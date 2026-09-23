@@ -542,7 +542,7 @@ the app serves one static file, and its service principal reads nothing.
    **Compute -> Apps -> idea**.
 
 Run All launches the install as a **tagged Databricks job**, prints the run URL,
-waits for it, then surfaces the app link. The job carries `dbx_idea_installer_*`
+waits for it, then surfaces the app link. The job carries `dbx_reference_architecture_agent_installer_*`
 tags (`app`, `kind`, `version`, `status`), so its serverless spend is
 attributable in `system.billing.usage`, the same pattern the vibe-modelling
 agent installer uses. If the running identity cannot create a job, the notebook

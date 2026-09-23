@@ -23,7 +23,7 @@ grants: it never reads anything.
 
 **How Run All behaves:** the notebook launches the install as a **tagged
 Databricks job**, prints the run URL, then waits for it and surfaces the app
-link. The job carries `dbx_idea_installer_*` tags, so its serverless spend is
+link. The job carries `dbx_reference_architecture_agent_installer_*` tags, so its serverless spend is
 attributable in `system.billing.usage`, the same pattern the vibe-modelling
 agent installer uses. If a job cannot be created (no permission, path not
 resolvable), the notebook deploys inline instead so the install still works.
@@ -59,7 +59,7 @@ DEFAULT_REPO = "amralieg/interactive-databricks-enterprise-architecture"
 # Tags follow the vibe-modelling-agent pattern: a prefix and a version, applied to
 # the install job so its serverless spend lands in system.billing.usage under a
 # name a cost report can group on. Bump the version when the app changes shape.
-INSTALLER_TAG_PREFIX = "dbx_idea_installer_"
+INSTALLER_TAG_PREFIX = "dbx_reference_architecture_agent_installer_"
 INSTALLER_VERSION = "v1"
 
 for _w in (W_NAME, W_SOURCE, W_REPO, W_POLICY):
@@ -329,7 +329,7 @@ class JobLauncher:
             if not self.notebook_path:
                 raise RuntimeError("could not resolve this notebook's path")
             w = _WC()
-            job_name = job_name or ("dbx_idea_installer_%d" % int(_t.time()))
+            job_name = job_name or ("dbx_reference_architecture_agent_installer_%d" % int(_t.time()))
             is_serverless, cluster_id = self._detect_compute_type()
 
             def _build_task(attach_cluster):
@@ -588,7 +588,7 @@ def run():
         W_POLICY: dbutils.widgets.get(W_POLICY),
     }
     nb_path = JobLauncher.get_current_notebook_path()
-    job_name = "dbx_idea_installer_%s_%s" % (JobLauncher._sanitize_tag(app_name), INSTALLER_VERSION)
+    job_name = "dbx_reference_architecture_agent_installer_%s_%s" % (JobLauncher._sanitize_tag(app_name), INSTALLER_VERSION)
     print("Launching the install as a Databricks job (%s) ...\\n" % job_name)
     res = JobLauncher(nb_path, widgets, tags).launch(job_name=job_name, run_name=job_name)
 
