@@ -2859,7 +2859,7 @@
     <select id="ai-model" class="ai-model-sel" title="Model — Fast is quickest, Thinking is most capable">
       <option value="fast">Fast · Haiku 4.5</option>
       <option value="balanced">Balanced · Sonnet 5</option>
-      <option value="thinking">Thinking · Opus 5</option>
+      <option value="thinking" selected>Thinking · Opus 5</option>
     </select>
     <a id="ai-key-toggle">API key</a>
     <a id="ai-edit-toggle" hidden style="margin-left:auto">✎ Editing: on</a>
@@ -10878,20 +10878,57 @@ function bootLang(){
    Connection order: local bridge (/health) -> direct Anthropic API
    with an in-memory key -> error.
    ================================================================== */
-/* Selectable model tiers. `id` is the tier the backend maps to a Databricks
-   serving endpoint (server-side allowlist in app.py); `anthropic` is the model
-   name used on the direct-API fallback path. */
-const AI_MODELS = [
-  { id:"fast",     anthropic:"claude-haiku-4-5"  },
-  { id:"balanced", anthropic:"claude-sonnet-5"   },
-  { id:"thinking", anthropic:"claude-opus-5"     },
+/* Selectable model tiers. Discovered at runtime from the backend /models
+   endpoint (the newest Claude opus/sonnet/haiku on the workspace), so a new
+   Claude version is picked up with no code change. This list is the static
+   fallback used when the backend isn't reachable (bridge offline / direct API).
+   `endpoint` is the Databricks serving endpoint; the direct-Anthropic fallback
+   path derives the API model name from it (strip the "databricks-" prefix). */
+let AI_MODELS = [
+  { id:"fast",     tier:"Fast",     endpoint:"databricks-claude-haiku-4-5", default:false },
+  { id:"balanced", tier:"Balanced", endpoint:"databricks-claude-sonnet-5",  default:false },
+  { id:"thinking", tier:"Thinking", endpoint:"databricks-claude-opus-5",    default:true  },
 ];
 const AI_MODEL_KEY = "dbxarch.dais2026.aimodel";
+function aiDefaultModelId(){ const d = AI_MODELS.find(m=>m.default); return d ? d.id : (AI_MODELS[0] && AI_MODELS[0].id) || "thinking"; }
+function aiModelLabel(m){
+  const rest = (m.endpoint||"").replace(/^databricks-claude-/,"");
+  if(!rest) return m.tier;
+  const i = rest.indexOf("-");
+  const fam = (i<0 ? rest : rest.slice(0,i));
+  const ver = (i<0 ? "" : rest.slice(i+1).replace(/-/g,"."));   // "4-5" -> "4.5"
+  const pretty = fam.replace(/\b\w/g,c=>c.toUpperCase()) + (ver ? " "+ver : "");
+  return m.tier + " · " + pretty;
+}
 let aiModelId = (function(){
   const s = store.get(AI_MODEL_KEY);
-  return AI_MODELS.some(m=>m.id===s) ? s : "balanced";
+  return AI_MODELS.some(m=>m.id===s) ? s : aiDefaultModelId();
 })();
-function aiAnthropicName(){ const m = AI_MODELS.find(x=>x.id===aiModelId); return m ? m.anthropic : "claude-sonnet-5"; }
+function aiAnthropicName(){
+  const m = AI_MODELS.find(x=>x.id===aiModelId);
+  return (m && (m.endpoint||"").replace(/^databricks-/,"")) || "claude-opus-5";
+}
+/* Rebuild the picker <option>s from AI_MODELS and keep the selection valid. */
+function aiRenderModelOptions(){
+  const sel = aiEls && aiEls.model; if(!sel) return;
+  sel.innerHTML = "";
+  AI_MODELS.forEach(m=>{ const o = document.createElement("option"); o.value = m.id; o.textContent = aiModelLabel(m); sel.appendChild(o); });
+  if(!AI_MODELS.some(m=>m.id===aiModelId)) aiModelId = aiDefaultModelId();
+  sel.value = aiModelId;
+}
+/* Fetch the live tiers from the backend and rebuild the picker. If the user has
+   not explicitly picked (nothing stored), follow the server's default tier. */
+async function aiLoadModels(){
+  try{
+    const r = await fetch("/models"); if(!r.ok) return;
+    const d = await r.json();
+    if(!Array.isArray(d.models) || !d.models.length) return;
+    AI_MODELS = d.models.map(m=>({ id:m.id, tier:m.label||m.id, endpoint:m.endpoint||"", default:!!m.default }));
+    const stored = store.get(AI_MODEL_KEY);
+    if(!AI_MODELS.some(m=>m.id===stored)) aiModelId = aiDefaultModelId();
+    aiRenderModelOptions();
+  }catch(_){ /* keep the static fallback */ }
+}
 let aiApiKey = "";                       // in memory only; never persisted
 const aiState = { busy:false, bridge:false, history:[] };
 
@@ -11137,11 +11174,12 @@ const aiEls = {
   file: document.getElementById("ai-file"),
 };
 if(aiEls.model){
-  aiEls.model.value = aiModelId;
+  aiRenderModelOptions();                 // static fallback first, so the picker is never empty
   aiEls.model.addEventListener("change", ()=>{
     aiModelId = aiEls.model.value;
     store.set(AI_MODEL_KEY, aiModelId);
   });
+  aiLoadModels();                         // then replace with the live tiers from the backend
 }
 
 /* ------------------------------------------------------------------

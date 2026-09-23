@@ -19,30 +19,92 @@ from databricks.sdk import WorkspaceClient
 HERE = os.path.dirname(__file__)
 HTML_PATH = os.path.join(HERE, "index.html")
 
-# Databricks-hosted model the assistant calls (Foundation Model API, pay-per-token).
-# SERVING_ENDPOINT is the default/balanced endpoint (kept for backward compat).
-SERVING_ENDPOINT = os.environ.get("SERVING_ENDPOINT", "databricks-claude-sonnet-5")
+# Model tiers are discovered dynamically from the workspace's serving endpoints
+# (see model_tiers()), so a newer Claude version is picked up with no code change.
+# These map a tier id to the Claude family it draws from, its label, and default.
+# Order is the fast -> thinking spectrum; `default` marks the initial selection.
+TIERS = [
+    {"id": "fast",     "family": "haiku",  "label": "Fast",     "default": False},
+    {"id": "balanced", "family": "sonnet", "label": "Balanced", "default": False},
+    {"id": "thinking", "family": "opus",   "label": "Thinking", "default": True},
+]
+TIER_BY_FAMILY = {t["family"]: t for t in TIERS}
+DEFAULT_FAMILY = next(t["family"] for t in TIERS if t["default"])
 
-# Selectable model tiers -> serving endpoints. The frontend sends a tier id
-# ("fast" | "balanced" | "thinking"); we map it here and reject anything not on
-# this allowlist so the browser can't point the app at an arbitrary endpoint.
-# Each is env-overridable in case a workspace hosts different endpoint names.
-MODEL_ENDPOINTS = {
-    "fast":     os.environ.get("FAST_ENDPOINT", "databricks-claude-haiku-4-5"),
-    "balanced": SERVING_ENDPOINT,
-    "thinking": os.environ.get("THINKING_ENDPOINT", "databricks-claude-opus-5"),
+# Static fallback endpoints, used only if the workspace can't be listed. Also
+# env-overridable. Discovery (model_tiers) supersedes these when it succeeds.
+FALLBACK_ENDPOINTS = {
+    "haiku":  os.environ.get("FAST_ENDPOINT",     "databricks-claude-haiku-4-5"),
+    "sonnet": os.environ.get("SERVING_ENDPOINT",  "databricks-claude-sonnet-5"),
+    "opus":   os.environ.get("THINKING_ENDPOINT", "databricks-claude-opus-5"),
 }
-DEFAULT_TIER = "balanced"
-
-
-def _resolve_endpoint(model) -> str:
-    """Map a frontend tier id to a serving endpoint; fall back to the default."""
-    return MODEL_ENDPOINTS.get(model, MODEL_ENDPOINTS[DEFAULT_TIER])
 # Optional AI Gateway URL — when set, calls route through the Gateway so usage
 # counters / inference tables register. Falls back to the serving-endpoints path.
 AI_GATEWAY_URL = os.environ.get("AI_GATEWAY_URL", "")
 
 IS_DATABRICKS_APP = bool(os.environ.get("DATABRICKS_APP_NAME"))
+
+_TIERS_CACHE = None
+
+
+def _version_key(version: str):
+    """Sortable key for a Claude version suffix like '5' or '4-8' (higher = newer)."""
+    parts = []
+    for chunk in version.split("-"):
+        parts.append(int(chunk) if chunk.isdigit() else 0)
+    return tuple(parts)
+
+
+def _discover_endpoints() -> dict:
+    """Newest `databricks-claude-<family>-<version>` endpoint per family, from the
+    live workspace. Returns {family: endpoint_name}. Empty on any failure."""
+    best = {}  # family -> (version_key, name)
+    try:
+        w = _workspace_client()
+        for ep in w.serving_endpoints.list():
+            name = getattr(ep, "name", "") or ""
+            if not name.startswith("databricks-claude-"):
+                continue
+            rest = name[len("databricks-claude-"):]        # e.g. "opus-5", "haiku-4-5"
+            head, _, version = rest.partition("-")          # family, "-", version suffix
+            if head not in TIER_BY_FAMILY or not version:
+                continue
+            vk = _version_key(version)
+            if head not in best or vk > best[head][0]:
+                best[head] = (vk, name)
+    except Exception:
+        return {}
+    return {fam: nm for fam, (vk, nm) in best.items()}
+
+
+def model_tiers() -> list:
+    """The selectable tiers, resolved to live endpoints (cached per process).
+    Falls back to FALLBACK_ENDPOINTS for any family discovery didn't return."""
+    global _TIERS_CACHE
+    if _TIERS_CACHE is not None:
+        return _TIERS_CACHE
+    discovered = _discover_endpoints()
+    out = []
+    for t in TIERS:
+        fam = t["family"]
+        endpoint = discovered.get(fam) or FALLBACK_ENDPOINTS.get(fam)
+        if not endpoint:
+            continue
+        out.append({"id": t["id"], "label": t["label"], "endpoint": endpoint,
+                    "default": t["default"]})
+    _TIERS_CACHE = out
+    return out
+
+
+def _resolve_endpoint(model) -> str:
+    """Map a frontend tier id to a live serving endpoint, validating against the
+    discovered allowlist; fall back to the default tier for anything unknown."""
+    tiers = model_tiers()
+    by_id = {t["id"]: t["endpoint"] for t in tiers}
+    if model in by_id:
+        return by_id[model]
+    default = next((t["endpoint"] for t in tiers if t["default"]), None)
+    return default or FALLBACK_ENDPOINTS[DEFAULT_FAMILY]
 
 app = FastAPI(title="Arch2 Architecture Assistant")
 
@@ -102,7 +164,15 @@ def _llm_client() -> OpenAI:
 
 @app.get("/health")
 def health():
-    return {"ok": True, "endpoint": SERVING_ENDPOINT, "models": MODEL_ENDPOINTS}
+    return {"ok": True, "models": model_tiers()}
+
+
+@app.get("/models")
+def models():
+    """The selectable model tiers (id, label, endpoint, default), discovered from
+    the workspace's live Claude serving endpoints. The frontend builds its picker
+    from this, so a newer Claude version appears with no code change."""
+    return {"models": model_tiers()}
 
 
 @app.post("/generate")
