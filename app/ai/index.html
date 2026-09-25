@@ -2309,6 +2309,11 @@
   .mapped { border-color:var(--brand) !important; box-shadow:0 0 0 1.5px var(--brand) !important; background:var(--brand-wash) !important; }
   body.ref-mode .atom:not(.mapped) { opacity:.26; }
   body.ref-mode .mapped { cursor:help; }
+  /* Generated custom architecture: the whole platform stays, but products not
+     used for this use case fade out. Dim-only — used products keep full colour
+     with no highlight border or badge. */
+  body.tab-dim .atom:not(.used) { opacity:.5; filter:grayscale(1); transition:opacity .2s, filter .2s; }
+  body.tab-dim .atom.used { cursor:help; }
   .map-badge { position:absolute; top:-5px; right:-5px; font-size:9px; font-weight:800; color:var(--on-accent);
     background:var(--brand); border-radius:20px; padding:0 5px; line-height:15px; min-width:15px; text-align:center; }
   .rtile, .ctile, .pcol, .schip, .plaincol, .fmt, .anyx { position:relative; }
@@ -5858,18 +5863,28 @@ const refBanner = document.getElementById("ref-banner");
    AI assistant maps a described customer onto; nothing is highlighted on load. */
 
 function clearRefPaint(){
-  document.body.classList.remove("ref-mode");
+  document.body.classList.remove("ref-mode", "tab-dim");
   document.querySelectorAll(".mapped").forEach(t=>{
     t.classList.remove("mapped");
     const b = t.querySelector(".map-badge"); if(b) b.remove();
   });
+  document.querySelectorAll(".used").forEach(t=> t.classList.remove("used"));
 }
 function paintRef(ref){
-  /* __tab__ refs show the banner and make notes accessible but do NOT dim the
-     board — no ref-mode class, no .mapped badges — because the generated tab's
-     own arch is the board and dimming it would make it unreadable. */
+  /* __tab__ refs are a generated custom architecture: the full platform is on
+     the board, so instead of the reference overlay we DIM the products this
+     use case does not use (dim-only — the used ones keep full colour, no badge).
+     Sources/Consumers are already trimmed in the tab's arch, so every remaining
+     one is "used" and stays lit. */
   if(ref && ref.id === "__tab__"){
     clearRefPaint();
+    if(ref.map && typeof ref.map === "object"){
+      document.body.classList.add("tab-dim");
+      Object.keys(ref.map).forEach(name=>{
+        const id = resolveAtom(name); if(!id || !byId[id]) return;
+        byId[id].el.classList.add("used");
+      });
+    }
     return;
   }
   clearRefPaint();
@@ -11027,13 +11042,14 @@ function filterArch(selected, base){
     }
     return kept;
   };
-  walk(clone.bands);
-  clone.bands = clone.bands.filter(b => walk(b.rows));
-  ["src","ing","ppl","cons"].forEach(rid => {
+  /* Trim only Sources (src) and Consumers (cons) to the ones this use case uses.
+     The platform bands, ingestion, People and Apps/Use Cases are kept WHOLE — the
+     generated tab dims their unused products (see paintRef __tab__) rather than
+     removing them, so the full Databricks platform stays visible. */
+  ["src","cons"].forEach(rid => {
     const rail = clone.rails[rid]; if(!rail) return;
     rail.groups = (rail.groups || []).filter(g => walk(g));
   });
-  if(clone.top && Array.isArray(clone.top.secs)) clone.top.secs = clone.top.secs.filter(s => walk(s));
   return { schema:SCHEMA, industry:(src.industry || "generic"), bands:clone.bands, rails:clone.rails, top:clone.top, cloud:clone.cloud };
 }
 
@@ -11546,6 +11562,10 @@ aiEditToggleEl.onclick = ()=>{
   } else {
     if(activeRef && activeRef.id==="__tab__"){ clearReference(); refBanner.classList.remove("show"); }
   }
+  /* _sel() already ran build() (which paints against the PREVIOUS activeRef), so
+     repaint now that activeRef reflects the tab just selected — dims a generated
+     tab, clears the dim on the reference/industry board. */
+  if(activeRef) paintRef(activeRef); else clearRefPaint();
   const arec = activeGeneratedRec();
   setEditMode(arec ? !!arec.edit : false);
   syncEditToggle();
