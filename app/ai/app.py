@@ -12,12 +12,67 @@ used automatically (WorkspaceClient()); locally it falls back to a CLI profile.
 import os
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from openai import OpenAI
 from databricks.sdk import WorkspaceClient
 
 HERE = os.path.dirname(__file__)
-HTML_PATH = os.path.join(HERE, "index.html")
+PARENT = os.path.dirname(HERE)  # .../app — the shared static board lives here
+
+# The AI assistant is NOT a forked copy of the board any more. We serve the SHARED
+# app/index.html (the exact page the static site publishes) and inject the AI layer
+# at request time, so the canvas never drifts from the static board. The AI JS is
+# spliced INSIDE the board's own <script> block (the one that defines build()) so it
+# shares scope with ARCH / byId / resolveAtom / paintRef / etc.
+BASE_HTML = os.path.join(PARENT, "index.html")
+AI_CSS = os.path.join(HERE, "ai.css")
+AI_JS = os.path.join(HERE, "ai.js")
+
+_page_cache = {"key": None, "html": None}
+
+
+def _compose_page() -> str:
+    """Inject the AI CSS + JS into the shared board HTML.
+
+    The AI JS is spliced just before the close of the MAIN board <script> (the
+    block that defines build()) so it runs in the board's own script scope and
+    can see ARCH / byId / resolveAtom / paintRef / etc. The AI JS injects its own
+    panel DOM into <body> at runtime, so there is no separate HTML splice — that
+    keeps this robust against the shared board's markup changing between releases.
+    """
+    base = open(BASE_HTML, encoding="utf-8").read()
+    css = open(AI_CSS, encoding="utf-8").read()
+    js = open(AI_JS, encoding="utf-8").read()
+    # AI JS before the main board script's close. The board never emits a raw
+    # </script> inside a string (it would end the block), so the first one after
+    # build() is the real close.
+    anchor = base.find("function build(")
+    if anchor != -1:
+        close = base.find("</script>", anchor)
+        if close != -1:
+            base = (base[:close]
+                    + "\n/* ===== AI assistant (injected) ===== */\n" + js + "\n"
+                    + base[close:])
+    # AI CSS before the last </style> in <head>.
+    head_end = base.find("</head>")
+    style_close = base.rfind("</style>", 0, head_end if head_end != -1 else len(base))
+    if style_close != -1:
+        base = (base[:style_close]
+                + "\n/* ===== AI assistant CSS (injected) ===== */\n" + css + "\n"
+                + base[style_close:])
+    return base
+
+
+def _page() -> str:
+    """Compose once, then reuse until any source file changes on disk."""
+    try:
+        key = tuple(os.path.getmtime(p) for p in (BASE_HTML, AI_CSS, AI_JS))
+    except OSError:
+        key = None
+    if _page_cache["html"] is None or _page_cache["key"] != key:
+        _page_cache["html"] = _compose_page()
+        _page_cache["key"] = key
+    return _page_cache["html"]
 
 # Model tiers are discovered dynamically from the workspace's serving endpoints
 # (see model_tiers()), so a newer Claude version is picked up with no code change.
@@ -233,10 +288,10 @@ async def generate(req: Request):
         return JSONResponse({"error": str(err)}, status_code=502)
 
 
-# Serve the single-page app last so /health and /generate win.
+# Serve the composed page last so /health, /models and /generate win.
 @app.get("/")
 def index():
-    return FileResponse(HTML_PATH, media_type="text/html")
+    return HTMLResponse(_page())
 
 
 # ---------------------------------------------------------------------------
@@ -245,8 +300,6 @@ def index():
 # above so those always win.
 # ---------------------------------------------------------------------------
 from fastapi.staticfiles import StaticFiles  # noqa: E402
-
-PARENT = os.path.dirname(HERE)  # .../app
 
 for _sub in ("architectures", "resources", "translations", "vendor", "assets", "share"):
     _p = os.path.join(PARENT, _sub)
