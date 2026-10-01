@@ -163,6 +163,33 @@ def _resolve_endpoint(model) -> str:
 
 app = FastAPI(title="Arch2 Architecture Assistant")
 
+# Content-Security-Policy. The Databricks Apps proxy injects no security response
+# headers, so the app sets its own on every response. The composed page carries
+# large inline <script>/<style> blocks (so script/style need 'unsafe-inline'),
+# pulls pdf.js from cdnjs, and the AI layer may fall back to calling the Anthropic
+# API directly from the browser (connect-src). The policy still forbids framing
+# and constrains object/base-uri and the allowed script/connect origins.
+CSP = (
+    "default-src 'self'; "
+    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
+    "style-src 'self' 'unsafe-inline'; "
+    "img-src 'self' data:; "
+    "font-src 'self' data:; "
+    "connect-src 'self' https://api.anthropic.com; "
+    "object-src 'none'; "
+    "base-uri 'self'; "
+    "frame-ancestors 'none'"
+)
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    resp = await call_next(request)
+    resp.headers.setdefault("Content-Security-Policy", CSP)
+    resp.headers.setdefault("X-Frame-Options", "DENY")
+    resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+    return resp
+
 
 def _content_text(content) -> str:
     """Flatten an assistant message's content to plain text.
