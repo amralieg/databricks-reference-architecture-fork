@@ -9998,9 +9998,11 @@ async function exportPptx(){
 }
 /* A copy of this page with the live state frozen in, so the download opens with
    the same edits and cloud provider the user is looking at. */
-// Escape "<" to its < JSON escape so a value containing "</script>" cannot
-// close the inline <script type="application/json"> block in the exported file.
-// (JSON.stringify does not escape "<"; a <script> is raw-text in the serializer.)
+// Escape "<" to its < JSON escape so a value containing a closing script
+// tag cannot terminate the inline application/json block in the exported file.
+// (JSON.stringify does not escape "<"; script content is raw text to the HTML
+// serializer. This comment avoids writing the literal closing tag, which would
+// itself end this block.)
 function _scriptJson(o){ return JSON.stringify(o).replace(/</g, "\\u003c"); }
 function exportHtmlDoc(){
   const snap = document.createElement("script");
