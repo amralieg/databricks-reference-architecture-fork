@@ -24,16 +24,12 @@ document.body.insertAdjacentHTML("beforeend", `
     <button data-q="Map a customer 360 and churn prediction use case.">Customer 360</button>
     <button data-q="Show an agentic RAG assistant over enterprise documents.">Agentic RAG</button>
   </div>
-  <div class="ai-key-row" id="ai-key-row">
-    <input type="password" id="ai-key" placeholder="Anthropic API key (sk-ant-…) — kept in memory this session only; used if the bridge is offline" autocomplete="off">
-  </div>
   <div class="ai-foot">
     <select id="ai-model" class="ai-model-sel" title="Model — Fast is quickest, Thinking is most capable">
       <option value="fast">Fast · Haiku 4.5</option>
       <option value="balanced">Balanced · Sonnet 5</option>
       <option value="thinking" selected>Thinking · Opus 5</option>
     </select>
-    <a id="ai-key-toggle">API key</a>
     <a id="ai-edit-toggle" hidden style="margin-left:auto">✎ Editing: on</a>
     <a id="ai-clear">Clear highlight</a>
   </div>
@@ -54,15 +50,16 @@ document.body.insertAdjacentHTML("beforeend", `
    architecture as a new tab. Two-phase: phase-1 detects the industry
    on the generic catalog; if an industry is detected, phase-2
    re-grounds selection on that industry's own board.
-   Connection order: local bridge (/health) -> direct Anthropic API
-   with an in-memory key -> error.
+   Connection: the app backend /generate (served by this app's FastAPI process,
+   which calls the Databricks-hosted model under the App service principal). If
+   the backend is unreachable the assistant reports an error — there is no
+   third-party fallback.
    ================================================================== */
 /* Selectable model tiers. Discovered at runtime from the backend /models
    endpoint (the newest Claude opus/sonnet/haiku on the workspace), so a new
    Claude version is picked up with no code change. This list is the static
-   fallback used when the backend isn't reachable (bridge offline / direct API).
-   `endpoint` is the Databricks serving endpoint; the direct-Anthropic fallback
-   path derives the API model name from it (strip the "databricks-" prefix). */
+   fallback used only to populate the picker when /models can't be reached.
+   `endpoint` is the Databricks serving endpoint. */
 let AI_MODELS = [
   { id:"fast",     tier:"Fast",     endpoint:"databricks-claude-haiku-4-5", default:false },
   { id:"balanced", tier:"Balanced", endpoint:"databricks-claude-sonnet-5",  default:false },
@@ -83,10 +80,6 @@ let aiModelId = (function(){
   const s = store.get(AI_MODEL_KEY);
   return AI_MODELS.some(m=>m.id===s) ? s : aiDefaultModelId();
 })();
-function aiAnthropicName(){
-  const m = AI_MODELS.find(x=>x.id===aiModelId);
-  return (m && (m.endpoint||"").replace(/^databricks-/,"")) || "claude-opus-5";
-}
 /* Rebuild the picker <option>s from AI_MODELS and keep the selection valid. */
 function aiRenderModelOptions(){
   const sel = aiEls && aiEls.model; if(!sel) return;
@@ -108,7 +101,6 @@ async function aiLoadModels(){
     aiRenderModelOptions();
   }catch(_){ /* keep the static fallback */ }
 }
-let aiApiKey = "";                       // in memory only; never persisted
 const aiState = { busy:false, bridge:false, history:[] };
 
 /* ------------------------------------------------------------------
@@ -329,20 +321,6 @@ async function aiCallBridge(system, user){
   if(!r.ok){ let m=r.status+" "+r.statusText; try{const e=await r.json(); if(e.error)m=e.error;}catch(_){} throw new Error(m); }
   return (await r.json()).text || "";
 }
-async function aiCallApi(key, system, user){
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{ "content-type":"application/json", "x-api-key":key, "anthropic-version":"2023-06-01",
-      "anthropic-dangerous-direct-browser-access":"true" },
-    body: JSON.stringify({ model:aiAnthropicName(), max_tokens:16000, system, messages:user })
-  });
-  if(!r.ok){ let m=r.status+" "+r.statusText; try{const e=await r.json(); if(e.error?.message)m=e.error.message;}catch(_){} throw new Error(m); }
-  const d = await r.json();
-  if(d.stop_reason==="refusal") throw new Error("Request declined by the safety system.");
-  if(d.stop_reason==="max_tokens") throw new Error("The model response was cut off (token limit). Try a shorter description or fewer data sources, then retry.");
-  return (d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
-}
-
 /* ----- chat UI ----- */
 const aiEls = {
   fab: document.getElementById("ai-fab"), panel: document.getElementById("ai-panel"),
@@ -464,16 +442,6 @@ function aiBridgeContent(text, imgs){
   if(!imgs.length) return text;
   return [{ type:"text", text }, ...imgs.map(im=>({ type:"image_url", image_url:{ url: im.dataUrl } }))];
 }
-function aiApiMessages(imgs){
-  const msgs = aiState.history.map(m=>({ role:m.role, content:m.content }));
-  if(imgs.length && msgs.length){
-    const last = msgs[msgs.length-1];
-    last.content = [{ type:"text", text: last.content },
-      ...imgs.map(im=>({ type:"image", source:{ type:"base64", media_type:im.mime, data:im.b64 } }))];
-  }
-  return msgs;
-}
-
 if(aiEls.attachBtn){
   aiEls.attachBtn.onclick = ()=> aiEls.file.click();
   aiEls.file.onchange = ()=>{ if(aiEls.file.files.length) aiAddFiles(Array.from(aiEls.file.files)); aiEls.file.value = ""; };
@@ -504,8 +472,7 @@ function aiSetBusy(b){
 async function aiRefreshConn(){
   aiState.bridge = await aiBridgeHealthy();
   aiEls.dot.className = "ai-dot " + (aiState.bridge ? "on" : "");
-  aiEls.conn.textContent = aiState.bridge ? "model connected" :
-    (aiApiKey ? "using API key (this session)" : "offline — add API key or start the backend");
+  aiEls.conn.textContent = aiState.bridge ? "model connected" : "offline — the app backend is not reachable";
 }
 
 function aiCreateTab(r, baseArch){
@@ -562,14 +529,8 @@ async function aiSend(promptText){
   const convo = aiState.history.map(m=>`${m.role==="user"?"USER":"ASSISTANT"}: ${m.content}`).join("\n\n");
   try{
     const system = aiSystemPrompt(componentCatalog());
-    let raw;
-    if(aiState.bridge){
-      raw = await aiCallBridge(system, aiBridgeContent(convo, imgs));
-    } else {
-      const key = aiApiKey.trim();
-      if(!key) throw new Error("No connection. Run the backend (uvicorn app:app) or add an Anthropic API key below.");
-      raw = await aiCallApi(key, system, aiApiMessages(imgs));
-    }
+    if(!aiState.bridge) throw new Error("No connection to the app backend. The AI assistant needs the app's /generate endpoint.");
+    let raw = await aiCallBridge(system, aiBridgeContent(convo, imgs));
     const result = aiExtractJson(raw);
     let baseArch = null;
     const indId = result.industry && result.industry !== "generic" &&
@@ -580,8 +541,7 @@ async function aiSend(promptText){
         const sys2 = aiSystemPrompt(catalogFromArch(baseArch));
         let raw2;
         try{
-          if(aiState.bridge) raw2 = await aiCallBridge(sys2, aiBridgeContent(convo, imgs));
-          else raw2 = await aiCallApi(aiApiKey.trim(), sys2, aiApiMessages(imgs));
+          raw2 = await aiCallBridge(sys2, aiBridgeContent(convo, imgs));
           const r2 = aiExtractJson(raw2);
           if(Array.isArray(r2.components) && r2.components.length) result.components = r2.components;
         }catch(_){ /* keep phase-1 components on phase-2 failure */ }
@@ -680,10 +640,6 @@ document.getElementById("ai-clear").onclick = ()=>{
     aiAddMsg("bot","Cleared the highlight — the full platform is shown again.");
   }
 };
-document.getElementById("ai-key-toggle").onclick = ()=> document.getElementById("ai-key-row").classList.toggle("show");
-(function(){ const k=document.getElementById("ai-key");
-  k.addEventListener("input", e=>{ aiApiKey = e.target.value.trim(); aiRefreshConn(); }); })();
-
 /* Edit toggle: visible only on a generated (editable) tab. */
 const aiEditToggleEl = document.getElementById("ai-edit-toggle");
 function activeGeneratedRec(){
