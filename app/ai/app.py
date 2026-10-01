@@ -338,6 +338,7 @@ async def generate(req: Request):
 
 # Serve the composed page last so /health, /models and /generate win.
 @app.get("/")
+@app.get("/index.html")
 def index():
     return HTMLResponse(_page())
 
