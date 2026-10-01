@@ -259,6 +259,15 @@ def models():
 
 @app.post("/generate")
 async def generate(req: Request):
+    # CSRF: reject cross-origin POSTs. Browsers omit Origin on same-origin
+    # requests; when present it must match the app's own URL. The platform gate
+    # authenticates the user, but this stops a cross-site page from driving the
+    # service-principal-authenticated proxy on a logged-in user's behalf.
+    _app_url = os.environ.get("DATABRICKS_APP_URL", "")
+    _origin = req.headers.get("origin")
+    if _origin and _app_url and _origin.rstrip("/") != _app_url.rstrip("/"):
+        return JSONResponse({"error": "Cross-origin request rejected"}, status_code=403)
+
     try:
         payload = await req.json()
     except Exception:
@@ -281,6 +290,18 @@ async def generate(req: Request):
     # The frontend sends a tier id ("fast"/"balanced"/"thinking"); map it to a
     # serving endpoint via the allowlist. Unknown values fall back to the default.
     model = _resolve_endpoint(payload.get("model"))
+
+    # Bound the request so a single caller can't push an oversized prompt through
+    # the shared service principal.
+    prompt_size = (len(user) if isinstance(user, str) else len(str(user))) + len(system)
+    if prompt_size > 200_000:
+        return JSONResponse({"error": "Prompt too large"}, status_code=413)
+    # Per-user audit: the proxy runs under the App SP (one identity for all users),
+    # so attribute each call to the authenticated user for accountability. stdout
+    # is collected as the app log.
+    print("audit generate user=%s model=%s bytes=%d"
+          % (req.headers.get("x-forwarded-email", "unknown"), model, prompt_size),
+          flush=True)
 
     messages = []
     if system:

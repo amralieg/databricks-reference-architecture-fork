@@ -3387,7 +3387,7 @@ function titleIcon(t, cls){
    product, which is the one mistake that stalls a build after sign-off. The
    panel is the compromise, so keep `st` accurate even though nothing on the
    canvas reads it. */
-function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
 /* A break opportunity at the seam of a run-together product name, so a chip too
    narrow for CustomerLake wraps it as Customer / Lake. Without it the only place
    the line can break is wherever the character happens to land, which read as
@@ -9998,10 +9998,14 @@ async function exportPptx(){
 }
 /* A copy of this page with the live state frozen in, so the download opens with
    the same edits and cloud provider the user is looking at. */
+// Escape "<" to its < JSON escape so a value containing "</script>" cannot
+// close the inline <script type="application/json"> block in the exported file.
+// (JSON.stringify does not escape "<"; a <script> is raw-text in the serializer.)
+function _scriptJson(o){ return JSON.stringify(o).replace(/</g, "\\u003c"); }
 function exportHtmlDoc(){
   const snap = document.createElement("script");
   snap.type = "application/json"; snap.id = "frozen-state";
-  snap.textContent = JSON.stringify({ schema:SCHEMA, industry:ARCH.industry, bands:ARCH.bands,
+  snap.textContent = _scriptJson({ schema:SCHEMA, industry:ARCH.industry, bands:ARCH.bands,
     rails:ARCH.rails, top:ARCH.top, cloud:ARCH.cloud });
   const html = document.documentElement.cloneNode(true);
   html.querySelector("#frozen-state")?.remove();
@@ -10014,7 +10018,7 @@ function exportHtmlDoc(){
   if(I18N.lang !== "en"){
     const langDict = document.createElement("script");
     langDict.type = "application/json"; langDict.id = "frozen-lang";
-    langDict.textContent = JSON.stringify({ [I18N.lang]: I18N.dict });
+    langDict.textContent = _scriptJson({ [I18N.lang]: I18N.dict });
     const langCode = document.createElement("script");
     langCode.type = "text/plain"; langCode.id = "frozen-lang-code";
     langCode.textContent = I18N.lang;
@@ -10038,12 +10042,12 @@ function exportHtmlDoc(){
     .map(row => ({ id: row[0], built: INDUSTRY_BUILT ? INDUSTRY_BUILT.has(row[0]) : true }));
   const resSnap = document.createElement("script");
   resSnap.type = "application/json"; resSnap.id = "frozen-resources";
-  resSnap.textContent = JSON.stringify({ links:LINKS, references:REFERENCES, accelerators:ACCEL_BY_NAME, connectors:frozenConn, regions:REGIONS, academy:ACADEMY, manifest });
+  resSnap.textContent = _scriptJson({ links:LINKS, references:REFERENCES, accelerators:ACCEL_BY_NAME, connectors:frozenConn, regions:REGIONS, academy:ACADEMY, manifest });
   html.querySelector("head").appendChild(resSnap);
   if(ARCH.industry && ARCH.industry !== "generic" && INDUSTRIES[ARCH.industry]){
     const archSnap = document.createElement("script");
     archSnap.type = "application/json"; archSnap.id = "frozen-arch-" + ARCH.industry;
-    archSnap.textContent = JSON.stringify(INDUSTRIES[ARCH.industry]);
+    archSnap.textContent = _scriptJson(INDUSTRIES[ARCH.industry]);
     html.querySelector("head").appendChild(archSnap);
   }
   html.querySelector("body")?.classList.remove("fitting");
