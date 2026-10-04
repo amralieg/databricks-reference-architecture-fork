@@ -2419,6 +2419,10 @@
     padding:3px 9px 3px 7px; border-radius:999px; border:1px solid var(--g-slate-bd);
     background:var(--g-slate-bg); color:var(--g-slate-ink); }
   .d-region .d-regsum::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+  a.d-regsum { text-decoration:none; cursor:pointer; transition:border-color .12s, filter .12s; }
+  a.d-regsum:hover { filter:brightness(1.04); border-color:currentColor; }
+  a.d-regsum:focus-visible { outline:2px solid var(--brand); outline-offset:2px; }
+  .d-region .d-regsrc { font-size:10px; font-weight:800; opacity:.75; margin-left:1px; }
   .d-region.all .d-regsum { border-color:var(--g-green-bd); background:var(--g-green-bg); color:var(--g-green-ink); }
   .d-region.some .d-regsum { border-color:var(--g-amber-bd); background:var(--g-amber-bg); color:var(--g-amber-ink); }
   .d-region .d-regcodes { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
@@ -5622,19 +5626,36 @@ function isDatabricksUrl(u){
 /* Regional availability for the cloud in the header. Only Databricks products
    carry it (a `doc` path in LINKS). Green when the product runs in every
    supported region, amber with the region codes listed when it is a subset. */
+/* Public docs source for the availability count. The "N of M" subset comes from
+   the "features with limited regional availability" page; the "all N" default
+   comes from the supported-regions list. Both are the exact pages scrape_regions.py
+   reads, carried in REGIONS.sources so the pill links to its own evidence. */
+function regionSrcUrl(all){
+  const s = (REGIONS && REGIONS.sources && REGIONS.sources[curCloud()]) || null;
+  if(!s) return "";
+  return all ? (s.supported || s.feature || "") : (s.feature || s.supported || "");
+}
+function regionSumPill(all, inner){
+  const u = regionSrcUrl(all);
+  if(!u) return `<span class="d-regsum">${inner}</span>`;
+  return `<a class="d-regsum" href="${esc(u)}" target="_blank" rel="noopener" ` +
+    `title="${esc(T("Source: Databricks documentation"))}">${inner}` +
+    `<span class="d-regsrc" aria-hidden="true">&#8599;</span></a>`;
+}
 function regionLine(t){
   if(typeof REGIONS === "undefined" || !REGIONS || !isPlatformProduct(t)) return "";
   const r = regionsFor(t); if(!r) return "";
   const cl = cloudLabelNow();
   if(r.all){
     return `<div class="d-region all"><h4>${esc(T("Regional availability"))}</h4>` +
-      `<span class="d-regsum">${esc(T("Available in all"))} ${r.total} ${esc(cl)} ${esc(T("regions"))}</span></div>`;
+      regionSumPill(true, `${esc(T("Available in all"))} ${r.total} ${esc(cl)} ${esc(T("regions"))}`) +
+      `</div>`;
   }
   const cr = cloudRegions();
   const codes = cr.regions.filter(x=>r.codes.has(x.code))
     .map(x=>`<span class="d-regcode is-go" data-rc="${esc(x.code)}" title="${esc(x.loc)} — ${esc(T("switch to this region"))}">${esc(x.code)}</span>`).join("");
   return `<div class="d-region some"><h4>${esc(T("Regional availability"))}</h4>` +
-    `<span class="d-regsum">${esc(T("Available in"))} ${r.codes.size} ${esc(T("of"))} ${r.total} ${esc(cl)} ${esc(T("regions"))}</span>` +
+    regionSumPill(false, `${esc(T("Available in"))} ${r.codes.size} ${esc(T("of"))} ${r.total} ${esc(cl)} ${esc(T("regions"))}`) +
     `<div class="d-regcodes">${codes}</div></div>`;
 }
 /* Interactive product tours and hands-on tutorials attached to this product,
@@ -5846,7 +5867,7 @@ function docsSearchUrl(term){
   const q = encodeURIComponent(String(term));
   const cl = curCloud();
   if(cl === "azure") return "https://learn.microsoft.com/en-us/search/?terms=" + q + "&scope=Azure%20Databricks";
-  return "https://docs.databricks.com/" + cl + "/en/search.html?q=" + q;
+  return "https://docs.databricks.com/" + cl + "/en/search?q=" + q;
 }
 /* Databricks-only resolution for a chip: its databricks.com product page if it
    has one, else its Databricks docs page (cloud-correct). Never the OSS/vendor
@@ -6071,16 +6092,15 @@ function openDetail(id, via){
      generic `what` leads instead; commercial mode shows both. */
   const catMode = (displayMode === "category" && !!t.cat);
   if(!catMode) html += `<h4>${esc(T("What it is"))}</h4><p>${esc(dispProse(t.long) || T("No description yet."))}</p>`;
-  /* A data-format tile shows its governing standard. A standards-body spec URL is
-     not Databricks-managed, so per the Databricks-only rule it resolves to the
-     cloud-correct Databricks docs-search for the format, never the external spec
-     (which is also sometimes a dead standards-body page). */
+  /* A data-format tile shows its governing standard, linked to the standards
+     body's own canonical page (iso20022.org, fixtrading.org, finos.org, hl7.org,
+     ...). A standard is not a competitor, so it links out directly; every other
+     link surface stays Databricks-only via the isDatabricksUrl allowlist. */
   if(t.spec_url){
-    const specHref = isDatabricksUrl(t.spec_url) ? t.spec_url : docsSearchUrl(displayName(t));
     html += `<h4>${esc(T("Standard reference"))}</h4><div class="d-links">` +
-      `<a class="d-link" href="${esc(specHref)}" target="_blank" rel="noopener">` +
+      `<a class="d-link" href="${esc(t.spec_url)}" target="_blank" rel="noopener">` +
       `<span class="dl-t">${esc(displayName(t))}</span>` +
-      `<span class="dl-s">${esc(host(specHref))}</span>` +
+      `<span class="dl-s">${esc(host(t.spec_url))}</span>` +
       `<span class="dl-go" aria-hidden="true">&#8599;</span></a></div>`;
   }
   if(t.spark_connector){
@@ -7080,11 +7100,37 @@ function platInkFor(accent){
   const cDark  = (L + 0.05) / (0.0148 + 0.05); /* contrast of #12161b on the accent */
   return (cWhite >= 3.0 || cWhite >= cDark) ? "" : "#12161b";
 }
+function fitPlatTitle(){
+  const ph = document.querySelector(".plat-head");
+  const line = ph && ph.querySelector(".ph-line");
+  if(!ph || !line) return;
+  line.style.fontSize = "";
+  const title = line.querySelector(".ph-title");
+  const ind = line.querySelector(".ph-ind");
+  const cs = getComputedStyle(ph);
+  let rightLimit = ph.clientWidth - parseFloat(cs.paddingRight);
+  const btn = ph.querySelector(".ph-max");
+  if(btn && btn.offsetParent) rightLimit = Math.min(rightLimit, btn.offsetLeft - 6);
+  const target = rightLimit - line.offsetLeft - 20;
+  if(target <= 0) return;
+  const measure = () => {
+    const g = parseFloat(getComputedStyle(line).columnGap) || 0;
+    return (title ? title.scrollWidth : 0) + (ind && !ind.hidden ? g + ind.scrollWidth : 0);
+  };
+  let need = measure();
+  let size = parseFloat(getComputedStyle(line).fontSize) || 21;
+  for(let i = 0; i < 6 && need > target && size > 11; i++){
+    size = Math.max(11, size * target / need);
+    line.style.fontSize = size.toFixed(2) + "px";
+    need = measure();
+  }
+}
 function applyPlatInk(){
   const ph = document.querySelector(".plat-head");
   if(!ph) return;
   const acc = getComputedStyle(document.body).getPropertyValue("--plat-accent");
   ph.style.color = platInkFor(acc);
+  fitPlatTitle();
 }
 
 /* Inline Lucide line-art for a menu row, from the single SVG source shared with
@@ -11379,12 +11425,13 @@ function fitBoard(){
   fitLayout();
   /* a soloed region hides the Z, its connectors and the pockets' flows, so the
      ring/connector geometry has nothing to measure and must not run */
-  if(document.body.classList.contains("zoom") && !document.body.classList.contains("plat-only")) return;
+  if(document.body.classList.contains("zoom") && !document.body.classList.contains("plat-only")){ fitPlatTitle(); return; }
   balanceHalves();
   fitLayout();
   drawZRing();
   alignConnectors();
   staggerFlows();
+  fitPlatTitle();
 }
 function fitLayout(){
   fitInEl.style.transform = "";
@@ -11530,7 +11577,7 @@ function paintBrandLogo(){
    query so no CDN edge can answer it): when its build differs from this build,
    reload once onto a cache-busting URL so the browser must pull the new HTML.
    BUILD here and app/version.json MUST be bumped together on every deploy. */
-const BUILD = "0.4.6";
+const BUILD = "0.4.7";
 async function staleReload(){
   try {
     const r = await fetch(APP_BASE + "version.json?_=" + Date.now(), { cache:"no-store" });

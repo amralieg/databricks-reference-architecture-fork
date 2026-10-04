@@ -59,11 +59,11 @@ ALIAS = {
     "Lakehouse//RT": "Lakehouse Real-Time",
     "Lakeflow Connect": "Managed connectors in Lakeflow Connect",
     "Zerobus": "Zerobus Ingest",
-    "Lakebase": "Lakebase Autoscaling",
-    "Model Serving": "Custom Model Serving capability (CPU serving)",
     "Unity Gateway": "Unity Gateway",
     "AI Functions": "Other AI functions",
     "Knowledge Assistant": "Knowledge Assistant",
+    "Document Parsing": "ai_parse_document",
+    "Text Classification": "ai_extract and ai_classify",
 }
 
 CHECK = "✓"
