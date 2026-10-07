@@ -1031,7 +1031,7 @@
   .flow.left::before { background-position:calc((1 - var(--dash-t,0)) * 100%) center, 0 center; }
   .flow.down::before { background-position:center calc(var(--dash-t,0) * 100%), center 0; }
   .flow.up::before, .pocket.ing::before, .pocket.ppl::before { background-position:center calc((1 - var(--dash-t,0)) * 100%), center 0; }
-  @media (prefers-reduced-motion:reduce) { .flow::before, .medal-arrow::before { animation:none; } }
+  @media (prefers-reduced-motion:reduce) { .flow::before, .medal-arrow::before, .pocket.ing::before, .pocket.ppl::before { animation:none !important; } }
   /* Give every travelling dot its own compositor layer. The whole board sits
      inside a transform:scale() (fitLayout), so without a layer the browser
      re-rasterises the connector against the scaled backing store every frame,
@@ -1047,6 +1047,8 @@
      style, which is the state the export is meant to capture. */
   body.exp-static *, body.exp-static *::before, body.exp-static *::after {
     animation:none !important; transition:none !important; }
+  body.motion-rest *, body.motion-rest *::before, body.motion-rest *::after { animation-play-state:paused !important; }
+  body.motion-rest #nav-progress.on::before { animation-play-state:running !important; }
   /* Zoom (.zx) and platform-maximise (.ph-max) are on-screen interface, not
      architecture: the raster path deletes them from its clone, and the vector
      (PPTX/PDF) path reads the live DOM, so they are hidden here too. walk()
@@ -1247,7 +1249,7 @@
      is why the ring is 2px on the same line they occupied. Geometry comes from
      drawZRing because the shape is grid-derived, not authorable in CSS. */
   .zring { position:absolute; inset:0; width:100%; height:100%; overflow:visible;
-    pointer-events:none; z-index:3; }
+    pointer-events:none; z-index:3; will-change:transform; }
   .zring path { fill:none; stroke:var(--plat-accent); stroke-width:2;
     stroke-dasharray:15 9; animation:zdash 1.15s linear infinite;
     /* same phase hook as the connectors, so the ring keeps travelling in the
@@ -1941,9 +1943,10 @@
      conn share one animation. */
   :root{ --dot-sz:6.4px; --dot-top:-3.2px; --dot-glow:5.6px; --dot-spread:1.6px; --dot-pitch:8.8px; --dot-edge:5.6px; }
   .badge-dot { position:absolute; top:2.5px; right:2.5px; width:var(--dot-sz); height:var(--dot-sz); border-radius:50%;
-    background:var(--bd); pointer-events:none; z-index:3;
-    box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd), 0 0 0 1px rgba(255,255,255,.55);
-    animation:badgePulse 1.6s ease-out infinite; }
+    background:var(--bd); pointer-events:none; z-index:3; --pulse:2.75;
+    box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd); }
+  .badge-dot::after, .d-badge .db-dot::after { content:""; position:absolute; inset:0; border-radius:50%;
+    background:var(--bd); pointer-events:none; animation:badgePulse 1.6s ease-out 5; }
   /* One dot per highlight kind, each its own colour. A tile can carry several,
      so the position comes from an hl-p* anchor assigned by paintHighlights: a
      lone dot sits top-left, extras line up beside it left-to-right. */
@@ -2001,9 +2004,8 @@
      rather than removing them: the shape stays whole and the gap is legible. */
   .atom.rg-off { opacity:.16; filter:grayscale(1); }
   @keyframes badgePulse {
-    0%   { box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd), 0 0 0 0 var(--bd); }
-    70%  { box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd), 0 0 0 var(--dot-glow) transparent; }
-    100% { box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd), 0 0 0 0 transparent; }
+    0%   { transform:scale(1); opacity:1; }
+    70%, 100% { transform:scale(var(--pulse)); opacity:0; }
   }
   .d-badge { margin:4px 0 2px; padding:9px 11px; border:1px solid var(--bd); border-radius:8px;
     background:var(--bdbg); }
@@ -2011,11 +2013,13 @@
   .d-badge.conn  { --bd:#12b6ef; --bdbg:rgba(18,182,239,.09); }
   .d-badge .db-h { display:flex; align-items:center; gap:7px; font-weight:800; font-size:12.5px;
     letter-spacing:.01em; }
-  .d-badge .db-dot { width:7.2px; height:7.2px; border-radius:50%; background:var(--bd); flex:0 0 auto;
-    box-shadow:0 0 5.6px .8px var(--bd); animation:badgePulse 1.6s ease-out infinite; }
+  .d-badge .db-dot { position:relative; width:7.2px; height:7.2px; border-radius:50%; background:var(--bd); flex:0 0 auto;
+    --pulse:2.56; box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd); }
   .d-badge p { margin:6px 0 8px; font-size:12.5px; }
   .d-badge .d-links { gap:0; }
-  @media (prefers-reduced-motion: reduce){ .badge-dot, .d-badge .db-dot { animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .badge-dot::after, .d-badge .db-dot::after { display:none; }
+    .badge-dot { box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd), 0 0 0 1px rgba(255,255,255,.55); }
+    .d-badge .db-dot { box-shadow:0 0 5.6px .8px var(--bd); } }
   /* The top band reuses the bottom band's markup, renderer and stylesheet and
      only swaps the accent, so the two horizontal bands read as a pair. */
   .hband.top { --cloud-accent:var(--g-plum-line); --cloud-bd:var(--g-plum-line); --cloud-head:var(--g-plum-head);
@@ -2456,7 +2460,7 @@
      customer stories, connector, demos, courses, videos), in that highlight's
      colour. It flows inline in the h4 and hides when the kind is switched off in
      the Highlights menu (shared .badge-dot.hl-* classes). */
-  h4 .d-secdot { position:static; top:auto; left:auto; right:auto; bottom:auto; transform:none;
+  h4 .d-secdot { position:relative; top:auto; left:auto; right:auto; bottom:auto; transform:none; --pulse:2.4;
     display:inline-block; width:8px; height:8px; margin-inline-start:8px; vertical-align:middle; }
   .d-body { padding:18px 24px 40px; overflow-y:auto; }
   .d-body h4 { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); margin:17px 0 7px; font-weight:800; }
@@ -2698,8 +2702,9 @@
     background:transparent; pointer-events:none; opacity:0; transition:opacity .15s ease; overflow:hidden; }
   #nav-progress.on{ opacity:1; }
   #nav-progress::before{ content:""; position:absolute; top:0; left:0; height:100%; width:35%;
-    background:var(--brand); border-radius:0 3px 3px 0; animation:navslide 1.1s ease-in-out infinite; }
-  @keyframes navslide{ 0%{ left:-35%; } 60%{ left:100%; } 100%{ left:100%; } }
+    background:var(--brand); border-radius:0 3px 3px 0; animation:navslide 1.1s ease-in-out infinite paused; }
+  #nav-progress.on::before{ animation-play-state:running; }
+  @keyframes navslide{ 0%{ transform:translateX(-100%); } 60%, 100%{ transform:translateX(calc(100% * 100 / 35)); } }
   @media print { #nav-progress{ display:none !important; } }
 </style>
 </head>
@@ -4383,8 +4388,9 @@ async function loadResources(){
   await Promise.all(names.map(async n => {
     try { const r = await fetch(APP_BASE + "resources/" + n + ".json", { cache:"no-store" }); out[n] = r.ok ? await r.json() : (n === "references" ? [] : {}); }
     catch(e){ out[n] = (n === "references" ? [] : {}); }
-  }));
-  try { const r = await fetch(APP_BASE + "architectures/manifest.json", { cache:"no-store" }); if(r.ok) out.manifest = await r.json(); } catch(e){}
+  }).concat((async () => {
+    try { const r = await fetch(APP_BASE + "architectures/manifest.json", { cache:"no-store" }); if(r.ok) out.manifest = await r.json(); } catch(e){}
+  })()));
   navDone();
   useResources(out);
 }
@@ -4461,17 +4467,20 @@ function frozenLangDict(){
 /* Load the _common shard for a language and reset the active dict to it. An
    offline export inlines the merged dict under #frozen-lang; use it directly so
    the file needs no network (the industry shard merge below then no-ops). */
-async function loadLang(code){
-  if(code === "en"){ I18N.dict = {}; return; }
+async function cacheLangCommon(code){
   const frozen = frozenLangDict();
-  if(frozen && frozen[code]){ I18N.commonCache[code] = frozen[code]; I18N.dict = Object.assign({}, frozen[code]); return; }
+  if(frozen && frozen[code]) return I18N.commonCache[code] = frozen[code];
   if(!I18N.commonCache[code]){
     try {
       const r = await fetch(APP_BASE + "translations/" + code + "/_common.json", { cache:"no-store" });
       I18N.commonCache[code] = (r.ok && (r.headers.get("content-type") || "").indexOf("json") >= 0) ? await r.json() : {};
     } catch(e){ I18N.commonCache[code] = {}; }
   }
-  I18N.dict = Object.assign({}, I18N.commonCache[code]);
+  return I18N.commonCache[code];
+}
+async function loadLang(code){
+  if(code === "en"){ I18N.dict = {}; return; }
+  I18N.dict = Object.assign({}, await cacheLangCommon(code));
 }
 /* Merge one industry's translation shard onto the active dict. Fetched once per
    (language, industry) and cached. A missing/HTML-fallback response merges
@@ -4480,8 +4489,8 @@ async function loadLang(code){
    (__import__) or any id not in the catalog has no shard on the server, so it is
    skipped: its as-authored content is shown untranslated rather than firing a 404
    on every language switch. */
-async function loadIndustryLang(code, id){
-  if(code === "en" || !id || id === "generic" || !isKnownIndustry(id)) return;
+async function cacheIndustryLang(code, id){
+  if(code === "en" || !id || id === "generic" || !isKnownIndustry(id)) return null;
   const key = code + "/" + id;
   if(!(key in I18N.shardCache)){
     try {
@@ -4489,7 +4498,20 @@ async function loadIndustryLang(code, id){
       I18N.shardCache[key] = (r.ok && (r.headers.get("content-type") || "").indexOf("json") >= 0) ? await r.json() : {};
     } catch(e){ I18N.shardCache[key] = {}; }
   }
-  Object.assign(I18N.dict, I18N.shardCache[key]);
+  return I18N.shardCache[key];
+}
+async function loadIndustryLang(code, id){
+  const shard = await cacheIndustryLang(code, id);
+  if(shard) Object.assign(I18N.dict, shard);
+}
+function setLangAttrs(meta){
+  I18N.lang = meta.code; I18N.dir = meta.dir;
+  document.documentElement.setAttribute("data-lang", meta.code);
+  document.documentElement.setAttribute("data-dir", meta.dir || "ltr");
+  /* The real lang attribute (not just data-lang) is what CSS hyphens:auto keys
+     off for language-correct word breaks, and it improves a11y/screen-reader
+     pronunciation. data-lang stays as the styling hook the rest of the CSS uses. */
+  document.documentElement.setAttribute("lang", meta.code);
 }
 async function applyLang(code, persist){
   /* Resolve to a built language only: an unbuilt (incompletely translated) code
@@ -4504,14 +4526,8 @@ async function applyLang(code, persist){
   if(meta.code !== "en" && typeof ARCH !== "undefined" && ARCH.industry && ARCH.industry !== "generic")
     await loadIndustryLang(meta.code, ARCH.industry);
   navDone();
-  I18N.lang = meta.code; I18N.dir = meta.dir;
+  setLangAttrs(meta);
   if(persist) store.set(LANG_LS, meta.code);
-  document.documentElement.setAttribute("data-lang", meta.code);
-  document.documentElement.setAttribute("data-dir", meta.dir || "ltr");
-  /* The real lang attribute (not just data-lang) is what CSS hyphens:auto keys
-     off for language-correct word breaks, and it improves a11y/screen-reader
-     pronunciation. data-lang stays as the styling hook the rest of the CSS uses. */
-  document.documentElement.setAttribute("lang", meta.code);
   if(typeof syncLangMenu === "function") syncLangMenu();
   if(typeof build === "function") build();
   if(typeof fitBoard === "function") fitBoard();
@@ -10098,7 +10114,7 @@ function exportHtmlDoc(){
     archSnap.textContent = _scriptJson(INDUSTRIES[ARCH.industry]);
     html.querySelector("head").appendChild(archSnap);
   }
-  html.querySelector("body")?.classList.remove("fitting");
+  html.querySelector("body")?.classList.remove("fitting", "motion-rest");
   return "<!doctype html>\n" + html.outerHTML;
 }
 function exportHtml(){
@@ -11503,6 +11519,31 @@ window.addEventListener("resize", scheduleFit);
 /* content height changes on every rebuild, tab switch and edit */
 new ResizeObserver(scheduleFit).observe(document.querySelector(".board"));
 
+const MOTION_REST_MS = 60000;
+(function motionRest(){
+  const body = document.body;
+  let last = 0, timer = 0;
+  function rest(){
+    const left = MOTION_REST_MS - (performance.now() - last);
+    if(left > 0){ timer = setTimeout(rest, left); return; }
+    timer = 0;
+    body.classList.add("motion-rest");
+  }
+  function wake(){
+    last = performance.now();
+    if(body.classList.contains("motion-rest")) body.classList.remove("motion-rest");
+    if(!timer) timer = setTimeout(rest, MOTION_REST_MS);
+  }
+  ["pointermove", "pointerdown", "keydown", "wheel"].forEach(t=>
+    window.addEventListener(t, wake, { capture:true, passive:true }));
+  document.addEventListener("visibilitychange", ()=>{
+    if(!document.hidden){ wake(); return; }
+    clearTimeout(timer); timer = 0;
+    body.classList.add("motion-rest");
+  });
+  wake();
+})();
+
 /* The other half of liveUrl(): a link written into an exported PDF or deck has
    to reopen the board it was exported from. Nothing here is remembered, because
    following somebody's link is looking at their diagram, not adopting it as your
@@ -11577,7 +11618,7 @@ function paintBrandLogo(){
    query so no CDN edge can answer it): when its build differs from this build,
    reload once onto a cache-busting URL so the browser must pull the new HTML.
    BUILD here and app/version.json MUST be bumped together on every deploy. */
-const BUILD = "0.4.7";
+const BUILD = "0.4.8";
 async function staleReload(){
   try {
     const r = await fetch(APP_BASE + "version.json?_=" + Date.now(), { cache:"no-store" });
@@ -11593,10 +11634,25 @@ async function staleReload(){
   } catch(e){}
   return false;
 }
+function bootIndustryId(){
+  const u = urlParam("industry");
+  const id = u && isKnownIndustry(u) ? u : ARCH.industry;
+  return id && id !== "generic" && isKnownIndustry(id) ? id : null;
+}
 (async function boot(){
-  if(await staleReload()) return;
+  const stale = staleReload();
   paintBrandLogo();
-  await loadResources();
+  const lang = bootLangMeta();
+  const code = lang && lang.code !== "en" ? lang.code : null;
+  const ind = bootIndustryId();
+  const warm = [loadResources()];
+  if(ind) warm.push(loadIndustry(ind));
+  if(code) warm.push(cacheLangCommon(code), cacheIndustryLang(code, ind));
+  navStart();
+  if(await stale) return;
+  await Promise.all(warm);
+  navDone();
+  if(code){ await loadLang(code); setLangAttrs(lang); }
   if(!(await seedFromUrl())){
     /* A saved industry id must not pin stale rails from an older template: refresh
        the industry overlay on load so new teams land without clearing band edits. */
@@ -11612,15 +11668,20 @@ async function staleReload(){
   bootLang();
   /* Seeding is done: let the address bar track the board from here on, and
      normalise it once now (so a plain visit or a stub link shows the shareable
-     URL). bootLang's applyLang, if any, will re-sync with the language param. */
+     URL). */
   urlSeeding = false;
   syncUrl();
 })();
 
-/* Re-apply a remembered content language after the first board is on screen, so
-   a returning reader sees the architecture in their language. English (default)
-   only runs the static-heading pass, which is a no-op. */
+/* The remembered content language. boot() applies it before the first build, so
+   a returning reader never sees the board drawn in English first; bootLang then
+   only runs the static-heading pass, which for English (default) is a no-op. */
 function bootLang(){
+  const meta = bootLangMeta();
+  if(meta && meta.code !== I18N.lang){ applyLang(meta.code, false); }
+  else { syncLangMenu(); translateContent(); syncIndustryBtn(); }
+}
+function bootLangMeta(){
   /* A downloaded HTML copy pins its language in #frozen-lang-code; it wins over
      whatever this browser last saved, so the file opens as it was exported. */
   let saved = null;
@@ -11633,9 +11694,7 @@ function bootLang(){
      if it was saved before it was hidden. A frozen offline copy carries its own
      dict, so its pinned code is honoured regardless of the built flag. */
   const frozen = !!document.getElementById("frozen-lang-code");
-  const meta = LANGS.find(l => l.code === saved && (frozen || l.built !== false));
-  if(meta && meta.code !== "en"){ applyLang(meta.code, false); }
-  else { syncLangMenu(); translateContent(); }
+  return LANGS.find(l => l.code === saved && (frozen || l.built !== false)) || null;
 }
 </script>
 
