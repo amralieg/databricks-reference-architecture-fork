@@ -292,15 +292,27 @@ async def generate(req: Request):
     model = _resolve_endpoint(payload.get("model"))
 
     # Bound the request so a single caller can't push an oversized prompt through
-    # the shared service principal.
-    prompt_size = (len(user) if isinstance(user, str) else len(str(user))) + len(system)
+    # the shared service principal. Count only TEXT toward the char cap: image
+    # attachments arrive as base64 data URLs (inherently large) and are already
+    # downscaled client-side, so bound them by COUNT instead -- otherwise a normal
+    # vision prompt is falsely rejected as "Prompt too large".
+    if isinstance(user, str):
+        text_len, img_count = len(user), 0
+    else:
+        text_len = sum(len(b.get("text", "")) for b in user
+                       if isinstance(b, dict) and b.get("type") == "text")
+        img_count = sum(1 for b in user
+                        if isinstance(b, dict) and b.get("type") == "image_url")
+    prompt_size = text_len + len(system)
     if prompt_size > 200_000:
         return JSONResponse({"error": "Prompt too large"}, status_code=413)
+    if img_count > 5:
+        return JSONResponse({"error": "Too many images (max 5)"}, status_code=413)
     # Per-user audit: the proxy runs under the App SP (one identity for all users),
     # so attribute each call to the authenticated user for accountability. stdout
     # is collected as the app log.
-    print("audit generate user=%s model=%s bytes=%d"
-          % (req.headers.get("x-forwarded-email", "unknown"), model, prompt_size),
+    print("audit generate user=%s model=%s text_bytes=%d images=%d"
+          % (req.headers.get("x-forwarded-email", "unknown"), model, prompt_size, img_count),
           flush=True)
 
     messages = []
