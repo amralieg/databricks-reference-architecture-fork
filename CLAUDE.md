@@ -74,7 +74,7 @@ The "Available in N of M regions" line links to its exact source doc.
 
 ```bash
 python3 tools/regiongate.py --live          # region data consistent + alias parity + source docs live
-node   tools/verify_all_sections.js         # 70 industries, uc/genie/dash/app = 10/4/4/4, 0 page errors
+node   tools/verify_all_sections.js         # 70 industries + the generic board, uc/genie/dash/app = 10/4/4/4, 0 page errors
 node   tools/verify_i18n_coverage.js        # translation coverage over the DATA corpus
 python3 tools/linkgate.py                    # structural completeness (add --urls for live link check)
 python3 tools/heightgate.py                  # layout / no clipping
