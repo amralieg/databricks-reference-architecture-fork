@@ -79,6 +79,7 @@ node   tools/verify_i18n_coverage.js        # translation coverage over the DATA
 python3 tools/linkgate.py                    # structural completeness (add --urls for live link check)
 python3 tools/heightgate.py                  # layout / no clipping
 node   tools/perfgate.js                     # motion rests at idle, reduced motion honoured, boot fetches once and in parallel
+node   tools/verify_exports.js               # deck + PDF, and the five drawing-app exports: shape parity, structure, links (--live also opens them in draw.io, excalidraw.com, LibreOffice)
 ```
 
 Local preview: `cd app && python3 -m http.server 8777` then open
