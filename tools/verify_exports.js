@@ -45,6 +45,7 @@ async function drawingProbe(edit) {
   const lineTexts = texts.flatMap(s => s.lines ? s.lines.map(l => l.txt) : [s.txt]);
   const links = [...new Set(m.groups.map(g => g.link).filter(Boolean))];
   const parse = (s, type) => { const x = new DOMParser().parseFromString(s, type); return x.querySelector("parsererror") ? null : x; };
+  const plain = s => String(s).replace(/[\u2066-\u2069]/g, "");
   const total = m.shapes.length;
   const out = {
     by, kinds, total, groups: m.groups.length, links: links.length, badLinks: links.filter(u => !isDatabricksUrl(u)).length,
@@ -61,7 +62,7 @@ async function drawingProbe(edit) {
     const idSet = new Set(ids);
     const style = c => c.getAttribute("style") || "";
     const values = cells.filter(c => /^text;/.test(style(c))).map(c => {
-      const t = document.createElement("textarea"); t.innerHTML = c.getAttribute("value") || ""; return t.value; });
+      const t = document.createElement("textarea"); t.innerHTML = c.getAttribute("value") || ""; return plain(t.value); });
     const dxLinks = [...dx.querySelectorAll("UserObject[link]")].map(e => e.getAttribute("link"));
     out.f.drawio = { ok: true, bytes: dxText.length, text: dxText,
       vertices: cells.filter(c => c.getAttribute("vertex") === "1" && style(c) !== "group").length,
@@ -83,7 +84,7 @@ async function drawingProbe(edit) {
   const exText = excalidrawJson(m);
   let ex = null; try { ex = JSON.parse(exText); } catch (e) {}
   if (ex && ex.type === "excalidraw" && Array.isArray(ex.elements)) {
-    const els = ex.elements, imgs = els.filter(e => e.type === "image"), exTexts = els.filter(e => e.type === "text").map(e => e.text);
+    const els = ex.elements, imgs = els.filter(e => e.type === "image"), exTexts = els.filter(e => e.type === "text").map(e => plain(e.text));
     out.f.excalidraw = { ok: true, bytes: exText.length, text: exText, elements: els.length, imgs: imgs.length,
       filesOk: imgs.every(e => ex.files[e.fileId] && /^data:image\/svg\+xml;base64,/.test(ex.files[e.fileId].dataURL)),
       groups: new Set(els.flatMap(e => e.groupIds)).size,

@@ -8701,13 +8701,14 @@ const PPT_FONT = "Calibri";
    naming widely installed script fonts keeps the deck legible and editable
    rather than rasterised. A missing font degrades to PowerPoint's own
    substitute, never to broken text. */
+const SCRIPT_FONTS = { zh:{ ea:"Microsoft YaHei" }, ja:{ ea:"Yu Gothic" }, ko:{ ea:"Malgun Gothic" },
+  ar:{ cs:"Arial" }, he:{ cs:"Arial" }, hi:{ cs:"Nirmala UI" } };
+function scriptFonts(){ return SCRIPT_FONTS[(typeof I18N !== "undefined" && I18N.lang) || "en"] || {}; }
 function pptxRunFonts(){
-  const lang = (typeof I18N !== "undefined" && I18N.lang) || "en";
-  const cs = lang === "ar" ? "Arial" : lang === "hi" ? "Nirmala UI" : "";
-  const ea = lang === "zh" ? "Microsoft YaHei" : "";
+  const f = scriptFonts();
   return '<a:latin typeface="' + PPT_FONT + '"/>' +
-    (ea ? '<a:ea typeface="' + ea + '"/>' : "") +
-    (cs ? '<a:cs typeface="' + cs + '"/>' : "");
+    (f.ea ? '<a:ea typeface="' + f.ea + '"/>' : "") +
+    (f.cs ? '<a:cs typeface="' + f.cs + '"/>' : "");
 }
 /* the connector colours live in CSS on ::before / ::after, which a DOM walk
    cannot read, so the four cases are mirrored here (see the .flow rules) */
@@ -9411,6 +9412,7 @@ function drawNum(v){ return +(+v).toFixed(2); }
 function drawPct(a){ return Math.round(Math.max(0, Math.min(1, a == null ? 1 : a)) * 100); }
 function drawAlign(a){ return a === "ctr" ? "center" : a === "r" ? "right" : "left"; }
 function drawDash(d){ return d === "sysDot" ? "dotted" : d ? "dashed" : "solid"; }
+function bidiIso(s, rtl){ return rtl ? "\u2067" + s + "\u2069" : s; }
 
 function drawioXml(model){
   const tree = exportTree(model), logos = exportLogos(model), n = drawNum, cells = [];
@@ -9442,8 +9444,8 @@ function drawioXml(model){
       vertex("text;html=1;strokeColor=none;fillColor=none;align=" + drawAlign(s.algn) + ";verticalAlign=middle;whiteSpace=" +
         (s.wrap ? "wrap" : "nowrap") + ";overflow=visible;spacing=0;spacingTop=0;spacingBottom=0;spacingLeft=0;spacingRight=0;" +
         "fontFamily=" + DRAW_FONT + ";fontSize=" + n(s.size) + ";fontColor=#" + s.col + ";" +
-        (s.a < 0.995 ? "textOpacity=" + drawPct(s.a) + ";" : "") + "fontStyle=" + ((s.bold ? 1 : 0) + (s.italic ? 2 : 0)) + ";" +
-        (s.rtl ? "textDirection=rtl;" : ""), s.box, o, parent, xmlEsc(esc(s.txt)));
+        (s.a < 0.995 ? "textOpacity=" + drawPct(s.a) + ";" : "") + "fontStyle=" + ((s.bold ? 1 : 0) + (s.italic ? 2 : 0)) + ";",
+        s.box, o, parent, xmlEsc(esc(bidiIso(s.txt, s.rtl))));
     }else if(s.t === "img"){
       vertex("shape=image;html=1;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;" +
         "image=data:image/svg+xml," + utf8B64(logos.uniq[logos.refs[s.ref]].xml) + ";", s.box, o, parent);
@@ -9565,7 +9567,7 @@ function excalidrawJson(model){
       strokeStyle:drawDash(s.line && s.line.dash), backgroundColor:s.fill ? col(s.fill, s.fillA) : "transparent",
       roundness:s.radius > 0.5 ? { type:3, value:s.radius } : null });
     if(s.t === "text"){
-      const t = (s.lines ? s.lines.map(l=> l.txt) : [s.txt]).join("\n");
+      const t = (s.lines ? s.lines.map(l=> l.txt) : [s.txt]).map(x=> bidiIso(x, s.rtl)).join("\n");
       return el("text", s.box, gids, { text:t, originalText:t, fontSize:s.size, fontFamily:2, textAlign:drawAlign(s.algn),
         verticalAlign:"middle", containerId:null, lineHeight:1.25, autoResize:true, strokeColor:col(s.col, s.a) });
     }
@@ -9637,7 +9639,7 @@ const VSDX_NS = 'xmlns="http://schemas.microsoft.com/office/visio/2012/main" ' +
 const VSDX_REL = "http://schemas.microsoft.com/visio/2010/relationships/";
 async function vsdxParts(model){
   const title = docTitle(), tree = exportTree(model), logos = await logoPngs(exportLogos(model));
-  const IN = 96, W = model.W / IN, H = model.H / IN;
+  const IN = 96, W = model.W / IN, H = model.H / IN, fonts = scriptFonts();
   const f = v=> String(+(+v).toFixed(6));
   const cell = (name, v, extra)=> '<Cell N="' + name + '" V="' + v + '"' + (extra || "") + "/>";
   const trans = a=> f(1 - Math.max(0, Math.min(1, a == null ? 1 : a)));
@@ -9670,7 +9672,8 @@ async function vsdxParts(model){
         cell("LeftMargin", 0) + cell("RightMargin", 0) + cell("TopMargin", 0) + cell("BottomMargin", 0) + cell("VerticalAlign", 1) +
         cell("TxtPinX", f(bw * side)) + cell("TxtPinY", f(bh / 2)) + cell("TxtWidth", f(tw)) + cell("TxtHeight", f(bh)) +
         cell("TxtLocPinX", f(tw * side)) + cell("TxtLocPinY", f(bh / 2)) + cell("TxtAngle", 0) +
-        '<Section N="Character"><Row IX="0">' + cell("Font", VSDX_FONT) + cell("Color", "#" + s.col) +
+        '<Section N="Character"><Row IX="0">' + cell("Font", fonts.ea || VSDX_FONT) +
+        (fonts.ea ? cell("AsianFont", fonts.ea) : "") + (fonts.cs ? cell("ComplexScriptFont", fonts.cs) : "") + cell("Color", "#" + s.col) +
         cell("ColorTrans", trans(s.a)) + cell("Style", (s.bold ? 1 : 0) + (s.italic ? 2 : 0)) +
         cell("Size", f(s.size / IN), ' U="PT"') + (s.rtl ? cell("RTLText", 1) : "") + "</Row></Section>" +
         '<Section N="Paragraph"><Row IX="0">' + cell("HorzAlign", s.algn === "ctr" ? 1 : s.algn === "r" ? 2 : 0) +
