@@ -160,8 +160,7 @@ platform zoom on the diagram itself.
 | **Palette** | Thirteen colour schemes in three groups |
 | **Style** | Five platform shapes |
 | **Stage** | Filters the platform box by release stage |
-| **Download** | PDF, PowerPoint, PNG, GIF, HTML, and editable draw.io, Visio, SVG, Excalidraw and PowerPoint files |
-| **Architecture descriptor** | Export the board on screen, the reference or any industry, as an editable YAML file, then import one back to open your own version in a new tab |
+| **Download** | PDF, PowerPoint, PNG, GIF, HTML, and editable draw.io, Visio, SVG, Excalidraw and PowerPoint files. Its *Architecture descriptor* section exports the board on screen, the reference or any industry, as an editable YAML file, and imports one back to open your own version in a new tab |
 | **Details panel dock** | Pins the detail drawer to the side so it stays open while you click from box to box, instead of overlaying the board each time |
 | **Language** | Translates the board content into any of sixteen languages, right-to-left for Arabic and Hebrew. The toolbar and menus stay in English, and product and brand names are never translated |
 | **Tour** (the ◎ at the end of the toolbar) | A guided walk-through that spotlights each control and each zone in turn, opens the detail panel on a real box so you see what a click gives you, and runs itself once on a first visit. Replayable any time |
@@ -670,8 +669,8 @@ authored as a readable YAML descriptor and loaded on demand. The reference
 material behind each box is a separate table on purpose: the board is what a user
 edits, saves and exports, while the product descriptions, stages and links are
 fixed facts that have no business being editable. You can export any board as
-YAML from the toolbar, edit it offline, and import it back to open your version
-in a new tab.
+YAML from the Download menu, edit it offline, and import it back to open your
+version in a new tab.
 
 **Exports are written by hand.** The PDF, PowerPoint and GIF writers are in the
 file: object tables and cross-reference offsets for the PDF, the parts and

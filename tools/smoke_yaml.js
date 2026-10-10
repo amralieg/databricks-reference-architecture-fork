@@ -88,14 +88,21 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
     typeof refYaml === 'string' && /^name:/m.test(refYaml) && /^sources:/m.test(refYaml) && /^agent_usecases:/m.test(refYaml),
     'bytes=' + (refYaml || '').length);
 
-  // ---- YAML is split out of Download into its own descriptor menu ----
+  // ---- the YAML descriptor is the last section of the Download menu ----
   const menu = await page.evaluate(() => ({
-    dlYaml: !!document.querySelector('#dl-menu button[data-dl="yaml"]'),
-    archExport: !!document.querySelector('#arch-menu button[data-arch="export"]'),
-    archImport: !!document.querySelector('#arch-menu button[data-arch="import"]')
+    archExport: !!document.querySelector('#dl-menu button[data-arch="export"]'),
+    archImport: !!document.querySelector('#dl-menu button[data-arch="import"]'),
+    separateControl: !!document.querySelector('#arch-btn, #arch-menu, #arch-wrap')
   }));
-  check('YAML split out of Download into a dedicated descriptor menu',
-    !menu.dlYaml && menu.archExport && menu.archImport, JSON.stringify(menu));
+  check('YAML descriptor sits in the Download menu, no separate control',
+    menu.archExport && menu.archImport && !menu.separateControl, JSON.stringify(menu));
+  await page.click('#dl-btn');
+  const [yamlDl] = await Promise.all([page.waitForEvent('download'), page.click('#dl-menu button[data-arch="export"]')]);
+  check('Download menu: Export yaml downloads the descriptor', /\.yaml$/.test(yamlDl.suggestedFilename()), yamlDl.suggestedFilename());
+  await page.click('#dl-btn');
+  const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.click('#dl-menu button[data-arch="import"]')]);
+  check('Download menu: Import yaml opens the file picker', !!chooser && !chooser.isMultiple());
+  await chooser.setFiles([]);
 
   // ---- import via the REAL file input opens a NEW tab, keeping the current board ----
   await page.evaluate(async () => { await applyIndustry('ecommerce', true); });

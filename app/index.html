@@ -2266,7 +2266,7 @@
   .dl-wrap { position:relative; display:inline-flex; }
   .dl-menu { position:absolute; top:calc(100% + 7px); right:0; min-width:212px; z-index:90;
     background:var(--card); border:1px solid var(--line); border-radius:11px; padding:5px;
-    box-shadow:var(--shadow-xl); display:none; }
+    box-shadow:var(--shadow-xl); display:none; max-height:calc(100vh - 56px); overflow-y:auto; }
   .dl-wrap.open .dl-menu { display:block; }
   .dl-menu button { display:flex; width:100%; align-items:center; gap:8px; background:none;
     border:0; text-align:left; font:inherit; font-size:12px; font-weight:650; color:var(--ink);
@@ -2789,7 +2789,7 @@
     <div class="pal-menu" id="shape-menu"></div>
   </div>
   <div class="dl-wrap" id="dl-wrap">
-    <button class="hbtn ico-only" id="dl-btn" title="Download this architecture"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></button>
+    <button class="hbtn ico-only" id="dl-btn" title="Download, export or import this architecture"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></button>
     <div class="dl-menu" id="dl-menu">
       <div class="men-hd">Download</div>
       <button data-dl="pdf">PDF <i>deck</i></button>
@@ -2809,14 +2809,9 @@
       <div class="dl-note">The current view as grouped, editable shapes: ungroup any zone
         or tile to restyle it. The other app draws text in its own fonts, so labels can
         shift slightly.</div>
-    </div>
-  </div>
-  <div class="dl-wrap" id="arch-wrap">
-    <button class="hbtn ico-only" id="arch-btn" title="Export or import this architecture as an editable YAML descriptor"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13"/><path d="m13 5 4 4-4 4"/><path d="M20 15H7"/><path d="m11 11-4 4 4 4"/></svg></button>
-    <div class="dl-menu" id="arch-menu">
       <div class="men-hd">Architecture descriptor</div>
-      <button data-arch="export"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> Export <i>yaml</i></button>
-      <button data-arch="import"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M5 3h14"/></svg> Import <i>yaml</i></button>
+      <button data-arch="export">Export <i>yaml</i></button>
+      <button data-arch="import">Import <i>yaml</i></button>
       <div class="dl-note">The readable YAML board descriptor. Export the reference
         board or any industry, edit it offline, then import to open your version in a
         new tab.</div>
@@ -11545,17 +11540,12 @@ document.getElementById("dl-menu").addEventListener("click", async (e)=>{
   }
   dlBtn.classList.remove("busy");
 });
-/* The architecture descriptor menu is its own control, split out of Download:
-   Export writes the readable YAML for the board on screen (reference or industry),
-   Import opens a picker. Reuses the .dl-wrap/.dl-menu box and the one delegated
-   outside-click closer, so no extra CSS or listeners. */
-const archWrap = document.getElementById("arch-wrap");
-const archBtn  = document.getElementById("arch-btn");
-if(archBtn) archBtn.onclick = (e)=>{ e.stopPropagation(); archWrap.classList.toggle("open"); };
-const archMenu = document.getElementById("arch-menu");
-if(archMenu) archMenu.addEventListener("click", (e)=>{
+/* The architecture descriptor is the last section of the Download menu: Export
+   writes the readable YAML for the board on screen (reference or industry), Import
+   opens a picker. */
+document.getElementById("dl-menu").addEventListener("click", (e)=>{
   const b = e.target.closest("button[data-arch]"); if(!b) return;
-  archWrap.classList.remove("open");
+  dlWrap.classList.remove("open");
   if(b.dataset.arch === "export"){
     ideaTrack("download", ["yaml"]);
     const y = archDescriptorYaml();
@@ -12264,10 +12254,8 @@ function bootLangMeta(){
       body:"Translate the whole architecture: labels, subtitles, use cases and side panel. Pick French, Spanish, Chinese, Arabic or Hindi. The toolbar stays in English, and product and brand names are never translated." },
     { sel:"#side-btn", place:"bottom", title:"Dock the details panel",
       body:"Pin the details panel beside the board instead of over it, so you can read one box and keep the whole architecture in view at the same time." },
-    { sel:"#arch-btn", place:"bottom", title:"Export and import as YAML",
-      body:"Export the board on screen, the reference platform or any industry, as a readable YAML descriptor. Edit it in any text editor, then import it back: your version opens in its own tab, so you can shape a custom architecture and share the file." },
     { sel:"#dl-btn", place:"bottom", title:"Take it with you",
-      body:"Export the current view as a multi-page PDF or PowerPoint (a cover, the board, a slide per use case and closing links), or as a PNG, an animated GIF, or interactive HTML. Exports follow the theme and language on screen." },
+      body:"Export the current view as a multi-page PDF or PowerPoint, a PNG, an animated GIF or interactive HTML; or as editable shapes for draw.io, Lucidchart, Visio, Miro, Figma, Excalidraw or PowerPoint. Export the board as a YAML descriptor too, edit it, and import it back into its own tab. Exports follow the theme and language on screen." },
     { sel:"#share-btn", place:"bottom", title:"Share this architecture",
       body:"Post the board straight to LinkedIn, X, Facebook, Reddit, Hacker News, WhatsApp, Telegram or email, or copy the link. The link reopens exactly this industry for whoever you send it to, titled \u201CDatabricks Reference Architecture for \u2039industry\u203A\u201D." },
     { sel:"#shape-btn", place:"bottom", title:"Shape and palette",
