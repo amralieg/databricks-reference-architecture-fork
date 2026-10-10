@@ -71,6 +71,23 @@ function check(n, c, d) { results.push(!!c); console.log((c ? 'PASS ' : 'FAIL ')
   // Board shows Arabic content offline.
   const anyArabic = await p2.evaluate(() => /[\u0600-\u06FF]/.test(document.querySelector('.board').textContent));
   check('offline: Arabic content on board', anyArabic);
+  const draw = await p2.evaluate(async () => {
+    const out = {};
+    for (const kind of Object.keys(DRAW_EXPORTS)) {
+      try { out[kind] = (await drawingBlob(kind)).size; } catch (e) { out[kind] = 'ERR ' + e.message; }
+    }
+    return out;
+  });
+  check('offline: all four drawing-app exports build', Object.values(draw).length === 4 &&
+    Object.values(draw).every(v => typeof v === 'number' && v > 10000), JSON.stringify(draw));
+  const deck = await p2.evaluate(async () => {
+    const t = new TextDecoder().decode(new Uint8Array(await (await exportPptx()).arrayBuffer()));
+    const title = T('Editable Architecture'), blurb = dt('editBlurb');
+    return { groups: (t.match(/<p:grpSp>/g) || []).length, translated: title !== 'Editable Architecture' && blurb !== DECK_TPL.en.editBlurb,
+      title: t.includes('>' + title + '<'), blurb: t.includes('>' + blurb + '<') };
+  });
+  check('offline: PowerPoint deck builds with its translated editable appendix (ar)',
+    deck.groups > 0 && deck.translated && deck.title && deck.blurb, JSON.stringify(deck));
   check('offline: no page errors', errs.length === 0, errs.slice(0, 5).join(' | '));
 
   fs.unlinkSync(tmp);

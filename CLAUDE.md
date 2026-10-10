@@ -74,11 +74,12 @@ The "Available in N of M regions" line links to its exact source doc.
 
 ```bash
 python3 tools/regiongate.py --live          # region data consistent + alias parity + source docs live
-node   tools/verify_all_sections.js         # 70 industries + the generic board, uc/genie/dash/app = 10/4/4/4, 0 page errors
+node   tools/verify_all_sections.js         # 70 industries + the generic board, uc/genie/dash/app = 10/4/4/4, the deck's editable appendix builds, 0 page errors
 node   tools/verify_i18n_coverage.js        # translation coverage over the DATA corpus
 python3 tools/linkgate.py                    # structural completeness (add --urls for live link check)
 python3 tools/heightgate.py                  # layout / no clipping
 node   tools/perfgate.js                     # motion rests at idle, reduced motion honoured, boot fetches once and in parallel
+node   tools/verify_exports.js               # deck with its editable appendix + PDF, and the four drawing-app exports: shape parity, structure, links (--live also opens them in draw.io, excalidraw.com, LibreOffice)
 ```
 
 Local preview: `cd app && python3 -m http.server 8777` then open
