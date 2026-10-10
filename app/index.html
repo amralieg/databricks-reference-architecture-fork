@@ -2798,14 +2798,14 @@
       <button data-dl="gif">Animated <i>gif</i></button>
       <button data-dl="html">Interactive <i>html</i></button>
       <div class="dl-note">PPTX and PDF export a full deck: a contents page, the
-        architecture, then its use cases, Genie Agents, dashboards and apps. PNG and
+        architecture, then its use cases, Genie Agents, dashboards and apps. The PPTX
+        ends with an appendix that repeats the architecture as editable shapes. PNG and
         GIF capture the current view, including <b>Platform only</b>. HTML stays interactive.</div>
       <div class="men-hd">Edit in another app</div>
       <button data-dl="drawio">draw.io / Lucidchart <i>drawio</i></button>
       <button data-dl="vsdx">Visio / Miro <i>vsdx</i></button>
       <button data-dl="svg">Figma / Illustrator <i>svg</i></button>
       <button data-dl="excalidraw">Excalidraw <i>excalidraw</i></button>
-      <button data-dl="pptx-edit">PowerPoint, editable <i>pptx</i></button>
       <div class="dl-note">The current view as grouped, editable shapes: ungroup any zone
         or tile to restyle it. The other app draws text in its own fonts, so labels can
         shift slightly.</div>
@@ -7860,7 +7860,7 @@ function coverLinks(){
     { label, url:modelUrl(id) },
   ];
 }
-function dlName(ext, tag){
+function dlName(ext){
   const tab = document.querySelector(".tab.active");
   const realInd = ARCH.industry && ARCH.industry !== "generic" && ARCH.industry.indexOf("__import__") !== 0;
   const ind = realInd ? ARCH.industry.replace(/_/g, "-") + "-" : "";
@@ -7870,7 +7870,7 @@ function dlName(ext, tag){
      bare. Reads the live selected language, not the OS locale. */
   const lang = (typeof I18N !== "undefined" && I18N.lang) || "en";
   const langSfx = lang && lang !== "en" ? "_" + lang : "";
-  return base + (document.body.classList.contains("plat-only") ? "-platform" : "") + (tag ? "-" + tag : "") + langSfx + "." + ext;
+  return base + (document.body.classList.contains("plat-only") ? "-platform" : "") + langSfx + "." + ext;
 }
 function dlBlob(blob, name){
   const a = document.createElement("a");
@@ -8075,6 +8075,7 @@ const DECK_TPL = {
     genieBlurb:"Ask the {ind} estate questions in plain language: what each agent explores, the governed data it reads and the teams it serves.",
     dashBlurb:"Certified AI/BI dashboards on governed Metric Views: the KPIs each tracks and the teams that run on them.",
     appBlurb:"Applications built on Databricks Apps over Lakebase: what each does for the business and the teams it serves.",
+    editBlurb:"The same architecture rebuilt as native, editable shapes: every zone and tile is a group you can ungroup, restyle and relabel.",
     ucCount:"{n} use cases", ucCount1:"{n} use case",
     genieCount:"{n} agents", genieCount1:"{n} agent",
     dashCount:"{n} dashboards", dashCount1:"{n} dashboard",
@@ -8089,6 +8090,7 @@ const DECK_TPL = {
     genieBlurb:"Interrogez le patrimoine {ind} en langage naturel : ce que chaque agent explore, les donn\u00e9es gouvern\u00e9es qu\u2019il lit et les \u00e9quipes qu\u2019il sert.",
     dashBlurb:"Tableaux de bord AI/BI certifi\u00e9s sur des Metric Views gouvern\u00e9es : les indicateurs suivis par chacun et les \u00e9quipes qui s\u2019en servent.",
     appBlurb:"Applications b\u00e2ties sur Databricks Apps au-dessus de Lakebase : ce que chacune apporte \u00e0 l\u2019entreprise et les \u00e9quipes qu\u2019elle sert.",
+    editBlurb:"La m\u00eame architecture reconstruite en formes natives et modifiables : chaque zone et chaque tuile est un groupe que vous pouvez dissocier, remettre en forme et renommer.",
     ucCount:"{n} cas d\u2019usage", ucCount1:"{n} cas d\u2019usage",
     genieCount:"{n} agents", genieCount1:"{n} agent",
     dashCount:"{n} tableaux de bord", dashCount1:"{n} tableau de bord",
@@ -8103,6 +8105,7 @@ const DECK_TPL = {
     genieBlurb:"Consulta el entorno {ind} en lenguaje natural: qu\u00e9 explora cada agente, los datos gobernados que lee y los equipos a los que sirve.",
     dashBlurb:"Paneles de AI/BI certificados sobre Metric Views gobernadas: los KPI que sigue cada uno y los equipos que los usan.",
     appBlurb:"Aplicaciones creadas sobre Databricks Apps con Lakebase: qu\u00e9 aporta cada una al negocio y los equipos a los que sirve.",
+    editBlurb:"La misma arquitectura reconstruida con formas nativas y editables: cada zona y cada mosaico es un grupo que puedes desagrupar, cambiar de estilo y renombrar.",
     ucCount:"{n} casos de uso", ucCount1:"{n} caso de uso",
     genieCount:"{n} agentes", genieCount1:"{n} agente",
     dashCount:"{n} paneles", dashCount1:"{n} panel",
@@ -8117,6 +8120,7 @@ const DECK_TPL = {
     genieBlurb:"\u7528\u81ea\u7136\u8bed\u8a00\u8be2\u95ee{ind}\u6570\u636e\u8d44\u4ea7\uff1a\u6bcf\u4e2a\u667a\u80fd\u4f53\u63a2\u7d22\u4ec0\u4e48\u3001\u8bfb\u53d6\u54ea\u4e9b\u53d7\u6cbb\u7406\u6570\u636e\uff0c\u4ee5\u53ca\u670d\u52a1\u4e8e\u54ea\u4e9b\u56e2\u961f\u3002",
     dashBlurb:"\u57fa\u4e8e\u53d7\u6cbb\u7406 Metric Views \u7684\u8ba4\u8bc1 AI/BI \u4eea\u8868\u677f\uff1a\u5404\u81ea\u8ddf\u8e2a\u7684 KPI \u4ee5\u53ca\u4f9d\u8d56\u5b83\u4eec\u7684\u56e2\u961f\u3002",
     appBlurb:"\u57fa\u4e8e Databricks Apps \u4e0e Lakebase \u6784\u5efa\u7684\u5e94\u7528\uff1a\u5404\u81ea\u4e3a\u4e1a\u52a1\u5e26\u6765\u7684\u4ef7\u503c\u4ee5\u53ca\u6240\u670d\u52a1\u7684\u56e2\u961f\u3002",
+    editBlurb:"\u4ee5\u539f\u751f\u53ef\u7f16\u8f91\u5f62\u72b6\u91cd\u5efa\u7684\u540c\u4e00\u67b6\u6784\uff1a\u6bcf\u4e2a\u533a\u57df\u548c\u78c1\u8d34\u90fd\u662f\u4e00\u4e2a\u7ec4\uff0c\u53ef\u4ee5\u53d6\u6d88\u7ec4\u5408\u3001\u66f4\u6539\u6837\u5f0f\u5e76\u91cd\u65b0\u547d\u540d\u3002",
     ucCount:"{n} \u4e2a\u7528\u4f8b", ucCount1:"{n} \u4e2a\u7528\u4f8b",
     genieCount:"{n} \u4e2a\u667a\u80fd\u4f53", genieCount1:"{n} \u4e2a\u667a\u80fd\u4f53",
     dashCount:"{n} \u4e2a\u4eea\u8868\u677f", dashCount1:"{n} \u4e2a\u4eea\u8868\u677f",
@@ -8131,6 +8135,7 @@ const DECK_TPL = {
     genieBlurb:"\u0627\u0633\u0623\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0642\u0637\u0627\u0639 {ind} \u0628\u0644\u063a\u0629 \u0637\u0628\u064a\u0639\u064a\u0629: \u0645\u0627 \u0627\u0644\u0630\u064a \u064a\u0633\u062a\u0643\u0634\u0641\u0647 \u0643\u0644 \u0648\u0643\u064a\u0644\u060c \u0648\u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u062d\u0648\u0643\u0645\u0629 \u0627\u0644\u062a\u064a \u064a\u0642\u0631\u0623\u0647\u0627\u060c \u0648\u0627\u0644\u0641\u0631\u0642 \u0627\u0644\u062a\u064a \u064a\u062e\u062f\u0645\u0647\u0627.",
     dashBlurb:"\u0644\u0648\u062d\u0627\u062a \u0645\u0639\u0644\u0648\u0645\u0627\u062a AI/BI \u0645\u0639\u062a\u0645\u062f\u0629 \u0639\u0644\u0649 Metric Views \u0645\u062d\u0648\u0643\u0645\u0629: \u0627\u0644\u0645\u0624\u0634\u0631\u0627\u062a \u0627\u0644\u062a\u064a \u062a\u062a\u0627\u0628\u0639\u0647\u0627 \u0643\u0644 \u0644\u0648\u062d\u0629 \u0648\u0627\u0644\u0641\u0631\u0642 \u0627\u0644\u062a\u064a \u062a\u0639\u062a\u0645\u062f \u0639\u0644\u064a\u0647\u0627.",
     appBlurb:"\u062a\u0637\u0628\u064a\u0642\u0627\u062a \u0645\u0628\u0646\u064a\u0629 \u0639\u0644\u0649 Databricks Apps \u0641\u0648\u0642 Lakebase: \u0645\u0627 \u062a\u0642\u062f\u0645\u0647 \u0643\u0644 \u0645\u0646\u0647\u0627 \u0644\u0644\u0623\u0639\u0645\u0627\u0644 \u0648\u0627\u0644\u0641\u0631\u0642 \u0627\u0644\u062a\u064a \u062a\u062e\u062f\u0645\u0647\u0627.",
+    editBlurb:"\u0627\u0644\u0645\u0639\u0645\u0627\u0631\u064a\u0629 \u0646\u0641\u0633\u0647\u0627 \u0645\u064f\u0639\u0627\u062f \u0628\u0646\u0627\u0624\u0647\u0627 \u0628\u0623\u0634\u0643\u0627\u0644 \u0623\u0635\u0644\u064a\u0629 \u0642\u0627\u0628\u0644\u0629 \u0644\u0644\u062a\u0639\u062f\u064a\u0644: \u0643\u0644 \u0645\u0646\u0637\u0642\u0629 \u0648\u0643\u0644 \u0645\u0631\u0628\u0639 \u0645\u062c\u0645\u0648\u0639\u0629 \u064a\u0645\u0643\u0646\u0643 \u0641\u0643 \u062a\u062c\u0645\u064a\u0639\u0647\u0627 \u0648\u062a\u063a\u064a\u064a\u0631 \u062a\u0646\u0633\u064a\u0642\u0647\u0627 \u0648\u0625\u0639\u0627\u062f\u0629 \u062a\u0633\u0645\u064a\u062a\u0647\u0627.",
     ucCount:"{n} \u062d\u0627\u0644\u0629 \u0627\u0633\u062a\u062e\u062f\u0627\u0645", ucCount1:"{n} \u062d\u0627\u0644\u0629 \u0627\u0633\u062a\u062e\u062f\u0627\u0645",
     genieCount:"{n} \u0648\u0643\u0644\u0627\u0621", genieCount1:"{n} \u0648\u0643\u064a\u0644",
     dashCount:"{n} \u0644\u0648\u062d\u0627\u062a", dashCount1:"{n} \u0644\u0648\u062d\u0629",
@@ -8145,6 +8150,7 @@ const DECK_TPL = {
     genieBlurb:"{ind} \u0921\u0947\u091f\u093e \u0915\u094b \u0938\u093e\u092e\u093e\u0928\u094d\u092f \u092d\u093e\u0937\u093e \u092e\u0947\u0902 \u092a\u0942\u091b\u0947\u0902: \u0939\u0930 \u090f\u091c\u0947\u0902\u091f \u0915\u094d\u092f\u093e \u0916\u094b\u091c\u0924\u093e \u0939\u0948, \u0915\u094c\u0928-\u0938\u093e \u0917\u0935\u0930\u094d\u0928 \u0915\u093f\u092f\u093e \u0917\u092f\u093e \u0921\u0947\u091f\u093e \u092a\u0922\u093c\u0924\u093e \u0939\u0948, \u0914\u0930 \u0915\u093f\u0928 \u091f\u0940\u092e\u094b\u0902 \u0915\u0940 \u0938\u0947\u0935\u093e \u0915\u0930\u0924\u093e \u0939\u0948\u0964",
     dashBlurb:"\u0917\u0935\u0930\u094d\u0928 \u0915\u0940 \u0917\u0908 Metric Views \u092a\u0930 \u092a\u094d\u0930\u092e\u093e\u0923\u093f\u0924 AI/BI \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921: \u0939\u0930 \u090f\u0915 \u091c\u094b KPI \u091f\u094d\u0930\u0948\u0915 \u0915\u0930\u0924\u093e \u0939\u0948 \u0914\u0930 \u091c\u094b \u091f\u0940\u092e\u0947\u0902 \u0909\u0928 \u092a\u0930 \u091a\u0932\u0924\u0940 \u0939\u0948\u0902\u0964",
     appBlurb:"Lakebase \u092a\u0930 Databricks Apps \u0938\u0947 \u092c\u0928\u0947 \u0910\u092a\u094d\u0932\u093f\u0915\u0947\u0936\u0928: \u0939\u0930 \u090f\u0915 \u0935\u094d\u092f\u0935\u0938\u093e\u092f \u0915\u0947 \u0932\u093f\u090f \u0915\u094d\u092f\u093e \u0915\u0930\u0924\u093e \u0939\u0948 \u0914\u0930 \u0915\u093f\u0928 \u091f\u0940\u092e\u094b\u0902 \u0915\u0940 \u0938\u0947\u0935\u093e \u0915\u0930\u0924\u093e \u0939\u0948\u0964",
+    editBlurb:"\u0935\u0939\u0940 \u0906\u0930\u094d\u0915\u093f\u091f\u0947\u0915\u094d\u091a\u0930, \u092e\u0942\u0932 \u0914\u0930 \u0938\u0902\u092a\u093e\u0926\u0928 \u092f\u094b\u0917\u094d\u092f \u0906\u0915\u0943\u0924\u093f\u092f\u094b\u0902 \u0915\u0947 \u0930\u0942\u092a \u092e\u0947\u0902 \u092b\u093f\u0930 \u0938\u0947 \u092c\u0928\u093e\u092f\u093e \u0917\u092f\u093e: \u0939\u0930 \u091c\u093c\u094b\u0928 \u0914\u0930 \u091f\u093e\u0907\u0932 \u090f\u0915 \u0938\u092e\u0942\u0939 \u0939\u0948, \u091c\u093f\u0938\u0947 \u0905\u0928\u0917\u094d\u0930\u0941\u092a \u0915\u0930\u0915\u0947 \u0906\u092a \u0909\u0938\u0915\u0940 \u0936\u0948\u0932\u0940 \u0914\u0930 \u0932\u0947\u092c\u0932 \u092c\u0926\u0932 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902\u0964",
     ucCount:"{n} \u0909\u092a\u092f\u094b\u0917-\u092a\u094d\u0930\u0915\u0930\u0923", ucCount1:"{n} \u0909\u092a\u092f\u094b\u0917-\u092a\u094d\u0930\u0915\u0930\u0923",
     genieCount:"{n} \u090f\u091c\u0947\u0902\u091f", genieCount1:"{n} \u090f\u091c\u0947\u0902\u091f",
     dashCount:"{n} \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921", dashCount1:"{n} \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921",
@@ -8159,6 +8165,7 @@ const DECK_TPL = {
     genieBlurb:"Stellen Sie dem {ind}-Anwesen Fragen im Klartext: Was jeder Agent untersucht, welche verwalteten Daten er liest und welche Teams er betreut.",
     dashBlurb:"Zertifizierte AI/BI-Dashboards auf verwaltetem Metric Views: die KPIs, die jeder verfolgt, und die Teams, die darauf arbeiten.",
     appBlurb:"Anwendungen, die auf Databricks Apps \u00fcber Lakebase basieren: Was jede einzelne f\u00fcr das Unternehmen und die Teams tut, denen sie dient.",
+    editBlurb:"Dieselbe Architektur, neu aufgebaut aus nativen, bearbeitbaren Formen: Jede Zone und jede Kachel ist eine Gruppe, deren Gruppierung Sie aufheben k\u00f6nnen, um sie neu zu gestalten und umzubenennen.",
     ucCount:"{n}-Anwendungsf\u00e4lle",
     ucCount1:"{n}-Anwendungsfall",
     genieCount:"{n}-Agenten",
@@ -8177,6 +8184,7 @@ const DECK_TPL = {
     genieBlurb:"Fa\u00e7a perguntas ao patrim\u00f4nio {ind} em linguagem simples: o que cada agente explora, os dados governados que l\u00ea e as equipes que atende.",
     dashBlurb:"Pain\u00e9is AI/BI certificados em Metric Views governado: os KPIs que cada um rastreia e as equipes que os executam.",
     appBlurb:"Aplicativos desenvolvidos em Databricks Apps em vez de Lakebase: o que cada um faz pelo neg\u00f3cio e pelas equipes que atende.",
+    editBlurb:"A mesma arquitetura recriada com formas nativas e edit\u00e1veis: cada zona e cada bloco \u00e9 um grupo que voc\u00ea pode desagrupar, reformatar e renomear.",
     ucCount:"Casos de uso {n}",
     ucCount1:"Caso de uso {n}",
     genieCount:"Agentes {n}",
@@ -8195,6 +8203,7 @@ const DECK_TPL = {
     genieBlurb:"Stel de {ind}-makelaarsvragen in duidelijke taal: wat elke agent onderzoekt, de beheerde gegevens die hij leest en de teams die hij bedient.",
     dashBlurb:"Gecertificeerde AI/BI-dashboards op bestuurde Metric Views: de KPI's die elk wordt bijgehouden en de teams die daarop draaien.",
     appBlurb:"Applicaties gebouwd op Databricks Apps in plaats van Lakebase: wat elk doet voor het bedrijf en de teams die het bedient.",
+    editBlurb:"Dezelfde architectuur, opnieuw opgebouwd uit native, bewerkbare vormen: elke zone en elke tegel is een groep waarvan u de groepering kunt opheffen om hem opnieuw op te maken en te hernoemen.",
     ucCount:"{n}-gebruiksscenario's",
     ucCount1:"{n}-gebruiksscenario",
     genieCount:"{n}-agenten",
@@ -8213,6 +8222,7 @@ const DECK_TPL = {
     genieBlurb:"{ind} \u4e0d\u52d5\u7523\u306b\u308f\u304b\u308a\u3084\u3059\u3044\u8a00\u8449\u3067\u8cea\u554f\u3057\u3066\u304f\u3060\u3055\u3044\u3002\u5404\u30a8\u30fc\u30b8\u30a7\u30f3\u30c8\u304c\u8abf\u67fb\u3059\u308b\u5185\u5bb9\u3001\u30a8\u30fc\u30b8\u30a7\u30f3\u30c8\u304c\u8aad\u307f\u53d6\u308b\u7ba1\u7406\u3055\u308c\u305f\u30c7\u30fc\u30bf\u3001\u30b5\u30fc\u30d3\u30b9\u3092\u63d0\u4f9b\u3059\u308b\u30c1\u30fc\u30e0\u306b\u3064\u3044\u3066\u3067\u3059\u3002",
     dashBlurb:"\u7ba1\u7406\u3055\u308c\u305f Metric Views \u4e0a\u306e\u8a8d\u5b9a AI/BI \u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c9: \u305d\u308c\u305e\u308c\u306e KPI \u3068\u305d\u308c\u3092\u5b9f\u884c\u3059\u308b\u30c1\u30fc\u30e0\u3092\u8ffd\u8de1\u3057\u307e\u3059\u3002",
     appBlurb:"Lakebase \u3067\u306f\u306a\u304f Databricks Apps \u306b\u57fa\u3065\u3044\u3066\u69cb\u7bc9\u3055\u308c\u305f\u30a2\u30d7\u30ea\u30b1\u30fc\u30b7\u30e7\u30f3: \u305d\u308c\u305e\u308c\u304c\u30d3\u30b8\u30cd\u30b9\u3068\u30b5\u30fc\u30d3\u30b9\u3092\u63d0\u4f9b\u3059\u308b\u30c1\u30fc\u30e0\u306b\u5bfe\u3057\u3066\u4f55\u3092\u884c\u3046\u304b\u3002",
+    editBlurb:"\u540c\u3058\u30a2\u30fc\u30ad\u30c6\u30af\u30c1\u30e3\u3092\u3001\u7de8\u96c6\u53ef\u80fd\u306a\u30cd\u30a4\u30c6\u30a3\u30d6\u56f3\u5f62\u3067\u518d\u69cb\u6210\u3057\u307e\u3057\u305f\u3002\u5404\u30be\u30fc\u30f3\u3068\u30bf\u30a4\u30eb\u306f\u30b0\u30eb\u30fc\u30d7\u306a\u306e\u3067\u3001\u30b0\u30eb\u30fc\u30d7\u89e3\u9664\u3057\u3066\u30b9\u30bf\u30a4\u30eb\u3084\u30e9\u30d9\u30eb\u3092\u5909\u66f4\u3067\u304d\u307e\u3059\u3002",
     ucCount:"{n} \u306e\u4f7f\u7528\u4f8b",
     ucCount1:"{n} \u306e\u4f7f\u7528\u4f8b",
     genieCount:"{n} \u30a8\u30fc\u30b8\u30a7\u30f3\u30c8",
@@ -8231,6 +8241,7 @@ const DECK_TPL = {
     genieBlurb:"Poni domande all'azienda {ind} in un linguaggio semplice: cosa esplora ogni agente, i dati regolamentati che legge e i team che serve.",
     dashBlurb:"Dashboard AI/BI certificate su Metric Views governate: i KPI tracciati da ciascuno e i team che li utilizzano.",
     appBlurb:"Applicazioni basate su Databricks Apps anzich\u00e9 Lakebase: cosa fanno ciascuna per l'azienda e i team che serve.",
+    editBlurb:"La stessa architettura ricostruita con forme native e modificabili: ogni zona e ogni riquadro \u00e8 un gruppo che puoi separare, riformattare e rinominare.",
     ucCount:"Casi d'uso {n}",
     ucCount1:"Caso d'uso {n}",
     genieCount:"Agenti {n}",
@@ -8249,6 +8260,7 @@ const DECK_TPL = {
     genieBlurb:"St\u00e4ll fr\u00e5gor till {ind}-godset p\u00e5 ett enkelt spr\u00e5k: vad varje agent utforskar, den styrda data den l\u00e4ser och de team den betj\u00e4nar.",
     dashBlurb:"Certifierade AI/BI-instrumentpaneler p\u00e5 styrda Metric Views: KPI:erna som var och en sp\u00e5rar och teamen som k\u00f6r p\u00e5 dem.",
     appBlurb:"Applikationer byggda p\u00e5 Databricks Apps \u00f6ver Lakebase: vad var och en g\u00f6r f\u00f6r verksamheten och de team den betj\u00e4nar.",
+    editBlurb:"Samma arkitektur, \u00e5terskapad med inbyggda, redigerbara former: varje zon och ruta \u00e4r en grupp som du kan dela upp, formatera om och byta namn p\u00e5.",
     ucCount:"{n} anv\u00e4ndningsfall",
     ucCount1:"{n} anv\u00e4ndningsfall",
     genieCount:"{n}-agenter",
@@ -8267,6 +8279,7 @@ const DECK_TPL = {
     genieBlurb:"\uac01 \uc5d0\uc774\uc804\ud2b8\uac00 \ud0d0\uc0c9\ud558\ub294 \ub0b4\uc6a9, \uc77d\ub294 \uad00\ub9ac\ub418\ub294 \ub370\uc774\ud130 \ubc0f \uc11c\ube44\uc2a4\ub97c \uc81c\uacf5\ud558\ub294 \ud300 \ub4f1 {ind} \uc790\uc0b0\uc5d0 \ub300\ud55c \uc9c8\ubb38\uc744 \uc77c\ubc18 \uc5b8\uc5b4\ub85c \ubb3c\uc5b4\ubcf4\uc138\uc694.",
     dashBlurb:"\uad00\ub9ac\ub418\ub294 Metric Views\uc758 \uc778\uc99d\ub41c AI/BI \ub300\uc2dc\ubcf4\ub4dc: \uac01 KPI\ub97c \ucd94\uc801\ud558\uace0 \uc774\ub97c \uc2e4\ud589\ud558\ub294 \ud300.",
     appBlurb:"Lakebase\uac00 \uc544\ub2cc Databricks Apps\uc5d0 \uad6c\ucd95\ub41c \uc560\ud50c\ub9ac\ucf00\uc774\uc158: \uac01 \uc560\ud50c\ub9ac\ucf00\uc774\uc158\uc774 \ube44\uc988\ub2c8\uc2a4\uc640 \ud300\uc744 \uc704\ud574 \uc218\ud589\ud558\ub294 \uc791\uc5c5\uc785\ub2c8\ub2e4.",
+    editBlurb:"\ub3d9\uc77c\ud55c \uc544\ud0a4\ud14d\ucc98\ub97c \ud3b8\uc9d1 \uac00\ub2a5\ud55c \uae30\ubcf8 \ub3c4\ud615\uc73c\ub85c \ub2e4\uc2dc \uad6c\uc131\ud588\uc2b5\ub2c8\ub2e4. \uac01 \uc601\uc5ed\uacfc \ud0c0\uc77c\uc740 \uadf8\ub8f9\uc774\ubbc0\ub85c \uadf8\ub8f9\uc744 \ud574\uc81c\ud558\uace0 \uc2a4\ud0c0\uc77c\uacfc \ub808\uc774\ube14\uc744 \ubc14\uafc0 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
     ucCount:"{n} \uc0ac\uc6a9 \uc0ac\ub840",
     ucCount1:"{n} \uc0ac\uc6a9 \uc0ac\ub840",
     genieCount:"{n} \uc5d0\uc774\uc804\ud2b8",
@@ -8285,6 +8298,7 @@ const DECK_TPL = {
     genieBlurb:"Stil {ind}-ejendomssp\u00f8rgsm\u00e5lene i almindeligt sprog: Hvad hver agent udforsker, de styrede data, den l\u00e6ser, og de teams, den betjener.",
     dashBlurb:"Certificerede AI/BI-dashboards p\u00e5 styret Metric Views: KPI'erne, som hver sporer, og de hold, der k\u00f8rer p\u00e5 dem.",
     appBlurb:"Applikationer bygget p\u00e5 Databricks Apps over Lakebase: hvad hver g\u00f8r for virksomheden og de teams, den betjener.",
+    editBlurb:"Den samme arkitektur, genskabt med indbyggede, redigerbare figurer: hver zone og hver flise er en gruppe, som du kan opdele, formatere om og omd\u00f8be.",
     ucCount:"{n} use cases",
     ucCount1:"{n} use case",
     genieCount:"{n} agenter",
@@ -8303,6 +8317,7 @@ const DECK_TPL = {
     genieBlurb:"Esit\u00e4 {ind}-kiinteist\u00f6lle kysymyksi\u00e4 selke\u00e4ll\u00e4 kielell\u00e4: mit\u00e4 kukin agentti tutkii, mit\u00e4 hallituja tietoja se lukee ja mit\u00e4 tiimej\u00e4 se palvelee.",
     dashBlurb:"Sertifioidut AI/BI-koontin\u00e4yt\u00f6t s\u00e4\u00e4detyss\u00e4 Metric Views:ss\u00e4: kunkin seuraamat KPI:t ja niill\u00e4 toimivat tiimit.",
     appBlurb:"Databricks Apps:lle ja Lakebase:lle rakennetut sovellukset: mit\u00e4 kukin tekee yritykselle ja palvelemilleen ryhmille.",
+    editBlurb:"Sama arkkitehtuuri natiiveina, muokattavina muotoina: jokainen alue ja ruutu on ryhm\u00e4, jonka voit purkaa, muotoilla uudelleen ja nimet\u00e4 uudelleen.",
     ucCount:"{n} k\u00e4ytt\u00f6tapaukset",
     ucCount1:"{n} k\u00e4ytt\u00f6tapaus",
     genieCount:"{n} agentit",
@@ -8321,6 +8336,7 @@ const DECK_TPL = {
     genieBlurb:"\u05e9\u05d0\u05dc \u05d0\u05ea \u05e9\u05d0\u05dc\u05d5\u05ea \u05e2\u05d6\u05d1\u05d5\u05df {ind} \u05d1\u05e9\u05e4\u05d4 \u05e4\u05e9\u05d5\u05d8\u05d4: \u05de\u05d4 \u05db\u05dc \u05e1\u05d5\u05db\u05df \u05d7\u05d5\u05e7\u05e8, \u05d4\u05e0\u05ea\u05d5\u05e0\u05d9\u05dd \u05d4\u05de\u05e0\u05d5\u05d4\u05dc\u05d9\u05dd \u05e9\u05d4\u05d5\u05d0 \u05e7\u05d5\u05e8\u05d0 \u05d5\u05d4\u05e6\u05d5\u05d5\u05ea\u05d9\u05dd \u05e9\u05d4\u05d5\u05d0 \u05de\u05e9\u05e8\u05ea.",
     dashBlurb:"\u05dc\u05d5\u05d7\u05d5\u05ea \u05de\u05d7\u05d5\u05d5\u05e0\u05d9\u05dd \u05de\u05d0\u05d5\u05e9\u05e8\u05d9\u05dd \u05e9\u05dc AI/BI \u05d1-Metric Views \u05d4\u05de\u05e0\u05d5\u05d4\u05dc\u05d9\u05dd: \u05de\u05d3\u05d3\u05d9 \u05d4-KPI \u05e9\u05db\u05dc \u05d0\u05d7\u05d3 \u05de\u05d4\u05dd \u05e2\u05d5\u05e7\u05d1 \u05d5\u05d4\u05e6\u05d5\u05d5\u05ea\u05d9\u05dd \u05e9\u05e4\u05d5\u05e2\u05dc\u05d9\u05dd \u05e2\u05dc\u05d9\u05d4\u05dd.",
     appBlurb:"\u05d0\u05e4\u05dc\u05d9\u05e7\u05e6\u05d9\u05d5\u05ea \u05d4\u05d1\u05e0\u05d5\u05d9\u05d5\u05ea \u05e2\u05dc Databricks Apps \u05e2\u05dc \u05e4\u05e0\u05d9 Lakebase: \u05de\u05d4 \u05db\u05dc \u05d0\u05d7\u05d3 \u05e2\u05d5\u05e9\u05d4 \u05e2\u05d1\u05d5\u05e8 \u05d4\u05e2\u05e1\u05e7 \u05d5\u05d4\u05e6\u05d5\u05d5\u05ea\u05d9\u05dd \u05e9\u05d4\u05d5\u05d0 \u05de\u05e9\u05e8\u05ea.",
+    editBlurb:"\u05d0\u05d5\u05ea\u05d4 \u05d0\u05e8\u05db\u05d9\u05d8\u05e7\u05d8\u05d5\u05e8\u05d4, \u05d1\u05e0\u05d5\u05d9\u05d4 \u05de\u05d7\u05d3\u05e9 \u05de\u05e6\u05d5\u05e8\u05d5\u05ea \u05de\u05e7\u05d5\u05e8\u05d9\u05d5\u05ea \u05e9\u05e0\u05d9\u05ea\u05e0\u05d5\u05ea \u05dc\u05e2\u05e8\u05d9\u05db\u05d4: \u05db\u05dc \u05d0\u05d6\u05d5\u05e8 \u05d5\u05db\u05dc \u05d0\u05e8\u05d9\u05d7 \u05d4\u05dd \u05e7\u05d1\u05d5\u05e6\u05d4 \u05e9\u05d0\u05e4\u05e9\u05e8 \u05dc\u05e4\u05e8\u05e7, \u05dc\u05e2\u05e6\u05d1 \u05de\u05d7\u05d3\u05e9 \u05d5\u05dc\u05e9\u05e0\u05d5\u05ea \u05d0\u05ea \u05d4\u05ea\u05d5\u05d5\u05d9\u05ea \u05e9\u05dc\u05d4.",
     ucCount:"\u05de\u05e7\u05e8\u05d9 \u05e9\u05d9\u05de\u05d5\u05e9 \u05d1-{n}",
     ucCount1:"\u05de\u05e7\u05e8\u05d4 \u05e9\u05d9\u05de\u05d5\u05e9 {n}",
     genieCount:"\u05e1\u05d5\u05db\u05e0\u05d9 {n}",
@@ -9600,8 +9616,8 @@ function excalidrawJson(model){
     appState:{ viewBackgroundColor:model.bg, gridSize:null }, files });
 }
 
-async function pptxEditableParts(model){
-  const title = docTitle(), fit = pptxBoardFit(model.W, model.H), tree = exportTree(model);
+async function pptxEditableSlide(model){
+  const fit = pptxBoardFit(model.W, model.H), tree = exportTree(model);
   const logos = await logoPngs(exportLogos(model));
   const slide = { media:[], hlinks:[], body:"" };
   logos.uniq.forEach(u=> slide.media.push(u.png, { u8:new TextEncoder().encode(u.xml), ext:"svg" }));
@@ -9625,8 +9641,8 @@ async function pptxEditableParts(model){
       "<p:grpSpPr><a:xfrm>" + xf + xf.replace("a:off", "a:chOff").replace("a:ext", "a:chExt") + "</a:xfrm></p:grpSpPr>" +
       k.kids.map(c=> node(c, r)).join("") + "</p:grpSp>";
   };
-  slide.body = pptxTitleStrip(id++, title, fit.pad, fit.bandH) + tree.map(k=> node(k, "")).join("");
-  return pptxParts([slide], title);
+  slide.body = pptxTitleStrip(id++, docTitle(), fit.pad, fit.bandH) + tree.map(k=> node(k, "")).join("");
+  return slide;
 }
 
 const VSDX_NS = 'xmlns="http://schemas.microsoft.com/office/visio/2012/main" ' +
@@ -9768,9 +9784,7 @@ const DRAW_EXPORTS = {
   drawio:{ ext:"drawio", mime:"application/vnd.jgraph.mxfile", build:drawioXml },
   svg:{ ext:"svg", mime:"image/svg+xml", build:vectorSvg },
   excalidraw:{ ext:"excalidraw", mime:"application/json", build:excalidrawJson },
-  vsdx:{ ext:"vsdx", mime:"application/vnd.ms-visio.drawing", build:vsdxParts },
-  "pptx-edit":{ ext:"pptx", tag:"editable", mime:"application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    build:pptxEditableParts }
+  vsdx:{ ext:"vsdx", mime:"application/vnd.ms-visio.drawing", build:vsdxParts }
 };
 async function drawingBlob(kind, model){
   const d = DRAW_EXPORTS[kind], out = await d.build(model || collectBoard());
@@ -9778,7 +9792,7 @@ async function drawingBlob(kind, model){
 }
 async function exportDrawing(kind){
   const d = DRAW_EXPORTS[kind];
-  dlBlob(await drawingBlob(kind), dlName(d.ext, d.tag));
+  dlBlob(await drawingBlob(kind), dlName(d.ext));
 }
 
 async function exportPng(){
@@ -10119,7 +10133,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
 
   /* --- section break: one per content section, coloured by its role, with a
      "SECTION N" tab whose N matches the Contents page row --- */
-  const sectionBreak = async (sec, roleHex, idx)=>{
+  const sectionBreak = async (sec, roleHex, idx, tab)=>{
     const ref = { id:2 }, parts = [], slide = { media:[], hlinks:[] };
     const wm = await glyphPngU8(svg(deckSectionIcon(sec)), 900, roleHex, true, ooxmlRtl());
     parts.push(pptxFillRect(ref.id++, 0, 0, Math.round(SW * 0.014), SH, roleHex));
@@ -10128,7 +10142,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
       parts.push(picXml(ref.id++, pptxSlideRel(slide, "img", mi), Math.round(cx - side / 2), Math.round(cy - side / 2), side, side)); }
     chrome(parts, ref, sec.eyebrow);
     let y = Math.round(SH * 0.30);
-    const kick = String(T("SECTION")).toUpperCase() + " " + idx;
+    const kick = tab || String(T("SECTION")).toUpperCase() + " " + idx;
     const kickW = pdfTextW(kick, 11) * PTU + Math.round(26 * PTU);
     parts.push(pptxFillRect(ref.id++, M, y, kickW, Math.round(21 * PTU), roleHex));
     parts.push(pptxTextEx(ref.id++, M + Math.round(13 * PTU), y + Math.round(4 * PTU),
@@ -10344,6 +10358,10 @@ async function pptxNarrativeSlides(coverGlyphPng){
     si++;
   }
   slides.push(closing());
+  const edit = T("Editable Architecture");
+  slides.push(await sectionBreak({ key:"board", eyebrow:edit, title:edit, blurb:dt("editBlurb") }, brand, 0,
+    String(T("APPENDIX")).toUpperCase()));
+  slides.push(await pptxEditableSlide(collectBoard()));
   return slides;
 }
 /* The board slide is assembled from the live DOM: one shape per box, one text box
@@ -10541,8 +10559,8 @@ async function exportPptx(){
      the live, themed DOM (boardPngU8), so dark mode, RTL and every translation
      come through exactly as seen. EVERY OTHER slide (cover, contents, use cases,
      Genie, dashboards, closing) stays native, editable OOXML - the deck is still
-     a working .pptx, only the diagram itself, which no one edits shape-by-shape
-     anyway, is a locked image. */
+     a working .pptx, only the diagram itself is a locked image, and the appendix
+     repeats it as grouped, editable shapes. */
   const board = { media:[], body:null };
   const png = await boardPngU8(3);
   board.media.push(png.u8);
@@ -12255,7 +12273,7 @@ function bootLangMeta(){
     { sel:"#side-btn", place:"bottom", title:"Dock the details panel",
       body:"Pin the details panel beside the board instead of over it, so you can read one box and keep the whole architecture in view at the same time." },
     { sel:"#dl-btn", place:"bottom", title:"Take it with you",
-      body:"Export the current view as a multi-page PDF or PowerPoint, a PNG, an animated GIF or interactive HTML; or as editable shapes for draw.io, Lucidchart, Visio, Miro, Figma, Excalidraw or PowerPoint. Export the board as a YAML descriptor too, edit it, and import it back into its own tab. Exports follow the theme and language on screen." },
+      body:"Export the current view as a multi-page PDF or PowerPoint, a PNG, an animated GIF or interactive HTML; or as editable shapes for draw.io, Lucidchart, Visio, Miro, Figma or Excalidraw. The PowerPoint ends with an editable copy of the board. Export the board as a YAML descriptor too, edit it, and import it back into its own tab. Exports follow the theme and language on screen." },
     { sel:"#share-btn", place:"bottom", title:"Share this architecture",
       body:"Post the board straight to LinkedIn, X, Facebook, Reddit, Hacker News, WhatsApp, Telegram or email, or copy the link. The link reopens exactly this industry for whoever you send it to, titled \u201CDatabricks Reference Architecture for \u2039industry\u203A\u201D." },
     { sel:"#shape-btn", place:"bottom", title:"Shape and palette",

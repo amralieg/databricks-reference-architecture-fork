@@ -54,7 +54,9 @@ const isAsciiOnly = s => !/[^\x00-\x7f]/.test(s);
         // one count caption per content section
         const caps = [];
         for (const s of secs) if (s.key !== 'arch') caps.push({ key: s.key, cap: deckCount(s.key, (s.tiles || []).length), en: (function () { let x = DECK_TPL.en[(s.key === 'uc' ? 'ucCount' : s.key === 'genie' ? 'genieCount' : s.key === 'dash' ? 'dashCount' : 'appCount')]; return x.split('{n}').join((s.tiles || []).length); })() });
-        return { dir: I18N.dir, secs: out, caps };
+        const appendix = [['tab', T('APPENDIX'), 'APPENDIX'], ['title', T('Editable Architecture'), 'Editable Architecture'],
+          ['blurb', dt('editBlurb'), DECK_TPL.en.editBlurb]];
+        return { dir: I18N.dir, secs: out, caps, appendix };
       }, L);
 
       for (const s of r.secs) {
@@ -69,6 +71,10 @@ const isAsciiOnly = s => !/[^\x00-\x7f]/.test(s);
         // renders pure ASCII (e.g. a Japanese "10 use cases"). A Latin-script
         // caption equal to English is an accepted loanword (Danish "4 apps").
         if (NON_LATIN.has(L) && isAsciiOnly(c.cap)) { fails++; console.log('FAIL count ' + L + '/' + ind + '/' + c.key + ' :: ' + c.cap); }
+      }
+      if (ind === INDS[0]) for (const [key, got, en] of r.appendix) {
+        checks++;
+        if (!got || got.trim() === en || (NON_LATIN.has(L) && isAsciiOnly(got))) { fails++; console.log('FAIL appendix ' + L + '/' + key + ' :: ' + got); }
       }
     }
   }

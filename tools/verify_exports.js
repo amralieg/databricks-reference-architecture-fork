@@ -100,7 +100,7 @@ async function drawingProbe(edit) {
     groups: vShapes.filter(s => s.getAttribute("Type") === "Group").length, foreign: vShapes.filter(s => s.getAttribute("Type") === "Foreign").length,
     media: vp.filter(p => /^visio\/media\//.test(p.name)).length, links: vLinks.length, badLinks: vLinks.filter(u => !isDatabricksUrl(u)).length };
   out.f.vsdx.bytes = Math.round(out.f.vsdx.b64.length * 3 / 4);
-  const pp = await pptxEditableParts(m), slides = pp.filter(p => /^ppt\/slides\/slide\d+\.xml$/.test(p.name));
+  const pp = pptxParts([await pptxEditableSlide(m)], docTitle()), slides = pp.filter(p => /^ppt\/slides\/slide\d+\.xml$/.test(p.name));
   const s1 = parse((slides[0] || {}).data || "", "text/xml");
   const pn = tag => s1 ? s1.getElementsByTagNameNS(PPTX_NS.p, tag).length : 0;
   const rels = parse((pp.find(p => p.name === "ppt/slides/_rels/slide1.xml.rels") || {}).data || "", "text/xml");
@@ -159,7 +159,7 @@ function drawingChecks(r) {
   ];
 }
 
-async function liveChecks(browser, stem) {
+async function liveChecks(browser, stem, slides) {
   const out = [];
   const xml = fs.readFileSync(stem + ".drawio", "utf8");
   const p = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
@@ -193,13 +193,19 @@ async function liveChecks(browser, stem) {
   } catch (e) { out.push(["excalidraw.com loads every element", false, String(e).slice(0, 200)]); }
   await q.close();
   const soffice = ["/opt/homebrew/bin/soffice", "/Applications/LibreOffice.app/Contents/MacOS/soffice", "/usr/bin/soffice"].find(f => fs.existsSync(f));
-  for (const ext of ["vsdx", "editable.pptx"]) {
-    const file = stem + "." + ext, png = file.replace(/\.[^.]+$/, ".png");
-    if (!soffice) { out.push([`LibreOffice renders .${ext}`, false, "soffice not installed"]); continue; }
-    fs.rmSync(png, { force: true });
-    const ok = shOk(`"${soffice}" -env:UserInstallation=file:///tmp/verify_exports_lo --headless --convert-to png --outdir "${path.dirname(file)}" "${file}"`) && fs.existsSync(png);
-    out.push([`LibreOffice renders .${ext}`, ok, ok ? png : "conversion failed"]);
-  }
+  if (!soffice) { out.push(["LibreOffice renders .vsdx and the deck", false, "soffice not installed"]); return out; }
+  const lo = `"${soffice}" -env:UserInstallation=file:///tmp/verify_exports_lo --headless`;
+  const png = stem + ".png";
+  fs.rmSync(png, { force: true });
+  const vOk = shOk(`${lo} --convert-to png --outdir "${path.dirname(stem)}" "${stem}.vsdx"`) && fs.existsSync(png);
+  out.push(["LibreOffice renders .vsdx", vOk, vOk ? png : "conversion failed"]);
+  const loDir = path.join(path.dirname(stem), "lo"), pdf = path.join(loDir, path.basename(stem) + ".pdf");
+  fs.rmSync(loDir, { recursive: true, force: true });
+  const dOk = shOk(`${lo} --convert-to pdf --outdir "${loDir}" "${stem}.pptx"`) && fs.existsSync(pdf);
+  let pages = 0;
+  if (dOk) { try { pages = Number((execSync(`pdfinfo "${pdf}"`).toString().match(/Pages:\s+(\d+)/) || [])[1]); }
+    catch (e) { pages = pdfPageCount(fs.readFileSync(pdf)); } }
+  out.push(["LibreOffice renders every deck slide, appendix included", dOk && pages === slides, pages + "/" + slides + " pages  " + pdf]);
   return out;
 }
 
@@ -249,6 +255,11 @@ function pdfPageCount(buf) {
       let bin = ""; for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
       return btoa(bin);
     });
+    const board = await page.evaluate(() => {
+      const m = collectBoard();
+      return { groups: m.groups.length, imgs: m.shapes.filter(s => s.t === "img").length,
+        texts: [String(T("APPENDIX")).toUpperCase(), T("Editable Architecture"), dt("editBlurb")] };
+    });
     const pdfB64 = await page.evaluate(async () => {
       const blob = await boardPdfBlob();
       if (!blob) return null;
@@ -275,7 +286,19 @@ function pdfPageCount(buf) {
 
     const pdfPages = pdfB64 ? pdfPageCount(u8FromB64(pdfB64)) : 0;
 
-    results.push({ tag, ...summary, slides: Number(slideList), pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
+    const n = Number(slideList), slideOf = i => `ppt/slides/slide${i}.xml`;
+    const unz = name => execSync(`unzip -p "${pptxPath}" "${name}"`).toString();
+    const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const lastXml = unz(slideOf(n)), breakXml = unz(slideOf(n - 1));
+    const appendix = { ...board,
+      breakOk: board.texts.every(s => breakXml.includes(esc(s))),
+      grpSp: (lastXml.match(/<p:grpSp>/g) || []).length, pics: (lastXml.match(/<p:pic>/g) || []).length,
+      svgType: /Extension="svg"/.test(unz("[[]Content_Types].xml")),
+      wellFormed: [slideOf(n - 1), slideOf(n), `ppt/slides/_rels/slide${n - 1}.xml.rels`, `ppt/slides/_rels/slide${n}.xml.rels`]
+        .every(f => shOk(`unzip -p "${pptxPath}" "${f}" | xmllint --noout -`)),
+      zipOk: shOk(`unzip -tq "${pptxPath}"`) };
+
+    results.push({ tag, ...summary, slides: n, appendix, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
   }
 
   const drawing = [];
@@ -284,7 +307,7 @@ function pdfPageCount(buf) {
     await page.waitForTimeout(700);
     const d = await page.evaluate(drawingProbe, !!edit);
     for (const kind of ["vsdx", "pptx"]) {
-      const file = path.join(OUT, `${tag}.${kind === "pptx" ? "editable.pptx" : kind}`);
+      const file = path.join(OUT, `${tag}.${kind === "pptx" ? "appendix.pptx" : kind}`);
       fs.writeFileSync(file, u8FromB64(d.f[kind].b64));
       delete d.f[kind].b64;
       d.f[kind].zipOk = shOk(`unzip -tq "${file}"`);
@@ -304,7 +327,7 @@ function pdfPageCount(buf) {
     drawing.push({ tag, ...d });
   }
 
-  const live = LIVE ? await liveChecks(browser, path.join(OUT, "banking_azure")) : null;
+  const live = LIVE ? await liveChecks(browser, path.join(OUT, "banking_azure"), (results.find(r => r.tag === "banking_azure") || {}).slides) : null;
 
   await browser.close();
   server.close();
@@ -335,14 +358,20 @@ function pdfPageCount(buf) {
     checks.push(["apps>0", hasAppS]);
     checks.push(["pptx has Genie", r.pptxHasGenie]);
     checks.push(["pptx has Dashboard", r.pptxHasDash]);
-    checks.push(["slides==exp(" + expSlides + ")", r.slides === expSlides]);
+    checks.push(["slides==exp+appendix(" + (expSlides + 2) + ")", r.slides === expSlides + 2]);
     checks.push(["pdf pages==exp(" + expSlides + ")", r.pdfPages === expSlides]);
+    const a = r.appendix;
+    checks.push(["appendix break has tab, title, subtitle", a.breakOk]);
+    checks.push(["appendix groups == board groups", a.grpSp > 0 && a.grpSp === a.groups]);
+    checks.push(["appendix pictures == board logos", a.pics === a.imgs]);
+    checks.push(["appendix svg content type", a.svgType]);
+    checks.push(["deck zip + appendix xml valid", a.zipOk && a.wellFormed]);
 
     const bad = checks.filter(c => !c[1]);
     if (bad.length) fail++;
     console.log(`● ${r.tag}  [${r.label}]  ${bad.length ? "❌" : "✅"}`);
     console.log(`   secs: ${secLine}`);
-    console.log(`   uc=${r.uc} genie=${r.genie} dash=${r.dash} apps=${r.apps}  slides=${r.slides}(exp ${expSlides})  pdfPages=${r.pdfPages}  pptx=${(r.pptxBytes/1024).toFixed(0)}KB pdf=${(r.pdfBytes/1024).toFixed(0)}KB`);
+    console.log(`   uc=${r.uc} genie=${r.genie} dash=${r.dash} apps=${r.apps}  slides=${r.slides}(exp ${expSlides + 2})  pdfPages=${r.pdfPages}  pptx=${(r.pptxBytes/1024).toFixed(0)}KB pdf=${(r.pdfBytes/1024).toFixed(0)}KB  appendix groups=${a.grpSp}/${a.groups} pics=${a.pics}/${a.imgs}`);
     console.log(`   firstUc=${JSON.stringify(r.firstUc)} inDeck=${r.ucInDeck}`);
     if (bad.length) console.log("   FAILS: " + bad.map(b => b[0]).join(", "));
   }

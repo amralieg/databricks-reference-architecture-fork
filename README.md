@@ -160,7 +160,7 @@ platform zoom on the diagram itself.
 | **Palette** | Thirteen colour schemes in three groups |
 | **Style** | Five platform shapes |
 | **Stage** | Filters the platform box by release stage |
-| **Download** | PDF, PowerPoint, PNG, GIF, HTML, and editable draw.io, Visio, SVG, Excalidraw and PowerPoint files. Its *Architecture descriptor* section exports the board on screen, the reference or any industry, as an editable YAML file, and imports one back to open your own version in a new tab |
+| **Download** | PDF, PowerPoint with an editable appendix, PNG, GIF, HTML, and editable draw.io, Visio, SVG and Excalidraw files. Its *Architecture descriptor* section exports the board on screen, the reference or any industry, as an editable YAML file, and imports one back to open your own version in a new tab |
 | **Details panel dock** | Pins the detail drawer to the side so it stays open while you click from box to box, instead of overlaying the board each time |
 | **Language** | Translates the board content into any of sixteen languages, right-to-left for Arabic and Hebrew. The toolbar and menus stay in English, and product and brand names are never translated |
 | **Tour** (the ◎ at the end of the toolbar) | A guided walk-through that spotlights each control and each zone in turn, opens the detail panel on a real box so you see what a click gives you, and runs itself once on a first visit. Replayable any time |
@@ -299,12 +299,12 @@ reading is the honest one in front of a customer.
 | Format | What you get |
 |---|---|
 | **PDF** | A cover with the title, the industry and cloud, the sentence the board leads with, and clickable links to the exact live board and to the industry's data model; an index page listing the sections; the architecture as a pixel-exact image of the board, in the current theme and palette; then four section breaks, each with one page per item, *Use Cases* (problem, beneficiary, build, components, story links), *Genie Agents* (the domain it serves, the data it reads, the teams and its top questions), *AI/BI Dashboards* (the KPIs it tracks and the teams that run on it) and *Databricks Apps*; then a closing page linking to the platform and the live board. All in the theme on screen and in Branded or Categorized names to match the board |
-| **PowerPoint** | The same pages, as native slides: a cover, an index slide, a board slide carrying a pixel-exact image of the board, then the *Use Cases*, *Genie Agents*, *AI/BI Dashboards* and *Databricks Apps* sections a slide per item, and a closing slide. The deck follows the theme and the Branded/Categorized choice on screen, so a categorized dark board exports a categorized dark deck |
+| **PowerPoint** | The same pages, as native slides: a cover, an index slide, a board slide carrying a pixel-exact image of the board, then the *Use Cases*, *Genie Agents*, *AI/BI Dashboards* and *Databricks Apps* sections a slide per item, and a closing slide. An *Editable Architecture* appendix follows: a break slide, then the board again as grouped native shapes you can ungroup and edit in PowerPoint, Keynote or Google Slides. The deck follows the theme and the Branded/Categorized choice on screen, so a categorized dark board exports a categorized dark deck |
 | **PNG** | 2x raster of the current view |
 | **GIF** | A looping animation, 1400px wide, twelve frames, that keeps the travelling dashes and the platform ring moving. Roughly 200 KB, because only the moving pixels are stored per frame, in the palette and theme on screen |
 | **HTML** | A standalone copy of the page with your current choices baked in, which opens anywhere with no server |
 
-**Edit in another app.** These downloads rebuild the current view as grouped, editable shapes instead of a picture. Every zone, group box and tile is a group you can ungroup; labels are real text, arrows are connectors, product logos are crisp images and each tile keeps its Databricks link. The other app draws text in its own fonts, so labels can shift slightly.
+**Edit in another app.** These downloads rebuild the current view as grouped, editable shapes instead of a picture. Every zone, group box and tile is a group you can ungroup; labels are real text, arrows are connectors, product logos are crisp images and each tile keeps its Databricks link. The other app draws text in its own fonts, so labels can shift slightly. For PowerPoint, the deck's appendix carries the same editable board.
 
 | Format | Opens in |
 |---|---|
@@ -312,12 +312,10 @@ reading is the honest one in front of a customer.
 | **Visio** (`.vsdx`) | Visio; imports into Miro, Lucidchart, draw.io and OmniGraffle |
 | **SVG** (`.svg`) | Figma, Illustrator and Inkscape, as editable vector layers and text |
 | **Excalidraw** (`.excalidraw`) | Excalidraw, as grouped elements with editable text |
-| **PowerPoint, editable** (`.pptx`) | PowerPoint, Keynote and Google Slides, as one slide of grouped native shapes |
 
 Every download is named for what is in it, so a folder of them stays readable:
 `databricks-airlines-reference-architecture.pdf`, and `-platform` on the end when
-the platform zoom is on. The editable PowerPoint adds `-editable`, so it never
-overwrites the deck. The board carries
+the platform zoom is on. The board carries
 *(C) Databricks Industry Solutions* in its bottom right corner, on screen and in
 every export.
 
@@ -677,15 +675,16 @@ file: object tables and cross-reference offsets for the PDF, the parts and
 relationships of an Office package for the PPTX, both carrying the cover, an
 index, the board, then a page or slide per item across the Use Cases, Genie
 Agents, AI/BI Dashboards and Databricks Apps sections, and a closing slide, with
-clickable links throughout. Every section is laid out from the same tile data the
+clickable links throughout. The PPTX then adds an appendix with the board as
+editable shapes. Every section is laid out from the same tile data the
 on-screen drawer reads, through one `deckSections()` source of truth, so the deck
 and the drawer cannot drift, and each tile is relabelled Branded or Categorized
 and picks up the live theme, so a categorized dark board exports a categorized
 dark deck. Pulling in a library for each format would be more code than the
 formats need, and would put the exports behind a network fetch that a workspace
-with no internet egress would fail on. The draw.io, Visio, SVG, Excalidraw and
-editable PowerPoint writers share one walk of the live board, `collectBoard()`,
-so all five carry the same shapes, groups and links.
+with no internet egress would fail on. The draw.io, Visio, SVG and Excalidraw
+writers and the deck's editable appendix share one walk of the live board,
+`collectBoard()`, so all five carry the same shapes, groups and links.
 
 **Colours are solved, not chosen.** `tools/palgen.py` takes a hue recipe per
 zone and walks lightness until every foreground clears WCAG AA against the
