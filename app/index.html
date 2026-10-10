@@ -2800,6 +2800,15 @@
       <div class="dl-note">PPTX and PDF export a full deck: a contents page, the
         architecture, then its use cases, Genie Agents, dashboards and apps. PNG and
         GIF capture the current view, including <b>Platform only</b>. HTML stays interactive.</div>
+      <div class="men-hd">Edit in another app</div>
+      <button data-dl="drawio">draw.io / Lucidchart <i>drawio</i></button>
+      <button data-dl="vsdx">Visio / Miro <i>vsdx</i></button>
+      <button data-dl="svg">Figma / Illustrator <i>svg</i></button>
+      <button data-dl="excalidraw">Excalidraw <i>excalidraw</i></button>
+      <button data-dl="pptx-edit">PowerPoint, editable <i>pptx</i></button>
+      <div class="dl-note">The current view as grouped, editable shapes: ungroup any zone
+        or tile to restyle it. The other app draws text in its own fonts, so labels can
+        shift slightly.</div>
     </div>
   </div>
   <div class="dl-wrap" id="arch-wrap">
@@ -5896,14 +5905,15 @@ function linksHref(L){
   return "";
 }
 /* {go:id} to walk to a board box, or {href:url} to open a product/doc/search. */
+function productHref(name){
+  const direct = linksHref(LINKS[name]); if(direct) return direct;
+  const alias = CHIP_ALIAS[name]; const aliased = alias && linksHref(LINKS[alias]);
+  return aliased || CHIP_URL[name] || "";
+}
 function chipHref(name){
   const id = resolveAtom(name);
   if(id) return { go:id };
-  const direct = linksHref(LINKS[name]); if(direct) return { href:direct };
-  const alias = CHIP_ALIAS[name]; const aliased = alias && linksHref(LINKS[alias]);
-  if(aliased) return { href:aliased };
-  if(CHIP_URL[name]) return { href:CHIP_URL[name] };
-  return { href:docsSearchUrl(name) };
+  return { href:productHref(name) || docsSearchUrl(name) };
 }
 /* One chip renderer for every cross-reference: an internal nav span (walks the
    board, remembered by the back control) or an external anchor. Labels always go
@@ -7855,7 +7865,7 @@ function coverLinks(){
     { label, url:modelUrl(id) },
   ];
 }
-function dlName(ext){
+function dlName(ext, tag){
   const tab = document.querySelector(".tab.active");
   const realInd = ARCH.industry && ARCH.industry !== "generic" && ARCH.industry.indexOf("__import__") !== 0;
   const ind = realInd ? ARCH.industry.replace(/_/g, "-") + "-" : "";
@@ -7865,7 +7875,7 @@ function dlName(ext){
      bare. Reads the live selected language, not the OS locale. */
   const lang = (typeof I18N !== "undefined" && I18N.lang) || "en";
   const langSfx = lang && lang !== "en" ? "_" + lang : "";
-  return base + (document.body.classList.contains("plat-only") ? "-platform" : "") + langSfx + "." + ext;
+  return base + (document.body.classList.contains("plat-only") ? "-platform" : "") + (tag ? "-" + tag : "") + langSfx + "." + ext;
 }
 function dlBlob(blob, name){
   const a = document.createElement("a");
@@ -7949,7 +7959,7 @@ function exportCss(){
      every raster/vector export (PNG, PDF, PPTX, GIF share this frozen CSS) drops
      them along with the drawer's inline section dots. */
   return css + "\n*,*::before,*::after{animation:none!important;transition:none!important;}" +
-    "\n.badge-dot,.d-secdot,.d-badge .db-dot{display:none!important;}\n";
+    "\n" + EXPORT_SKIP + "{display:none!important;}\n";
 }
 /* `phase` is the 0..1 dash position the frame should be drawn at. It is set on
    the wrapper rather than on the live page because the foreignObject is its own
@@ -7978,7 +7988,7 @@ function boardSvgMarkup(phase){
   const clone = bd.cloneNode(true);
   /* .ph-max is interface, not architecture: it belongs on screen and nowhere in
      a downloaded picture of the board. */
-  clone.querySelectorAll(".dl-menu, .ph-max, .zx").forEach(n=>n.remove());
+  clone.querySelectorAll(EXPORT_SKIP).forEach(n=>n.remove());
   /* The clone is serialised as XML, where a comment may not contain a double
      hyphen. The board's comments are full of CSS custom property names, so one
      of them is enough to make the whole document unparseable and every raster
@@ -8619,7 +8629,7 @@ function crc32(u8){
   for(let i=0;i<u8.length;i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
   return (c ^ 0xFFFFFFFF) >>> 0;
 }
-function zipStore(files){
+function zipStore(files, type){
   const enc = new TextEncoder(), parts = [], dir = [];
   let off = 0, n = 0;
   files.forEach(f=>{
@@ -8647,7 +8657,7 @@ function zipStore(files){
   eo.setUint32(0, 0x06054b50, true); eo.setUint16(4, 0, true); eo.setUint16(6, 0, true);
   eo.setUint16(8, n, true); eo.setUint16(10, n, true);
   eo.setUint32(12, dirBytes, true); eo.setUint32(16, off, true); eo.setUint16(20, 0, true);
-  return new Blob([...parts, ...dir, new Uint8Array(eo.buffer)], {type:"application/vnd.openxmlformats-officedocument.presentationml.presentation"});
+  return new Blob([...parts, ...dir, new Uint8Array(eo.buffer)], {type:type || "application/vnd.openxmlformats-officedocument.presentationml.presentation"});
 }
 
 /* ---------- pptx: one 16:9 slide holding the rendered board ---------- */
@@ -8705,10 +8715,18 @@ const FLOW_COLOUR = { right:"7D8794", left:"7D8794", down:"C07F3F", up:"8A7FA8",
 
 function cssRgb(v){
   if(!v) return null;
-  const m = String(v).match(/rgba?\(([^)]+)\)/);
-  if(!m) return null;
-  const p = m[1].split(",").map(s=> parseFloat(s.trim()));
-  const a = p.length > 3 ? p[3] : 1;
+  const s = String(v);
+  let p, a = 1, m = s.match(/rgba?\(([^)]+)\)/);
+  if(m){
+    p = m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat);
+    if(p.length > 3) a = p[3];
+  }else if((m = s.match(/color\(srgb\s+([^)]+)\)/))){
+    const q = m[1].split(/[\s\/]+/).filter(Boolean).map(parseFloat);
+    p = q.slice(0, 3).map(x=> x * 255);
+    if(q.length > 3) a = q[3];
+  }else return null;
+  p = p.map(x=> isNaN(x) ? 0 : x);
+  a = Math.min(1, isNaN(a) ? 1 : a);
   if(!(a > 0.02)) return null;
   const hex = n=> Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, "0").toUpperCase();
   return { hex:hex(p[0]) + hex(p[1]) + hex(p[2]), a };
@@ -8731,7 +8749,7 @@ function applyCase(txt, tf){
 }
 
 /* ---- icons and logos: rasterised once per distinct glyph, then shared ---- */
-async function rasterSvg(el, cssW, cssH, scale){
+function standaloneSvgEl(el, cssW, cssH, scale){
   const clone = el.cloneNode(true);
   clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   if(!clone.getAttribute("viewBox")) clone.setAttribute("viewBox", `0 0 ${cssW} ${cssH}`);
@@ -8742,7 +8760,10 @@ async function rasterSvg(el, cssW, cssH, scale){
   const cs = getComputedStyle(el);
   clone.setAttribute("color", cs.color);
   if(!clone.getAttribute("stroke")) clone.setAttribute("stroke", cs.stroke && cs.stroke !== "none" ? cs.stroke : "currentColor");
-  const xml = new XMLSerializer().serializeToString(clone);
+  return clone;
+}
+async function rasterSvg(el, cssW, cssH, scale){
+  const xml = new XMLSerializer().serializeToString(standaloneSvgEl(el, cssW, cssH, scale));
   const img = new Image();
   img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(xml);
   await img.decode();
@@ -8834,6 +8855,9 @@ function lineRuns(node, raw){
   })).filter(l=> l.txt);
 }
 
+const EXPORT_SKIP = ".badge-dot, .d-secdot, .d-badge .db-dot, .dl-menu, .ph-max, .zx, .addbtn";
+const EXPORT_ZONES = [["#topband", "top"], [".col.src", "src"], [".col.cons", "cons"], [".pocket.ing", "ing"],
+  [".pocket.ppl", "ppl"], [".plat-head, #plat-top, #plat-waist, #platform", "platform"], ["#cloud", "cloud"]];
 function collectBoard(){
   document.body.classList.add("exp-static");
   try{ return collectBoardInner(); }
@@ -8842,22 +8866,41 @@ function collectBoard(){
 function collectBoardInner(){
   const board = document.querySelector(".board");
   const B = board.getBoundingClientRect();
-  const shapes = [], svgs = [];
-  const rel = r=> ({ x:r.left - B.left, y:r.top - B.top, w:r.width, h:r.height });
+  const shapes = [], svgs = [], groups = [], zones = {};
   /* the board is drawn under a fit transform: rects come back already scaled,
-     computed styles do not, so anything read from a style needs this factor */
-  const fitK = (()=>{ const m = document.querySelector(".mid");
-    return m ? m.getBoundingClientRect().width / (m.offsetWidth || 1) : 1; })();
+     computed styles do not, so rects are divided back to unscaled layout px */
+  const fitK = B.width / (board.offsetWidth || B.width || 1);
+  const at = (x, y)=> ({ x:(x - B.left) / fitK, y:(y - B.top) / fitK });
+  const rel = r=> Object.assign(at(r.left, r.top), { w:r.width / fitK, h:r.height / fitK });
+  const label = (el, sel)=>{ const n = el.querySelector(sel); return n ? n.textContent.replace(/\s+/g, " ").trim() : ""; };
+  const group = (kind, parent, name, link)=>{
+    const id = "g" + (groups.length + 1);
+    groups.push({ id, kind, parent, name:name || "", link:link || "" });
+    return id;
+  };
+  const enter = (el, g)=>{
+    for(const [sel, key] of EXPORT_ZONES) if(el.matches(sel)){
+      if(!zones[key]) zones[key] = group("zone", g, label(el, ".colhead, .pockhead, .ph-title, .cl-name span") || key);
+      return zones[key];
+    }
+    if(el.matches(".band, .band-row, .rgroup, .cloud-sec")) return group("box", g, label(el, ".band-lbl, .rg-label"));
+    const rec = el.classList.contains("atom") && byId[el.dataset.id];
+    if(rec && rec.arr != null){
+      const href = productHref(rec.tile.n);
+      return group("tile", g, label(el, ".t-name") || displayName(rec.tile), isDatabricksUrl(href) ? href : "");
+    }
+    return g;
+  };
 
-  const flowShape = (el, r)=>{
+  const flowShape = (el, r, g)=>{
     const cl = el.classList;
     let dir = cl.contains("down") ? "down" : cl.contains("up") ? "up"
               : cl.contains("left") ? "left" : "right";
     /* colour follows the connector's lane (its class), which does not change when
        a connector is mirrored to point inbound; geometry follows the actual
        drawn direction, so a scaleX/scaleY(-1) reversal is honoured in the export */
-    const col = cl.contains("ppl") && (dir === "left" || dir === "right")
-      ? FLOW_COLOUR.ppl : FLOW_COLOUR[dir];
+    const col = headColour(getComputedStyle(el, "::after")) ||
+      (cl.contains("ppl") && (dir === "left" || dir === "right") ? FLOW_COLOUR.ppl : FLOW_COLOUR[dir]);
     const tf = getComputedStyle(el).transform;
     if(tf && tf !== "none"){
       const m = tf.match(/matrix\(([^)]+)\)/);
@@ -8874,20 +8917,22 @@ function collectBoardInner(){
     else if(dir === "left"){ a1 = { x:b.x + b.w, y:cy }; a2 = { x:b.x, y:cy }; }
     else if(dir === "down"){ a1 = { x:cx, y:b.y }; a2 = { x:cx, y:b.y + b.h }; }
     else { a1 = { x:cx, y:b.y + b.h }; a2 = { x:cx, y:b.y }; }
-    shapes.push({ t:"arrow", a1, a2, col, w:3 });
+    shapes.push({ t:"arrow", a1, a2, col, a:1, w:3, g });
   };
 
-  const walk = el=>{
+  const walk = (el, g)=>{
+    if(el.matches(EXPORT_SKIP)) return;
     const cs = getComputedStyle(el);
     if(cs.display === "none" || cs.visibility === "hidden" || parseFloat(cs.opacity) === 0) return;
     const r = el.getBoundingClientRect();
     if(r.width < 0.6 && r.height < 0.6) return;
+    g = enter(el, g);
 
-    if(el.classList && el.classList.contains("flow")){ flowShape(el, r); return; }
+    if(el.classList && el.classList.contains("flow")){ flowShape(el, r, g); return; }
     if(el.classList && el.classList.contains("medal-arrow")){
       const b = rel(r);
       shapes.push({ t:"arrow", a1:{ x:b.x, y:b.y + b.h / 2 }, a2:{ x:b.x + b.w, y:b.y + b.h / 2 },
-                    col:"4A5059", w:2 });
+                    col:headColour(getComputedStyle(el, "::after")) || "4A5059", a:1, w:2, g });
       return;
     }
     /* the Z ring is rebuilt from its own corner points further down */
@@ -8897,7 +8942,7 @@ function collectBoardInner(){
       const b = rel(r);
       if(b.w >= 1 && b.h >= 1){
         svgs.push({ el, box:b });
-        shapes.push({ t:"img", box:b, ref:svgs.length - 1 });
+        shapes.push({ t:"img", box:b, ref:svgs.length - 1, g });
       }
       return;
     }
@@ -8909,6 +8954,9 @@ function collectBoardInner(){
       c:cssRgb(cs["border" + s + "Color"]), st:cs["border" + s + "Style"] }))
       .filter(d=> d.w > 0.2 && d.c && d.st !== "none" && d.st !== "hidden");
     const radius = parseFloat(cs.borderTopLeftRadius) || 0;
+    boxRings(cs.boxShadow).forEach(rg=> shapes.push({ t:"rect",
+      box:{ x:b.x - rg.e, y:b.y - rg.e, w:b.w + rg.e * 2, h:b.h + rg.e * 2 }, radius:radius ? radius + rg.e : 0,
+      fill:null, fillA:1, line:{ col:rg.c.hex, a:rg.c.a, w:rg.w, dash:null }, g }));
 
     if(sides.length === 1 && !fill){
       /* a single-sided rule is a divider, not a box */
@@ -8917,12 +8965,12 @@ function collectBoardInner(){
                 : d.s === "Right" ? [{ x:b.x + b.w, y:b.y }, { x:b.x + b.w, y:b.y + b.h }]
                 : d.s === "Top"   ? [{ x:b.x, y:b.y }, { x:b.x + b.w, y:b.y }]
                 :                   [{ x:b.x, y:b.y + b.h }, { x:b.x + b.w, y:b.y + b.h }];
-      shapes.push({ t:"line", a1:seg[0], a2:seg[1], col:d.c.hex, w:d.w, dash:dashKind(d.st) });
+      shapes.push({ t:"line", a1:seg[0], a2:seg[1], col:d.c.hex, a:d.c.a, w:d.w, dash:dashKind(d.st), g });
     } else if(fill || sides.length){
       const bd = sides.length >= 3 ? sides[0] : null;   /* uniform enough to ring */
       shapes.push({ t:"rect", box:b, radius,
-                    fill:fill ? fill.hex : null,
-                    line:bd ? { col:bd.c.hex, w:bd.w, dash:dashKind(bd.st) } : null });
+                    fill:fill ? fill.hex : null, fillA:fill ? fill.a : 1,
+                    line:bd ? { col:bd.c.hex, a:bd.c.a, w:bd.w, dash:dashKind(bd.st) } : null, g });
     }
 
     /* outline draws outside the border box, so it is its own ring */
@@ -8932,8 +8980,8 @@ function collectBoardInner(){
       const off = (parseFloat(cs.outlineOffset) || 0) + ow / 2;
       shapes.push({ t:"rect",
         box:{ x:b.x - off, y:b.y - off, w:b.w + off * 2, h:b.h + off * 2 },
-        radius:radius ? radius + off : 0, fill:null,
-        line:{ col:oc.hex, w:ow, dash:dashKind(cs.outlineStyle) } });
+        radius:radius ? radius + off : 0, fill:null, fillA:1,
+        line:{ col:oc.hex, a:oc.a, w:ow, dash:dashKind(cs.outlineStyle) }, g });
     }
 
     /* text. A run the browser drew on ONE line is emitted as a TIGHT box drawn
@@ -8957,27 +9005,30 @@ function collectBoardInner(){
         size:parseFloat(cs.fontSize) || 12,
         bold:(parseInt(cs.fontWeight, 10) || 400) >= 600,
         italic:cs.fontStyle === "italic",
-        col:col ? col.hex : "1B1F24",
+        col:col ? col.hex : "1B1F24", a:col ? col.a : 1,
         spc:parseFloat(cs.letterSpacing) || 0,
-        algn:cs.textAlign === "center" ? "ctr" : cs.textAlign === "right" ? "r" : "l" };
+        algn:cs.textAlign === "center" ? "ctr" : cs.textAlign === "right" ||
+          cs.textAlign === (cs.direction === "rtl" ? "start" : "end") ? "r" : "l",
+        font:cs.fontFamily, g };
       const runs = lineRuns(n, raw);
       if(runs.length <= 1){
-        runs.forEach(ln=>{ const tb = rel(ln.rect);
+        runs.forEach(ln=>{ const tb = rel(ln.rect), txt = applyCase(ln.txt, cs.textTransform);
           shapes.push(Object.assign({ t:"text", wrap:false,
             box:{ x:tb.x - 1, y:tb.y - 1, w:tb.w + 2, h:tb.h + 2 },
-            txt:applyCase(ln.txt, cs.textTransform) }, base)); });
+            txt, rtl:isRtlText(txt) }, base)); });
         return;
       }
       const er = rel(el.getBoundingClientRect());
-      const padL = (parseFloat(cs.paddingLeft) || 0) * fitK;
-      const padR = (parseFloat(cs.paddingRight) || 0) * fitK;
+      const padL = parseFloat(cs.paddingLeft) || 0;
+      const padR = parseFloat(cs.paddingRight) || 0;
+      const lines = runs.map(ln=> Object.assign(rel(ln.rect), { txt:applyCase(ln.txt, cs.textTransform) }));
       let top = Infinity, bot = -Infinity;
-      runs.forEach(ln=>{ const tb = rel(ln.rect);
-        if(tb.y < top) top = tb.y; if(tb.y + tb.h > bot) bot = tb.y + tb.h; });
+      lines.forEach(l=>{ if(l.y < top) top = l.y; if(l.y + l.h > bot) bot = l.y + l.h; });
+      const txt = lines.map(l=> l.txt).join(" ");
       shapes.push(Object.assign({ t:"text", wrap:true,
         box:{ x:er.x + padL, y:top - 1,
               w:Math.max(4, er.w - padL - padR), h:(bot - top) + 2 },
-        txt:applyCase(runs.map(l=> l.txt).join(" "), cs.textTransform) }, base));
+        txt, lines, rtl:isRtlText(txt) }, base));
     });
 
     /* pseudo-element decoration: a connector shaft (a solid wire carrying a
@@ -8989,9 +9040,7 @@ function collectBoardInner(){
       const isConn = shaft && head && headColour(head.cs) &&
         /gradient/.test(String(shaft.cs.backgroundImage));
       if(isConn){
-        const col = headColour(head.cs) ||
-          (String(shaft.cs.backgroundImage).match(/rgba?\([^)]+\)/) || [])[0];
-        const hex = col && col.charAt(0) !== "r" ? col : (cssRgb(col) || {}).hex;
+        const hex = headColour(head.cs);
         const vertical = shaft.h >= shaft.w;
         const sc = { x:shaft.x + shaft.w / 2, y:shaft.y + shaft.h / 2 };
         let a1, a2;
@@ -9004,21 +9053,19 @@ function collectBoardInner(){
           a1 = { x:left ? shaft.x + shaft.w : shaft.x, y:sc.y };
           a2 = { x:left ? head.x : head.x + head.w, y:sc.y };
         }
-        const rel1 = rel({ left:a1.x, top:a1.y }), rel2 = rel({ left:a2.x, top:a2.y });
-        shapes.push({ t:"arrow", a1:{ x:rel1.x, y:rel1.y }, a2:{ x:rel2.x, y:rel2.y },
-          col:hex || "7D8794", w:3 });
+        shapes.push({ t:"arrow", a1:at(a1.x, a1.y), a2:at(a2.x, a2.y), col:hex || "7D8794", a:1, w:3, g });
       }else if(shaft && cssRgb(shaft.cs.backgroundColor) &&
                cssRgb(shaft.cs.backgroundColor).a > .05 && shaft.w > 1 && shaft.h > 1){
         const sb = rel({ left:shaft.x, top:shaft.y, width:shaft.w, height:shaft.h });
-        shapes.push({ t:"rect", box:sb, radius:0,
-          fill:cssRgb(shaft.cs.backgroundColor).hex, line:null });
+        const sc = cssRgb(shaft.cs.backgroundColor);
+        shapes.push({ t:"rect", box:sb, radius:0, fill:sc.hex, fillA:sc.a, line:null, g });
       }
     }
 
-    for(const c of el.children) walk(c);
+    for(const c of el.children) walk(c, g);
   };
 
-  walk(board);
+  walk(board, null);
 
   /* the platform ring, as the same corners the screen draws */
   if(document.body.classList.contains("zring-on") && zpathEl && zpathEl.getAttribute("d")){
@@ -9029,34 +9076,109 @@ function collectBoardInner(){
     const blocks = [platTopEl, platWaistEl, platformEl]
       .filter(el=> el && el.offsetHeight > 1).map(off);
     const zo = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--zo")) || 6;
-    /* offsetLeft/Top are unscaled layout px; the walk above works in on-screen
-       px, so the ring has to be scaled by the same fit factor and shifted to
-       where .mid actually sits */
-    const k = mr.width / (mid.offsetWidth || 1);
-    const pts = stackPoints(blocks, off(platHeadEl).t, zo - 1).map(p=> ({
-      x:(mr.left - B.left) + p.x * k, y:(mr.top - B.top) + p.y * k }));
-    /* The screen ring is roundPoly(..., Z_R + zo) with a 2 layout-px stroke and a
-       15/9 dash. The native export used to trace the SHARP corners with
-       PowerPoint's coarse "dash" preset, so the exported ring read as a jagged,
-       wrong-rhythm rectangle next to the app. Carry the same corner radius and a
-       width-relative custom dash (15/2 on, 9/2 off => 750%/450%) so the vector
-       ring is app-identical; the stroke and radius are scaled to on-screen px
-       (like the points) so E() lands them in the right EMU. */
-    shapes.push({ t:"poly", pts, col:"FF3621", w:2 * k, round:(Z_R + zo) * k,
-      dashPct:[750000, 450000] });
+    /* offsetLeft/Top are unscaled layout px measured from .mid, so the ring only
+       has to be shifted to where .mid sits on the board */
+    const o = at(mr.left, mr.top), s = mr.width / (mid.offsetWidth || 1) / fitK;
+    const pts = stackPoints(blocks, off(platHeadEl).t, zo - 1).map(p=> ({ x:o.x + p.x * s, y:o.y + p.y * s }));
+    /* The screen ring is roundPoly(..., Z_R + zo) with its CSS stroke and dash, so
+       the export carries the same corner radius, width and dash read off the path
+       instead of tracing sharp corners with a coarse preset dash. */
+    const zs = getComputedStyle(zpathEl), zc = cssRgb(zs.stroke);
+    const dash = String(zs.strokeDasharray).split(/[\s,]+/).map(parseFloat).filter(v=> v > 0);
+    shapes.push({ t:"poly", pts, col:zc ? zc.hex : "FF3621", a:zc ? zc.a : 1,
+      w:parseFloat(zs.strokeWidth) || 2, round:Z_R + zo, dashPx:dash.length >= 2 ? dash.slice(0, 2) : [15, 9], g:null });
   }
 
-  return { shapes, svgs, W:B.width, H:B.height };
+  return { shapes, svgs, groups, W:board.offsetWidth, H:board.offsetHeight, bg:expBg() };
+}
+function boxRings(v){
+  if(!v || v === "none") return [];
+  const layers = [], out = [];
+  let depth = 0, cur = "", prev = 0;
+  for(const ch of v){
+    if(ch === "(") depth++;
+    if(ch === ")") depth--;
+    if(ch === "," && !depth){ layers.push(cur); cur = ""; } else cur += ch;
+  }
+  layers.push(cur);
+  layers.forEach(l=>{
+    if(/inset/.test(l)) return;
+    const c = cssRgb(l), px = (l.replace(/(?:rgba?|color)\([^)]*\)/g, "").match(/-?[\d.]+px/g) || []).map(parseFloat);
+    const [ox, oy, blur, spread] = px.concat([0, 0, 0, 0]);
+    if(!c || ox || oy || blur || !(spread > prev)) return;
+    out.push({ e:(prev + spread) / 2, w:spread - prev, c });
+    prev = spread;
+  });
+  return out;
+}
+function shapeExtent(s){
+  if(s.box) return s.box;
+  const ps = s.pts || [s.a1, s.a2], pad = (s.w || 1) * (s.t === "arrow" ? 2.5 : 0.5);
+  const xs = ps.map(p=> p.x), ys = ps.map(p=> p.y);
+  const x1 = Math.min(...xs) - pad, y1 = Math.min(...ys) - pad;
+  return { x:x1, y:y1, w:Math.max(...xs) + pad - x1, h:Math.max(...ys) + pad - y1 };
+}
+function exportTree(model){
+  const G = {};
+  model.groups.forEach(g=> G[g.id] = g);
+  const chain = id=>{ const c = []; for(let x = id; x; x = G[x].parent) c.unshift(x); return c; };
+  const root = { kids:[] }, open = [{ id:null, node:root }];
+  model.shapes.forEach(s=>{
+    const c = chain(s.g);
+    let d = 0;
+    while(d < c.length && d + 1 < open.length && open[d + 1].id === c[d]) d++;
+    open.length = d + 1;
+    for(let j = d; j < c.length; j++){
+      const node = { group:G[c[j]], kids:[] };
+      open[open.length - 1].node.kids.push(node);
+      open.push({ id:c[j], node });
+    }
+    open[open.length - 1].node.kids.push({ shape:s });
+  });
+  const ext = n=>{
+    if(n.shape) return shapeExtent(n.shape);
+    let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+    n.kids.forEach(k=>{ const e = ext(k);
+      x1 = Math.min(x1, e.x); y1 = Math.min(y1, e.y); x2 = Math.max(x2, e.x + e.w); y2 = Math.max(y2, e.y + e.h); });
+    return (n.box = { x:x1, y:y1, w:Math.max(1, x2 - x1), h:Math.max(1, y2 - y1) });
+  };
+  root.kids.forEach(ext);
+  return root.kids;
+}
+function u8ToB64(u8){
+  let s = "";
+  for(let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+function utf8B64(s){ return u8ToB64(new TextEncoder().encode(s)); }
+function exportLogos(model){
+  const seen = new Map(), uniq = [];
+  const refs = model.svgs.map(s=>{
+    const el = standaloneSvgEl(s.el, s.box.w, s.box.h, 1);
+    ["color", "stroke"].forEach(a=>{ const c = cssRgb(el.getAttribute(a)); if(c) el.setAttribute(a, "#" + c.hex); });
+    const xml = new XMLSerializer().serializeToString(el);
+    if(!seen.has(xml)){ seen.set(xml, uniq.length); uniq.push({ xml, el:s.el, w:s.box.w, h:s.box.h }); }
+    return seen.get(xml);
+  });
+  return { refs, uniq };
+}
+async function logoPngs(logos){
+  for(const u of logos.uniq) if(!u.png) u.png = await rasterSvg(u.el, u.w, u.h, 3);
+  return logos;
 }
 
 /* ---- DrawingML ---- */
-function pptxShapeXml(sh, id, k, ox, oy, embed){
+function pptxClr(hex, a){
+  return '<a:srgbClr val="' + hex + '"' + (a != null && a < 0.995 ? '><a:alpha val="' + Math.round(a * 100000) + '"/></a:srgbClr>' : '/>');
+}
+function pptxShapeXml(sh, id, k, ox, oy, embed, link){
   const E = v=> Math.round(v * k);
   const X = v=> E(v) + ox, Y = v=> E(v) + oy;
-  const nv = (nm, extra)=> '<p:cNvPr id="' + id + '" name="' + xmlEsc(nm) + '"/>' + extra;
+  const nv = (nm, extra)=> '<p:cNvPr id="' + id + '" name="' + xmlEsc(nm) + '"' +
+    (link ? '><a:hlinkClick r:id="' + link + '"/></p:cNvPr>' : '/>') + extra;
   const lnOf = l=> !l ? '<a:ln><a:noFill/></a:ln>'
-    : '<a:ln w="' + Math.max(3175, E(l.w)) + '" cap="rnd"><a:solidFill><a:srgbClr val="' + l.col +
-      '"/></a:solidFill>' + (l.dash ? '<a:prstDash val="' + l.dash + '"/>' : "") + '</a:ln>';
+    : '<a:ln w="' + Math.max(3175, E(l.w)) + '" cap="rnd"><a:solidFill>' + pptxClr(l.col, l.a) +
+      '</a:solidFill>' + (l.dash ? '<a:prstDash val="' + l.dash + '"/>' : "") + '</a:ln>';
 
   if(sh.t === "rect"){
     const w = Math.max(1, E(sh.box.w)), h = Math.max(1, E(sh.box.h));
@@ -9067,7 +9189,7 @@ function pptxShapeXml(sh, id, k, ox, oy, embed){
     return '<p:sp><p:nvSpPr>' + nv("box", "<p:cNvSpPr/><p:nvPr/>") + "</p:nvSpPr><p:spPr>" +
       '<a:xfrm><a:off x="' + X(sh.box.x) + '" y="' + Y(sh.box.y) + '"/>' +
       '<a:ext cx="' + w + '" cy="' + h + '"/></a:xfrm>' + geom +
-      (sh.fill ? '<a:solidFill><a:srgbClr val="' + sh.fill + '"/></a:solidFill>' : "<a:noFill/>") +
+      (sh.fill ? '<a:solidFill>' + pptxClr(sh.fill, sh.fillA) + '</a:solidFill>' : "<a:noFill/>") +
       lnOf(sh.line) + "</p:spPr></p:sp>";
   }
 
@@ -9081,8 +9203,8 @@ function pptxShapeXml(sh, id, k, ox, oy, embed){
       '<a:xfrm' + flipH + flipV + '><a:off x="' + ox2 + '" y="' + oy2 + '"/>' +
       '<a:ext cx="' + Math.max(1, Math.abs(x2 - x1)) + '" cy="' + Math.max(1, Math.abs(y2 - y1)) +
       '"/></a:xfrm><a:prstGeom prst="line"><a:avLst/></a:prstGeom>' +
-      '<a:ln w="' + Math.max(3175, E(sh.w)) + '" cap="rnd"><a:solidFill><a:srgbClr val="' + sh.col +
-      '"/></a:solidFill>' + (sh.dash ? '<a:prstDash val="' + sh.dash + '"/>' : "") + head +
+      '<a:ln w="' + Math.max(3175, E(sh.w)) + '" cap="rnd"><a:solidFill>' + pptxClr(sh.col, sh.a) +
+      '</a:solidFill>' + (sh.dash ? '<a:prstDash val="' + sh.dash + '"/>' : "") + head +
       "</a:ln></p:spPr></p:sp>";
   }
 
@@ -9093,40 +9215,31 @@ function pptxShapeXml(sh, id, k, ox, oy, embed){
     const pt = p=> '<a:pt x="' + E(p.x - bx) + '" y="' + E(p.y - by) + '"/>';
     let path;
     if(sh.round){
-      /* Rounded corners rebuilt exactly like roundPoly() on screen: for each
-         corner, step back along both incident edges by the radius (clamped to
-         half the shorter edge) and sweep the turn with a quadratic whose control
-         point is the corner itself. moveTo the first entry point, then lnTo the
-         next corner's entry + quadBezTo its exit, all the way round, and close.
-         This is what stops the exported ring from being a sharp-cornered box. */
-      const n = sh.pts.length;
-      const len = (a, b)=> Math.hypot(b.x - a.x, b.y - a.y);
-      const walk = (a, b, d)=>{ const L = len(a, b) || 1; return { x:a.x + (b.x - a.x) * d / L, y:a.y + (b.y - a.y) * d / L }; };
-      const seg = [];
-      for(let i = 0; i < n; i++){
-        const p = sh.pts[i], prev = sh.pts[(i - 1 + n) % n], next = sh.pts[(i + 1) % n];
-        const a = walk(p, prev, Math.min(sh.round, len(p, prev) / 2));
-        const b = walk(p, next, Math.min(sh.round, len(p, next) / 2));
-        seg.push(i ? "<a:lnTo>" + pt(a) + "</a:lnTo>" : "<a:moveTo>" + pt(a) + "</a:moveTo>");
-        seg.push("<a:quadBezTo>" + pt(p) + pt(b) + "</a:quadBezTo>");
-      }
+      /* Rounded corners come from the same roundPolySegs() the screen ring uses:
+         moveTo the first entry point, then lnTo each corner's entry + quadBezTo
+         its exit, all the way round, and close. This is what stops the exported
+         ring from being a sharp-cornered box. */
+      const seg = roundPolySegs(sh.pts, sh.round).map(s=> s.op === "Q"
+        ? "<a:quadBezTo>" + pt(s.c) + pt(s.p) + "</a:quadBezTo>"
+        : s.op === "M" ? "<a:moveTo>" + pt(s.p) + "</a:moveTo>" : "<a:lnTo>" + pt(s.p) + "</a:lnTo>");
       path = '<a:path w="' + bw + '" h="' + bh + '">' + seg.join("") + "<a:close/></a:path>";
     }else{
       path = '<a:path w="' + bw + '" h="' + bh + '"><a:moveTo>' + pt(sh.pts[0]) + "</a:moveTo>" +
         sh.pts.slice(1).map(p=> "<a:lnTo>" + pt(p) + "</a:lnTo>").join("") +
         "<a:close/></a:path>";
     }
-    /* Width-relative custom dash (750% on / 450% off) reproduces the screen's
-       15/9 dash against the 2-layout-px stroke, regardless of export scale. */
-    const dashXml = sh.dashPct
-      ? '<a:custDash><a:ds d="' + sh.dashPct[0] + '" sp="' + sh.dashPct[1] + '"/></a:custDash>'
-      : (sh.dash ? '<a:prstDash val="' + sh.dash + '"/>' : "");
+    /* Width-relative custom dash reproduces the screen's dash against its
+       stroke (15/9 on a 2px stroke => 750%/450%), regardless of export scale. */
+    const dashXml = sh.dashPx
+      ? '<a:custDash><a:ds d="' + Math.round(sh.dashPx[0] / sh.w * 100000) + '" sp="' +
+        Math.round(sh.dashPx[1] / sh.w * 100000) + '"/></a:custDash>'
+      : "";
     return '<p:sp><p:nvSpPr>' + nv("Platform outline", "<p:cNvSpPr/><p:nvPr/>") + "</p:nvSpPr><p:spPr>" +
       '<a:xfrm><a:off x="' + X(bx) + '" y="' + Y(by) + '"/><a:ext cx="' + bw + '" cy="' + bh +
       '"/></a:xfrm><a:custGeom><a:avLst/><a:gdLst/><a:ahLst/><a:cxnLst/>' +
       '<a:rect l="0" t="0" r="' + bw + '" b="' + bh + '"/><a:pathLst>' + path + "</a:pathLst></a:custGeom><a:noFill/>" +
-      '<a:ln w="' + Math.max(3175, E(sh.w)) + '"><a:solidFill><a:srgbClr val="' + sh.col +
-      '"/></a:solidFill>' + dashXml +
+      '<a:ln w="' + Math.max(3175, E(sh.w)) + '"><a:solidFill>' + pptxClr(sh.col, sh.a) +
+      '</a:solidFill>' + dashXml +
       "</a:ln></p:spPr></p:sp>";
   }
 
@@ -9134,8 +9247,8 @@ function pptxShapeXml(sh, id, k, ox, oy, embed){
     const pt = Math.max(100, Math.round(sh.size * k / 12700 * 100));
     const spc = sh.spc ? ' spc="' + Math.round(sh.spc * k / 12700 * 100) + '"' : "";
     const rPr = '<a:rPr lang="' + ooxmlLang() + '" sz="' + pt + '" b="' + (sh.bold ? 1 : 0) + '" i="' +
-      (sh.italic ? 1 : 0) + '"' + spc + ' dirty="0"><a:solidFill><a:srgbClr val="' + sh.col +
-      '"/></a:solidFill>' + pptxRunFonts() + '</a:rPr>';
+      (sh.italic ? 1 : 0) + '"' + spc + ' dirty="0"><a:solidFill>' + pptxClr(sh.col, sh.a) +
+      '</a:solidFill>' + pptxRunFonts() + '</a:rPr>';
     /* A single-line label is a tight box drawn wrap="none" with no autofit - the
        treatment the English deck proves renders one clean, un-wrapped line in
        PowerPoint/Keynote/LibreOffice alike, and what keeps a short brand name from
@@ -9158,9 +9271,15 @@ function pptxShapeXml(sh, id, k, ox, oy, embed){
   }
 
   if(sh.t === "img"){
+    const png = embed && embed.png || embed, svgRel = embed && embed.svg;
+    const blip = svgRel
+      ? '<a:blip r:embed="' + png + '"><a:extLst><a:ext uri="{96DAC541-7B7A-43D3-8B79-37D633B846F1}">' +
+        '<asvg:svgBlip xmlns:asvg="http://schemas.microsoft.com/office/drawing/2016/SVG/main" r:embed="' + svgRel +
+        '"/></a:ext></a:extLst></a:blip>'
+      : '<a:blip r:embed="' + png + '"/>';
     return '<p:pic><p:nvPicPr>' + nv("icon", '<p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/>') +
       "</p:nvPicPr>" +
-      '<p:blipFill><a:blip r:embed="' + embed + '"/><a:stretch><a:fillRect/></a:stretch></p:blipFill>' +
+      '<p:blipFill>' + blip + '<a:stretch><a:fillRect/></a:stretch></p:blipFill>' +
       '<p:spPr><a:xfrm><a:off x="' + X(sh.box.x) + '" y="' + Y(sh.box.y) + '"/>' +
       '<a:ext cx="' + Math.max(1, E(sh.box.w)) + '" cy="' + Math.max(1, E(sh.box.h)) +
       '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>';
@@ -9172,19 +9291,33 @@ function pptxShapeXml(sh, id, k, ox, oy, embed){
    slide brings ~40 rasterised glyphs and the cover brings two external links,
    and both of those are per-slide relationships, so the package is built from a
    list rather than from one hard-coded slide1. */
-function pptxParts(slides, title){
-  const SW = PPT_SW, SH = PPT_SH;
-  const rels = (list)=> XD + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-    list.map(o=>'<Relationship Id="' + o.id + '" Type="http://schemas.openxmlformats.org/' +
+function opcRels(list){
+  return XD + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+    list.map(o=>'<Relationship Id="' + o.id + '" Type="' + (/^https?:/.test(o.type) ? "" : "http://schemas.openxmlformats.org/") +
       o.type + '" Target="' + o.t + '"' +
       (o.ext ? ' TargetMode="External"' : "") + "/>").join("") + "</Relationships>";
+}
+function opcCore(title){
+  return XD +
+    '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"' +
+    ' xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"' +
+    ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+    "<dc:title>" + xmlEsc(title) + "</dc:title><dc:creator>Databricks</dc:creator>" +
+    '<cp:lastModifiedBy>Databricks</cp:lastModifiedBy>' +
+    '<dcterms:created xsi:type="dcterms:W3CDTF">' + new Date().toISOString().slice(0,19) + 'Z</dcterms:created>' +
+    '</cp:coreProperties>';
+}
+function pptxParts(slides, title){
+  const SW = PPT_SW, SH = PPT_SH;
+  const rels = opcRels;
   /* Media parts are numbered across the whole package, not per slide, so a
      second slide carrying images cannot collide with the first. */
   let mediaSeq = 0;
-  slides.forEach(s=>{ s.mediaNames = (s.media || []).map(()=> "image" + (++mediaSeq) + ".png"); });
+  slides.forEach(s=>{ s.mediaNames = (s.media || []).map(m=> "image" + (++mediaSeq) + "." + (m.ext || "png")); });
   const allMedia = [];
   slides.forEach(s=> (s.media || []).forEach((m, i)=>
-    allMedia.push({ name:"ppt/media/" + s.mediaNames[i], data:m })));
+    allMedia.push({ name:"ppt/media/" + s.mediaNames[i], data:m.u8 || m })));
+  const hasSvg = allMedia.some(m=> /\.svg$/.test(m.name));
   const empty = '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>' +
     '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/>' +
     '<a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>';
@@ -9195,6 +9328,7 @@ function pptxParts(slides, title){
       '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
       '<Default Extension="xml" ContentType="application/xml"/>' +
       '<Default Extension="png" ContentType="image/png"/>' +
+      (hasSvg ? '<Default Extension="svg" ContentType="image/svg+xml"/>' : "") +
       '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>' +
       '<Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/>' +
       '<Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/>' +
@@ -9208,14 +9342,7 @@ function pptxParts(slides, title){
       { id:"rId1", type:"officeDocument/2006/relationships/officeDocument", t:"ppt/presentation.xml" },
       { id:"rId2", type:"package/2006/relationships/metadata/core-properties", t:"docProps/core.xml" },
       { id:"rId3", type:"officeDocument/2006/relationships/extended-properties", t:"docProps/app.xml" }]) },
-    { name:"docProps/core.xml", data: XD +
-      '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"' +
-      ' xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"' +
-      ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
-      "<dc:title>" + xmlEsc(title) + "</dc:title><dc:creator>Databricks</dc:creator>" +
-      '<cp:lastModifiedBy>Databricks</cp:lastModifiedBy>' +
-      '<dcterms:created xsi:type="dcterms:W3CDTF">' + new Date().toISOString().slice(0,19) + 'Z</dcterms:created>' +
-      '</cp:coreProperties>' },
+    { name:"docProps/core.xml", data: opcCore(title) },
     { name:"docProps/app.xml", data: XD +
       '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"' +
       ' xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">' +
@@ -9278,6 +9405,383 @@ function pptxSlideRel(slide, kind, n){
   return "rId" + (kind === "img" ? n + 2 : imgs + n + 2);
 }
 function xmlEsc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+const DRAW_FONT = "Helvetica", VSDX_FONT = "Arial";
+function drawNum(v){ return +(+v).toFixed(2); }
+function drawPct(a){ return Math.round(Math.max(0, Math.min(1, a == null ? 1 : a)) * 100); }
+function drawAlign(a){ return a === "ctr" ? "center" : a === "r" ? "right" : "left"; }
+function drawDash(d){ return d === "sysDot" ? "dotted" : d ? "dashed" : "solid"; }
+
+function drawioXml(model){
+  const tree = exportTree(model), logos = exportLogos(model), n = drawNum, cells = [];
+  const W = Math.round(model.W), H = Math.round(model.H);
+  let seq = 1;
+  const geo = (b, o)=> '<mxGeometry x="' + n(b.x - o.x) + '" y="' + n(b.y - o.y) + '" width="' + n(Math.max(1, b.w)) +
+    '" height="' + n(Math.max(1, b.h)) + '" as="geometry"/>';
+  const vertex = (style, b, o, parent, value)=> cells.push('<mxCell id="c' + (++seq) + '" value="' + (value || "") +
+    '" style="' + style + '" vertex="1" parent="' + parent + '">' + geo(b, o) + "</mxCell>");
+  const edge = (style, pts, o, parent)=>{
+    const p = q=> 'x="' + n(q.x - o.x) + '" y="' + n(q.y - o.y) + '"', mid = pts.slice(1, -1);
+    cells.push('<mxCell id="c' + (++seq) + '" value="" style="' + style + '" edge="1" parent="' + parent + '">' +
+      '<mxGeometry relative="1" as="geometry"><mxPoint ' + p(pts[0]) + ' as="sourcePoint"/><mxPoint ' +
+      p(pts[pts.length - 1]) + ' as="targetPoint"/>' +
+      (mid.length ? '<Array as="points">' + mid.map(q=> "<mxPoint " + p(q) + "/>").join("") + "</Array>" : "") +
+      "</mxGeometry></mxCell>");
+  };
+  const stroke = (col, a, w)=> "strokeColor=#" + col + ";strokeWidth=" + n(w) + ";" +
+    (a < 0.995 ? "strokeOpacity=" + drawPct(a) + ";" : "");
+  const shape = (s, o, parent)=>{
+    if(s.t === "rect"){
+      const r = Math.min(s.radius || 0, s.box.w / 2, s.box.h / 2);
+      vertex((r > 0.5 ? "rounded=1;absoluteArcSize=1;arcSize=" + n(r * 2) + ";" : "rounded=0;") +
+        (s.fill ? "fillColor=#" + s.fill + ";" + (s.fillA < 0.995 ? "fillOpacity=" + drawPct(s.fillA) + ";" : "") : "fillColor=none;") +
+        (s.line ? stroke(s.line.col, s.line.a, s.line.w) +
+          (s.line.dash ? "dashed=1;" + (s.line.dash === "sysDot" ? "dashPattern=1 2;" : "") : "") : "strokeColor=none;") +
+        "html=1;", s.box, o, parent);
+    }else if(s.t === "text"){
+      vertex("text;html=1;strokeColor=none;fillColor=none;align=" + drawAlign(s.algn) + ";verticalAlign=middle;whiteSpace=" +
+        (s.wrap ? "wrap" : "nowrap") + ";overflow=visible;spacing=0;spacingTop=0;spacingBottom=0;spacingLeft=0;spacingRight=0;" +
+        "fontFamily=" + DRAW_FONT + ";fontSize=" + n(s.size) + ";fontColor=#" + s.col + ";" +
+        (s.a < 0.995 ? "textOpacity=" + drawPct(s.a) + ";" : "") + "fontStyle=" + ((s.bold ? 1 : 0) + (s.italic ? 2 : 0)) + ";" +
+        (s.rtl ? "textDirection=rtl;" : ""), s.box, o, parent, xmlEsc(esc(s.txt)));
+    }else if(s.t === "img"){
+      vertex("shape=image;html=1;imageAspect=1;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;" +
+        "image=data:image/svg+xml," + utf8B64(logos.uniq[logos.refs[s.ref]].xml) + ";", s.box, o, parent);
+    }else if(s.t === "arrow" || s.t === "line"){
+      edge("html=1;rounded=0;" + stroke(s.col, s.a, s.w) + "startArrow=none;" +
+        (s.t === "arrow" ? "endArrow=block;endFill=1;endSize=" + n(s.w * 10 / 3) + ";" : "endArrow=none;") +
+        (s.dash ? "dashed=1;" : ""), [s.a1, s.a2], o, parent);
+    }else if(s.t === "poly"){
+      const p0 = s.pts[0], p1 = s.pts[1], m = { x:(p0.x + p1.x) / 2, y:(p0.y + p1.y) / 2 };
+      edge("html=1;startArrow=none;endArrow=none;rounded=1;arcSize=" + n(s.round * 2) + ";" + stroke(s.col, s.a, s.w) +
+        (s.dashPx ? "dashed=1;dashPattern=" + s.dashPx.map(d=> n(d / s.w)).join(" ") + ";" : ""),
+        [m].concat(s.pts.slice(1), [p0, m]), o, parent);
+    }
+  };
+  const node = (k, o, parent)=>{
+    if(k.shape) return shape(k.shape, o, parent);
+    const g = k.group, id = "c" + (++seq);
+    cells.push('<UserObject label="" ' + (g.name ? 'tooltip="' + xmlEsc(g.name) + '" ' : "") +
+      (g.link ? 'link="' + xmlEsc(g.link) + '" ' : "") + 'id="' + id + '"><mxCell style="group" vertex="1" connectable="0" parent="' +
+      parent + '">' + geo(k.box, o) + "</mxCell></UserObject>");
+    k.kids.forEach(c=> node(c, k.box, id));
+  };
+  tree.forEach(k=> node(k, { x:0, y:0 }, "1"));
+  return '<mxfile host="app.diagrams.net" agent="' + xmlEsc(document.title) + '" type="device"><diagram id="board" name="' +
+    xmlEsc(docTitle()) + '"><mxGraphModel dx="' + W + '" dy="' + H + '" grid="0" gridSize="10" guides="1" tooltips="1" ' +
+    'connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="' + W + '" pageHeight="' + H + '" background="' +
+    model.bg + '" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/>' + cells.join("") +
+    "</root></mxGraphModel></diagram></mxfile>";
+}
+
+function vectorSvg(model){
+  const tree = exportTree(model), n = drawNum;
+  let seq = 0;
+  const paint = (k, hex, a)=> " " + k + '="#' + hex + '"' + (a != null && a < 0.995 ? " " + k + '-opacity="' + n(a) + '"' : "");
+  const dashArr = (d, w)=> d === "sysDot" ? n(w) + " " + n(w) : n(w * 3) + " " + n(w * 2);
+  const line = (a, b, s, extra)=> '<line x1="' + n(a.x) + '" y1="' + n(a.y) + '" x2="' + n(b.x) + '" y2="' + n(b.y) + '"' +
+    paint("stroke", s.col, s.a) + ' stroke-width="' + n(s.w) + '" stroke-linecap="round"' + (extra || "") + "/>";
+  const logo = s=>{
+    const el = standaloneSvgEl(model.svgs[s.ref].el, s.box.w, s.box.h, 1), pre = "l" + (++seq) + "-";
+    ["color", "stroke"].forEach(a=>{ const c = cssRgb(el.getAttribute(a)); if(c) el.setAttribute(a, "#" + c.hex); });
+    const ids = new Set([...el.querySelectorAll("[id]")].map(e=> e.id));
+    if(ids.size){
+      const fix = v=> v.replace(/url\(\s*(['"]?)#([^)'"]+)\1\s*\)/g, (m, q, id)=> ids.has(id) ? "url(" + q + "#" + pre + id + q + ")" : m)
+        .replace(/^#(.+)$/, (m, id)=> ids.has(id) ? "#" + pre + id : m);
+      el.querySelectorAll("*").forEach(e=> [...e.attributes].forEach(a=>{ if(a.value.indexOf("#") >= 0) a.value = fix(a.value); }));
+      el.querySelectorAll("[id]").forEach(e=> e.setAttribute("id", pre + e.id));
+    }
+    ["class", "aria-hidden"].forEach(a=> el.removeAttribute(a));
+    el.setAttribute("x", n(s.box.x)); el.setAttribute("y", n(s.box.y));
+    el.setAttribute("width", n(s.box.w)); el.setAttribute("height", n(s.box.h));
+    return new XMLSerializer().serializeToString(el);
+  };
+  const text = s=>{
+    const lines = s.lines || [{ txt:s.txt, x:s.box.x + 1, y:s.box.y + 1, w:s.box.w - 2, h:s.box.h - 2 }];
+    const side = s.algn === "ctr" ? 0 : s.algn === "r" ? 1 : -1;
+    const anchor = side === 0 ? "middle" : (side > 0) !== !!s.rtl ? "end" : "start";
+    const attrs = ' font-family="' + xmlEsc(s.font || DRAW_FONT) + '" font-size="' + n(s.size) + '"' +
+      (s.bold ? ' font-weight="bold"' : "") + (s.italic ? ' font-style="italic"' : "") + paint("fill", s.col, s.a) +
+      ' text-anchor="' + anchor + '"' + (s.rtl ? ' direction="rtl"' : "") + (s.spc ? ' letter-spacing="' + n(s.spc) + '"' : "");
+    return lines.map(l=> '<text x="' + n(side === 0 ? l.x + l.w / 2 : side > 0 ? l.x + l.w : l.x) + '" y="' +
+      n(l.y + l.h / 2 + s.size * 0.35) + '"' + attrs + ' xml:space="preserve">' + xmlEsc(l.txt) + "</text>").join("");
+  };
+  const shape = s=>{
+    if(s.t === "rect"){
+      const r = Math.min(s.radius || 0, s.box.w / 2, s.box.h / 2);
+      return '<rect x="' + n(s.box.x) + '" y="' + n(s.box.y) + '" width="' + n(Math.max(0.1, s.box.w)) + '" height="' +
+        n(Math.max(0.1, s.box.h)) + '"' + (r > 0.5 ? ' rx="' + n(r) + '"' : "") +
+        (s.fill ? paint("fill", s.fill, s.fillA) : ' fill="none"') +
+        (s.line ? paint("stroke", s.line.col, s.line.a) + ' stroke-width="' + n(s.line.w) + '"' +
+          (s.line.dash ? ' stroke-dasharray="' + dashArr(s.line.dash, s.line.w) + '"' : "") : "") + "/>";
+    }
+    if(s.t === "text") return text(s);
+    if(s.t === "img") return logo(s);
+    if(s.t === "line") return line(s.a1, s.a2, s, s.dash ? ' stroke-dasharray="' + dashArr(s.dash, s.w) + '"' : "");
+    if(s.t === "arrow"){
+      const dx = s.a2.x - s.a1.x, dy = s.a2.y - s.a1.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+      const hl = Math.min(L, s.w * 10 / 3), hw = s.w * 7 / 3, bx = s.a2.x - ux * hl, by = s.a2.y - uy * hl;
+      return "<g>" + line(s.a1, { x:bx, y:by }, s) + '<polygon points="' +
+        [[s.a2.x, s.a2.y], [bx - uy * hw, by + ux * hw], [bx + uy * hw, by - ux * hw]].map(p=> n(p[0]) + "," + n(p[1])).join(" ") +
+        '"' + paint("fill", s.col, s.a) + "/></g>";
+    }
+    if(s.t === "poly") return '<path d="' + roundPoly(s.pts, s.round) + '" fill="none"' + paint("stroke", s.col, s.a) +
+      ' stroke-width="' + n(s.w) + '"' + (s.dashPx ? ' stroke-dasharray="' + s.dashPx.map(n).join(" ") + '"' : "") + "/>";
+    return "";
+  };
+  const node = k=>{
+    if(k.shape) return shape(k.shape);
+    const g = k.group, inner = k.kids.map(node).join("");
+    return '<g id="' + g.kind + "-" + (++seq) + '"' + (g.name ? ' data-name="' + xmlEsc(g.name) + '"' : "") + ">" +
+      (g.link ? '<a href="' + xmlEsc(g.link) + '" target="_blank">' + inner + "</a>" : inner) + "</g>";
+  };
+  const W = n(model.W), H = n(model.H);
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H +
+    '" viewBox="0 0 ' + W + " " + H + '"><title>' + xmlEsc(docTitle()) + '</title><rect width="' + W + '" height="' + H +
+    '" fill="' + model.bg + '"/>' + tree.map(node).join("") + "</svg>";
+}
+
+function excalidrawJson(model){
+  const tree = exportTree(model), logos = exportLogos(model), now = Date.now(), els = [], files = {};
+  let seq = 0, gseq = 0;
+  const col = (hex, a)=> "#" + hex + (a != null && a < 0.995 ? Math.round(a * 255).toString(16).padStart(2, "0") : "");
+  const el = (type, b, gids, extra)=>{
+    const i = ++seq;
+    els.push(Object.assign({ id:"dx" + i, type, x:b.x, y:b.y, width:Math.max(0, b.w), height:Math.max(0, b.h), angle:0,
+      strokeColor:"transparent", backgroundColor:"transparent", fillStyle:"solid", strokeWidth:1, strokeStyle:"solid",
+      roughness:0, opacity:100, groupIds:gids, frameId:null, roundness:null, seed:i * 7919, version:1,
+      versionNonce:i * 104729, isDeleted:false, boundElements:null, updated:now, link:null, locked:false }, extra));
+  };
+  const linear = (type, pts, s, gids, extra)=>{
+    const x0 = pts[0].x, y0 = pts[0].y, rel = pts.map(p=> [p.x - x0, p.y - y0]);
+    const xs = rel.map(p=> p[0]), ys = rel.map(p=> p[1]);
+    el(type, { x:x0, y:y0, w:Math.max(...xs) - Math.min(...xs), h:Math.max(...ys) - Math.min(...ys) }, gids, Object.assign({
+      points:rel, strokeColor:col(s.col, s.a), strokeWidth:s.w, lastCommittedPoint:null, startBinding:null, endBinding:null,
+      startArrowhead:null, endArrowhead:null }, extra));
+  };
+  const shape = (s, gids)=>{
+    if(s.t === "rect") return el("rectangle", s.box, gids, {
+      strokeColor:s.line ? col(s.line.col, s.line.a) : "transparent", strokeWidth:s.line ? s.line.w : 1,
+      strokeStyle:drawDash(s.line && s.line.dash), backgroundColor:s.fill ? col(s.fill, s.fillA) : "transparent",
+      roundness:s.radius > 0.5 ? { type:3, value:s.radius } : null });
+    if(s.t === "text"){
+      const t = (s.lines ? s.lines.map(l=> l.txt) : [s.txt]).join("\n");
+      return el("text", s.box, gids, { text:t, originalText:t, fontSize:s.size, fontFamily:2, textAlign:drawAlign(s.algn),
+        verticalAlign:"middle", containerId:null, lineHeight:1.25, autoResize:true, strokeColor:col(s.col, s.a) });
+    }
+    if(s.t === "img"){
+      const li = logos.refs[s.ref], fid = "logo" + li;
+      if(!files[fid]) files[fid] = { mimeType:"image/svg+xml", id:fid, created:now, lastRetrieved:now,
+        dataURL:"data:image/svg+xml;base64," + utf8B64(logos.uniq[li].xml) };
+      return el("image", s.box, gids, { fileId:fid, status:"saved", scale:[1, 1], crop:null });
+    }
+    if(s.t === "arrow") return linear("arrow", [s.a1, s.a2], s, gids, { endArrowhead:"triangle", elbowed:false });
+    if(s.t === "line") return linear("line", [s.a1, s.a2], s, gids, { strokeStyle:drawDash(s.dash) });
+    if(s.t === "poly"){
+      const pts = [];
+      roundPolySegs(s.pts, s.round).forEach(g=>{
+        if(g.op !== "Q"){ pts.push(g.p); return; }
+        const a = pts[pts.length - 1];
+        for(let t = 1; t <= 4; t++){
+          const u = t / 4, v = 1 - u;
+          pts.push({ x:v * v * a.x + 2 * v * u * g.c.x + u * u * g.p.x, y:v * v * a.y + 2 * v * u * g.c.y + u * u * g.p.y });
+        }
+      });
+      pts.push(pts[0]);
+      return linear("line", pts, s, gids, { strokeStyle:"dashed" });
+    }
+  };
+  const node = (k, gids)=>{
+    if(k.shape) return shape(k.shape, gids);
+    const inner = ["grp" + (++gseq)].concat(gids), before = els.length;
+    k.kids.forEach(c=> node(c, inner));
+    const own = els.slice(before), first = own.find(e=> e.type !== "text") || own[0];
+    if(k.group.link && first) first.link = k.group.link;
+  };
+  tree.forEach(k=> node(k, []));
+  return JSON.stringify({ type:"excalidraw", version:2, source:location.origin + location.pathname, elements:els,
+    appState:{ viewBackgroundColor:model.bg, gridSize:null }, files });
+}
+
+async function pptxEditableParts(model){
+  const title = docTitle(), fit = pptxBoardFit(model.W, model.H), tree = exportTree(model);
+  const logos = await logoPngs(exportLogos(model));
+  const slide = { media:[], hlinks:[], body:"" };
+  logos.uniq.forEach(u=> slide.media.push(u.png, { u8:new TextEncoder().encode(u.xml), ext:"svg" }));
+  const collect = k=>{ if(!k.group) return;
+    if(k.group.link && slide.hlinks.indexOf(k.group.link) < 0) slide.hlinks.push(k.group.link);
+    k.kids.forEach(collect); };
+  tree.forEach(collect);
+  const E = v=> Math.round(v * fit.k);
+  let id = 2;
+  const node = (k, rid)=>{
+    if(k.shape){
+      const s = k.shape, li = s.t === "img" ? logos.refs[s.ref] : -1;
+      return pptxShapeXml(s, id++, fit.k, fit.ox, fit.oy,
+        li >= 0 ? { png:pptxSlideRel(slide, "img", li * 2), svg:pptxSlideRel(slide, "img", li * 2 + 1) } : null, rid);
+    }
+    const g = k.group, r = g.link ? pptxSlideRel(slide, "link", slide.hlinks.indexOf(g.link)) : rid, gid = id++;
+    const x = E(k.box.x) + fit.ox, y = E(k.box.y) + fit.oy, cx = Math.max(1, E(k.box.w)), cy = Math.max(1, E(k.box.h));
+    const xf = '<a:off x="' + x + '" y="' + y + '"/><a:ext cx="' + cx + '" cy="' + cy + '"/>';
+    return '<p:grpSp><p:nvGrpSpPr><p:cNvPr id="' + gid + '" name="' + xmlEsc(g.name || g.kind) + '"' +
+      (r ? '><a:hlinkClick r:id="' + r + '"/></p:cNvPr>' : "/>") + "<p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>" +
+      "<p:grpSpPr><a:xfrm>" + xf + xf.replace("a:off", "a:chOff").replace("a:ext", "a:chExt") + "</a:xfrm></p:grpSpPr>" +
+      k.kids.map(c=> node(c, r)).join("") + "</p:grpSp>";
+  };
+  slide.body = pptxTitleStrip(id++, title, fit.pad, fit.bandH) + tree.map(k=> node(k, "")).join("");
+  return pptxParts([slide], title);
+}
+
+const VSDX_NS = 'xmlns="http://schemas.microsoft.com/office/visio/2012/main" ' +
+  'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xml:space="preserve"';
+const VSDX_REL = "http://schemas.microsoft.com/visio/2010/relationships/";
+async function vsdxParts(model){
+  const title = docTitle(), tree = exportTree(model), logos = await logoPngs(exportLogos(model));
+  const IN = 96, W = model.W / IN, H = model.H / IN;
+  const f = v=> String(+(+v).toFixed(6));
+  const cell = (name, v, extra)=> '<Cell N="' + name + '" V="' + v + '"' + (extra || "") + "/>";
+  const trans = a=> f(1 - Math.max(0, Math.min(1, a == null ? 1 : a)));
+  const X = (x, o)=> (x - o.x) / IN, Y = (y, o)=> (o.y + o.h - y) / IN;
+  let sid = 0;
+  const open = (type, name)=> '<Shape ID="' + (++sid) + '" Type="' + type + '" LineStyle="0" FillStyle="0" TextStyle="0"' +
+    (name ? ' NameU="' + xmlEsc(name) + "." + sid + '" Name="' + xmlEsc(name) + "." + sid + '"' : "") + ">";
+  const xform = (b, o)=> cell("PinX", f(X(b.x + b.w / 2, o))) + cell("PinY", f(Y(b.y + b.h / 2, o))) +
+    cell("Width", f(Math.max(0.0001, b.w / IN))) + cell("Height", f(Math.max(0.0001, b.h / IN))) +
+    cell("LocPinX", f(b.w / IN / 2), ' F="Width*0.5"') + cell("LocPinY", f(b.h / IN / 2), ' F="Height*0.5"') + cell("Angle", 0);
+  const geom = (pts, noFill, noLine)=> '<Section N="Geometry" IX="0">' + cell("NoFill", noFill ? 1 : 0) +
+    cell("NoLine", noLine ? 1 : 0) + cell("NoShow", 0) + cell("NoSnap", 0) +
+    pts.map((p, i)=> '<Row T="' + (i ? "LineTo" : "MoveTo") + '" IX="' + (i + 1) + '">' + cell("X", f(p[0])) +
+      cell("Y", f(p[1])) + "</Row>").join("") + "</Section>";
+  const box = (w, h)=> [[0, 0], [w, 0], [w, h], [0, h], [0, 0]];
+  const lineCells = l=> l ? cell("LineWeight", f(l.w / IN)) + cell("LineColor", "#" + l.col) + cell("LineColorTrans", trans(l.a)) +
+    cell("LinePattern", l.dash === "sysDot" ? 3 : l.dash ? 2 : 1) : cell("LinePattern", 0);
+  const fillCells = (hex, a)=> hex ? cell("FillForegnd", "#" + hex) + cell("FillForegndTrans", trans(a)) + cell("FillPattern", 1)
+    : cell("FillPattern", 0);
+  const shape = (s, o)=>{
+    if(s.t === "rect"){
+      const w = s.box.w / IN, h = s.box.h / IN, r = Math.min(s.radius || 0, s.box.w / 2, s.box.h / 2) / IN;
+      return open("Shape", s.name) + xform(s.box, o) + lineCells(s.line) + fillCells(s.fill, s.fillA) +
+        (r > 0.001 ? cell("Rounding", f(r)) : "") + geom(box(w, h), !s.fill, !s.line) + "</Shape>";
+    }
+    if(s.t === "text"){
+      const bw = s.box.w / IN, bh = s.box.h / IN, tw = bw * (s.wrap ? 1.15 : 1.6);
+      const side = s.algn === "ctr" ? 0.5 : s.algn === "r" ? 1 : 0;
+      return open("Shape") + xform(s.box, o) + cell("LinePattern", 0) + cell("FillPattern", 0) +
+        cell("LeftMargin", 0) + cell("RightMargin", 0) + cell("TopMargin", 0) + cell("BottomMargin", 0) + cell("VerticalAlign", 1) +
+        cell("TxtPinX", f(bw * side)) + cell("TxtPinY", f(bh / 2)) + cell("TxtWidth", f(tw)) + cell("TxtHeight", f(bh)) +
+        cell("TxtLocPinX", f(tw * side)) + cell("TxtLocPinY", f(bh / 2)) + cell("TxtAngle", 0) +
+        '<Section N="Character"><Row IX="0">' + cell("Font", VSDX_FONT) + cell("Color", "#" + s.col) +
+        cell("ColorTrans", trans(s.a)) + cell("Style", (s.bold ? 1 : 0) + (s.italic ? 2 : 0)) +
+        cell("Size", f(s.size / IN), ' U="PT"') + (s.rtl ? cell("RTLText", 1) : "") + "</Row></Section>" +
+        '<Section N="Paragraph"><Row IX="0">' + cell("HorzAlign", s.algn === "ctr" ? 1 : s.algn === "r" ? 2 : 0) +
+        "</Row></Section><Text>" + xmlEsc(s.lines ? s.lines.map(l=> l.txt).join("\n") : s.txt) + "</Text></Shape>";
+    }
+    if(s.t === "img"){
+      const w = s.box.w / IN, h = s.box.h / IN;
+      return open("Foreign") + xform(s.box, o) + cell("ImgOffsetX", 0) + cell("ImgOffsetY", 0) + cell("ImgWidth", f(w)) +
+        cell("ImgHeight", f(h)) + cell("LinePattern", 0) + cell("FillPattern", 0) + geom(box(w, h), true, true) +
+        '<ForeignData ForeignType="Bitmap" CompressionType="PNG"><Rel r:id="rId' + (logos.refs[s.ref] + 1) + '"/></ForeignData></Shape>';
+    }
+    if(s.t === "arrow" || s.t === "line"){
+      const x1 = X(s.a1.x, o), y1 = Y(s.a1.y, o), x2 = X(s.a2.x, o), y2 = Y(s.a2.y, o);
+      const len = Math.max(0.0001, Math.hypot(x2 - x1, y2 - y1));
+      return open("Shape") + cell("PinX", f((x1 + x2) / 2)) + cell("PinY", f((y1 + y2) / 2)) + cell("Width", f(len)) +
+        cell("Height", 0) + cell("LocPinX", f(len / 2)) + cell("LocPinY", 0) + cell("Angle", f(Math.atan2(y2 - y1, x2 - x1))) +
+        cell("BeginX", f(x1)) + cell("BeginY", f(y1)) + cell("EndX", f(x2)) + cell("EndY", f(y2)) + cell("ObjType", 2) +
+        lineCells({ col:s.col, a:s.a, w:s.w, dash:s.dash }) + cell("BeginArrow", 0) +
+        cell("EndArrow", s.t === "arrow" ? 4 : 0) + cell("EndArrowSize", 2) + cell("FillPattern", 0) +
+        geom([[0, 0], [len, 0]], true, false) + "</Shape>";
+    }
+    if(s.t === "poly"){
+      const xs = s.pts.map(p=> p.x), ys = s.pts.map(p=> p.y), bx = Math.min(...xs), by = Math.min(...ys);
+      const b = { x:bx, y:by, w:Math.max(...xs) - bx, h:Math.max(...ys) - by };
+      return open("Shape", "Platform outline") + xform(b, o) + lineCells({ col:s.col, a:s.a, w:s.w, dash:"dash" }) +
+        cell("FillPattern", 0) + cell("Rounding", f(s.round / IN)) +
+        geom(s.pts.concat([s.pts[0]]).map(p=> [(p.x - bx) / IN, (by + b.h - p.y) / IN]), true, false) + "</Shape>";
+    }
+    return "";
+  };
+  const node = (k, o)=>{
+    if(k.shape) return shape(k.shape, o);
+    const g = k.group;
+    return open("Group", g.name || g.kind) + xform(k.box, o) + cell("LinePattern", 0) + cell("FillPattern", 0) +
+      (g.link ? '<Section N="Hyperlink"><Row N="Row_1">' + cell("Description", xmlEsc(g.name)) + cell("Address", xmlEsc(g.link)) +
+        cell("Default", 1) + "</Row></Section>" : "") +
+      "<Shapes>" + k.kids.map(c=> node(c, k.box)).join("") + "</Shapes></Shape>";
+  };
+  const root = { x:0, y:0, w:model.W, h:model.H };
+  const bg = { t:"rect", box:root, radius:0, fill:model.bg.replace("#", "").toUpperCase(), fillA:1, line:null, name:"Background" };
+  const doc = XD + "<VisioDocument " + VSDX_NS + ">" +
+    '<DocumentSettings TopPage="0" DefaultTextStyle="0" DefaultLineStyle="0" DefaultFillStyle="0" DefaultGuideStyle="0">' +
+    "<GlueSettings>9</GlueSettings><SnapSettings>65847</SnapSettings><SnapExtensions>34</SnapExtensions><SnapAngles/>" +
+    "<DynamicGridEnabled>0</DynamicGridEnabled><ProtectStyles>0</ProtectStyles><ProtectShapes>0</ProtectShapes>" +
+    "<ProtectMasters>0</ProtectMasters><ProtectBkgnds>0</ProtectBkgnds></DocumentSettings>" +
+    '<Colors><ColorEntry IX="0" RGB="#000000"/><ColorEntry IX="1" RGB="#FFFFFF"/></Colors>' +
+    '<FaceNames><FaceName NameU="' + VSDX_FONT + '" Flags="325"/></FaceNames>' +
+    '<StyleSheets><StyleSheet ID="0" NameU="No Style" IsCustomNameU="1" Name="No Style" IsCustomName="1">' +
+    cell("EnableLineProps", 1) + cell("EnableFillProps", 1) + cell("EnableTextProps", 1) + cell("HideForApply", 0) +
+    cell("LineWeight", f(1 / IN)) + cell("LineColor", "#000000") + cell("LinePattern", 1) + cell("Rounding", 0) +
+    cell("EndArrowSize", 2) + cell("BeginArrow", 0) + cell("EndArrow", 0) + cell("LineCap", 0) + cell("BeginArrowSize", 2) +
+    cell("LineColorTrans", 0) + cell("FillForegnd", "#FFFFFF") + cell("FillBkgnd", "#000000") + cell("FillPattern", 1) +
+    cell("ShdwForegnd", "#000000") + cell("ShdwPattern", 0) + cell("FillForegndTrans", 0) + cell("FillBkgndTrans", 0) +
+    cell("ShdwForegndTrans", 0) + cell("LeftMargin", 0) + cell("RightMargin", 0) + cell("TopMargin", 0) +
+    cell("BottomMargin", 0) + cell("VerticalAlign", 1) + cell("TextBkgnd", 0) + cell("TextDirection", 0) +
+    cell("TextBkgndTrans", 0) + '<Section N="Character"><Row IX="0">' + cell("Font", VSDX_FONT) + cell("Color", "#000000") +
+    cell("Style", 0) + cell("Case", 0) + cell("Pos", 0) + cell("FontScale", 1) + cell("Size", f(12 / IN), ' U="PT"') +
+    cell("ColorTrans", 0) + '</Row></Section><Section N="Paragraph"><Row IX="0">' + cell("IndFirst", 0) +
+    cell("IndLeft", 0) + cell("IndRight", 0) + cell("SpLine", -1.2) + cell("SpBefore", 0) + cell("SpAfter", 0) +
+    cell("HorzAlign", 1) + cell("Bullet", 0) + "</Row></Section></StyleSheet></StyleSheets></VisioDocument>";
+  const pages = XD + "<Pages " + VSDX_NS + '><Page ID="0" NameU="Page-1" Name="' + xmlEsc(title) + '" ViewScale="-1" ViewCenterX="' +
+    f(W / 2) + '" ViewCenterY="' + f(H / 2) + '"><PageSheet LineStyle="0" FillStyle="0" TextStyle="0">' +
+    cell("PageWidth", f(W)) + cell("PageHeight", f(H)) + cell("ShdwOffsetX", 0.125) + cell("ShdwOffsetY", -0.125) +
+    cell("PageScale", 1, ' U="IN_F"') + cell("DrawingScale", 1, ' U="IN_F"') + cell("DrawingSizeType", 0) +
+    cell("DrawingScaleType", 0) + cell("InhibitSnap", 0) + cell("UIVisibility", 0) + cell("ShdwType", 0) +
+    cell("DrawingResizeType", 1) + '</PageSheet><Rel r:id="rId1"/></Page></Pages>';
+  const page1 = XD + "<PageContents " + VSDX_NS + "><Shapes>" + shape(bg, root) + tree.map(k=> node(k, root)).join("") +
+    "</Shapes></PageContents>";
+  return [
+    { name:"[Content_Types].xml", data:XD + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/>' +
+      '<Override PartName="/visio/document.xml" ContentType="application/vnd.ms-visio.drawing.main+xml"/>' +
+      '<Override PartName="/visio/pages/pages.xml" ContentType="application/vnd.ms-visio.pages+xml"/>' +
+      '<Override PartName="/visio/pages/page1.xml" ContentType="application/vnd.ms-visio.page+xml"/>' +
+      '<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>' +
+      '<Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>' +
+      "</Types>" },
+    { name:"_rels/.rels", data:opcRels([
+      { id:"rId1", type:VSDX_REL + "document", t:"visio/document.xml" },
+      { id:"rId2", type:"package/2006/relationships/metadata/core-properties", t:"docProps/core.xml" },
+      { id:"rId3", type:"officeDocument/2006/relationships/extended-properties", t:"docProps/app.xml" }]) },
+    { name:"docProps/core.xml", data:opcCore(title) },
+    { name:"docProps/app.xml", data:XD + '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">' +
+      "<Application>Databricks Reference Architecture</Application></Properties>" },
+    { name:"visio/document.xml", data:doc },
+    { name:"visio/_rels/document.xml.rels", data:opcRels([{ id:"rId1", type:VSDX_REL + "pages", t:"pages/pages.xml" }]) },
+    { name:"visio/pages/pages.xml", data:pages },
+    { name:"visio/pages/_rels/pages.xml.rels", data:opcRels([{ id:"rId1", type:VSDX_REL + "page", t:"page1.xml" }]) },
+    { name:"visio/pages/page1.xml", data:page1 },
+    { name:"visio/pages/_rels/page1.xml.rels", data:opcRels(logos.uniq.map((u, i)=> ({ id:"rId" + (i + 1),
+      type:"officeDocument/2006/relationships/image", t:"../media/image" + (i + 1) + ".png" }))) },
+  ].concat(logos.uniq.map((u, i)=> ({ name:"visio/media/image" + (i + 1) + ".png", data:u.png })));
+}
+
+const DRAW_EXPORTS = {
+  drawio:{ ext:"drawio", mime:"application/vnd.jgraph.mxfile", build:drawioXml },
+  svg:{ ext:"svg", mime:"image/svg+xml", build:vectorSvg },
+  excalidraw:{ ext:"excalidraw", mime:"application/json", build:excalidrawJson },
+  vsdx:{ ext:"vsdx", mime:"application/vnd.ms-visio.drawing", build:vsdxParts },
+  "pptx-edit":{ ext:"pptx", tag:"editable", mime:"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    build:pptxEditableParts }
+};
+async function drawingBlob(kind, model){
+  const d = DRAW_EXPORTS[kind], out = await d.build(model || collectBoard());
+  return typeof out === "string" ? new Blob([out], { type:d.mime }) : zipStore(out, d.mime);
+}
+async function exportDrawing(kind){
+  const d = DRAW_EXPORTS[kind];
+  dlBlob(await drawingBlob(kind), dlName(d.ext, d.tag));
+}
 
 async function exportPng(){
   const { blob } = await boardPngBlob(2);
@@ -10005,9 +10509,28 @@ async function dbxLogoRgbOnBg(h, bgHex, wordmarkHex){
   const enc = await flate(rgb); if(!enc) return null;
   return { stream:enc, w:w, h:h };
 }
-async function exportPptx(){
+function pptxBoardFit(W, H){
+  const SW = PPT_SW, SH = PPT_SH, pad = 0.03;
+  const bandH = Math.round(SH * 0.052), availH = SH * (1 - pad * 2) - bandH;
+  const k = Math.min(SW * (1 - pad * 2) / W, availH / H);
+  return { pad, bandH, k, ox:Math.round((SW - W * k) / 2), oy:Math.round(SH * pad + bandH) };
+}
+function pptxTitleStrip(id, title, pad, bandH){
   const SW = PPT_SW, SH = PPT_SH;
-  const pad = 0.03;
+  return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="Title"/>' +
+    '<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="' +
+    Math.round(SW * pad) + '" y="' + Math.round(SH * pad) + '"/><a:ext cx="' +
+    Math.round(SW * (1 - pad * 2)) + '" cy="' + bandH + '"/></a:xfrm>' +
+    '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>' +
+    '<p:txBody><a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" anchor="t">' +
+    '<a:noAutofit/></a:bodyPr><a:lstStyle/><a:p><a:pPr algn="' + ooxmlAlgn("l") + '"' +
+    ooxmlRtlAttr(title) + '/>' +
+    '<a:r><a:rPr lang="' + ooxmlLang() + '" sz="1800" b="1"><a:solidFill><a:srgbClr val="' +
+    expInk().replace("#", "").toUpperCase() + '"/>' +
+    '</a:solidFill>' + pptxRunFonts() + '</a:rPr><a:t>' + xmlEsc(title) +
+    '</a:t></a:r></a:p></p:txBody></p:sp>';
+}
+async function exportPptx(){
   const title = docTitle();
   const coverGlyphPng = await (async()=>{ const cv = await coverGlyphCanvas(1400, ooxmlRtl()); return cv ? canvasPngU8(cv) : null; })();
   const coverLogoPng = await dbxLogoPngU8(140, expInk());
@@ -10031,10 +10554,7 @@ async function exportPptx(){
      it. The strip is kept tight and the board is top-aligned right beneath it
      (not vertically centred) so the platform gets the maximum height to zoom
      into instead of floating with a gap above and below. */
-  const bandH = Math.round(SH * 0.052), availH = SH * (1 - pad * 2) - bandH;
-  const k = Math.min(SW * (1 - pad * 2) / W, availH / H);
-  const ox = Math.round((SW - W * k) / 2);
-  const oy = Math.round(SH * pad + bandH);
+  const { pad, bandH, k, ox, oy } = pptxBoardFit(W, H);
 
   let id = 2;
   const parts = ['<p:pic><p:nvPicPr><p:cNvPr id="' + (id++) + '" name="Architecture"/>' +
@@ -10043,18 +10563,7 @@ async function exportPptx(){
     '<a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="' + ox +
     '" y="' + oy + '"/><a:ext cx="' + Math.round(W * k) + '" cy="' + Math.round(H * k) +
     '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>'];
-  parts.push('<p:sp><p:nvSpPr><p:cNvPr id="' + (id++) + '" name="Title"/>' +
-    '<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="' +
-    Math.round(SW * pad) + '" y="' + Math.round(SH * pad) + '"/><a:ext cx="' +
-    Math.round(SW * (1 - pad * 2)) + '" cy="' + bandH + '"/></a:xfrm>' +
-    '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>' +
-    '<p:txBody><a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" anchor="t">' +
-    '<a:noAutofit/></a:bodyPr><a:lstStyle/><a:p><a:pPr algn="' + ooxmlAlgn("l") + '"' +
-    ooxmlRtlAttr(title) + '/>' +
-    '<a:r><a:rPr lang="' + ooxmlLang() + '" sz="1800" b="1"><a:solidFill><a:srgbClr val="' +
-    expInk().replace("#", "").toUpperCase() + '"/>' +
-    '</a:solidFill>' + pptxRunFonts() + '</a:rPr><a:t>' + xmlEsc(title) +
-    '</a:t></a:r></a:p></p:txBody></p:sp>');
+  parts.push(pptxTitleStrip(id++, title, pad, bandH));
   board.body = parts.join("");
   return zipStore(pptxParts([pptxCoverSlide(coverGlyphPng, coverLogoPng), pptxIndexSlide(), board].concat(await pptxNarrativeSlides(coverGlyphPng)), title));
 }
@@ -11025,6 +11534,7 @@ document.getElementById("dl-menu").addEventListener("click", async (e)=>{
     if(kind === "png") await exportPng();
     else if(kind === "pdf") await exportPdf();
     else if(kind === "gif") await exportGif();
+    else if(DRAW_EXPORTS[kind]) await exportDrawing(kind);
     else dlBlob(await exportPptx(), dlName("pptx"));
   }catch(err){
     alert("Could not build the " + kind.toUpperCase() + " here: " + err.message +
@@ -11236,18 +11746,20 @@ const zpathEl = document.getElementById("zpath");
 const platHeadEl = document.querySelector(".plat-head");
 const Z_R = 13;
 
-function roundPoly(pts, r){
+function roundPolySegs(pts, r){
   const n = pts.length, out = [];
   const len = (a,b)=> Math.hypot(b.x - a.x, b.y - a.y);
   const walk = (a,b,d)=>{ const L = len(a,b) || 1; return { x:a.x + (b.x-a.x)*d/L, y:a.y + (b.y-a.y)*d/L }; };
   for(let i = 0; i < n; i++){
     const p = pts[i], prev = pts[(i-1+n)%n], next = pts[(i+1)%n];
-    const a = walk(p, prev, Math.min(r, len(p,prev)/2));
-    const b = walk(p, next, Math.min(r, len(p,next)/2));
-    out.push(`${i ? "L" : "M"}${a.x.toFixed(1)} ${a.y.toFixed(1)}`);
-    out.push(`Q${p.x.toFixed(1)} ${p.y.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`);
+    out.push({ op:i ? "L" : "M", p:walk(p, prev, Math.min(r, len(p,prev)/2)) });
+    out.push({ op:"Q", c:p, p:walk(p, next, Math.min(r, len(p,next)/2)) });
   }
-  return out.join(" ") + " Z";
+  return out;
+}
+function roundPoly(pts, r){
+  const f = q=> q.x.toFixed(1) + " " + q.y.toFixed(1);
+  return roundPolySegs(pts, r).map(s=> s.op === "Q" ? "Q" + f(s.c) + " " + f(s.p) : s.op + f(s.p)).join(" ") + " Z";
 }
 
 /* The platform's zone box IS its travelling-dash ring: one stroke, offset clear
@@ -11618,7 +12130,7 @@ function paintBrandLogo(){
    query so no CDN edge can answer it): when its build differs from this build,
    reload once onto a cache-busting URL so the browser must pull the new HTML.
    BUILD here and app/version.json MUST be bumped together on every deploy. */
-const BUILD = "0.4.8";
+const BUILD = "0.4.9";
 async function staleReload(){
   try {
     const r = await fetch(APP_BASE + "version.json?_=" + Date.now(), { cache:"no-store" });
