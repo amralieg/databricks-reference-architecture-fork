@@ -17,6 +17,410 @@
  },
  "clouds": {
   "aws": {
+   "derived": {
+    "MCP servers": {
+     "cat": "MCP and Unity Catalog HTTP connection",
+     "doc": "https://docs.databricks.com/aws/en/agents/mcp-tools/",
+     "from": "Custom Model Serving capability (CPU serving)",
+     "say": "MCP servers and Unity Catalog HTTP connections are supported in the same regions as Custom Model Serving.",
+     "sec": "mcp-and-unity-catalog-http-connection-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#mcp-and-unity-catalog-http-connection-availability",
+     "st": "GA"
+    },
+    "Unity Catalog HTTP connections": {
+     "cat": "MCP and Unity Catalog HTTP connection",
+     "doc": "https://docs.databricks.com/aws/en/query-federation/http",
+     "from": "Custom Model Serving capability (CPU serving)",
+     "say": "MCP servers and Unity Catalog HTTP connections are supported in the same regions as Custom Model Serving.",
+     "sec": "mcp-and-unity-catalog-http-connection-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#mcp-and-unity-catalog-http-connection-availability",
+     "st": "GA"
+    }
+   },
+   "designated": {
+    "geos": [
+     "Americas",
+     "Asia",
+     "Australia & New Zealand",
+     "Europe",
+     "India",
+     "Mainland China",
+     "Middle East and Africa"
+    ],
+    "legend": {
+     "*": {
+      "c": true,
+      "t": "This feature is only available when you enable cross-Geo processing on your workspace. Where multiple models are available for a particular feature, some models might only be available if cross-Geo processing has been enabled. See Model availability by region for model-specific region availability."
+     },
+     "§": {
+      "c": false,
+      "t": "Traffic is processed within the same country as the workspace region for Japan and Korea when you disable cross-Geo processing. Indonesia traffic is processed in Asia Geo. For other countries in the Asia Geo, including Singapore and Hong Kong, this feature requires cross-Geo processing."
+     },
+     "¶": {
+      "c": false,
+      "t": "For AI Runtime, some GPU types require cross-Geo processing. For AWS workspaces in Asia, Australia & New Zealand, Europe, and India, cross-Geo GPU workloads run in the Americas Geo."
+     },
+     "‖": {
+      "c": false,
+      "t": "Foundation Model API requests for workspaces in the Americas Geo are processed within the United States. Unless you enable cross-Geo processing, these requests do not leave the US."
+     },
+     "†": {
+      "c": false,
+      "t": "Asia Geo traffic can be sent for processing within regions in Japan, South Korea or Singapore. If your workspace is in a Japan region, then that traffic is processed within that region."
+     },
+     "‡": {
+      "c": false,
+      "t": "Traffic is processed within the same country or territory as the workspace region for Brazil, Canada, Japan, Korea, Singapore, and United Kingdom when you disable cross-Geo processing. For other countries in the Asia Geo, this feature is supported by models in Asia Geo if cross-Geo processing is disabled."
+     }
+    },
+    "local": {
+     "AI-generated comments": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Processed in Singapore",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Processed in Singapore",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     },
+     "AI/BI dashboards": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Processed in Singapore",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Processed in Singapore",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     },
+     "Genie Agents chat mode": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Not available",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Not available",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     },
+     "Genie Code chat and cell actions": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Processed in Singapore",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Processed in Singapore",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     }
+    },
+    "local_sec": "country-specific-processing-for-ai-assistive-features",
+    "rows": [
+     {
+      "doc": "https://docs.databricks.com/aws/en/machine-learning/foundation-model-apis/#token-foundation-apis",
+      "geo": {
+       "Americas": "Available‖",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Pay-per-token Foundation Model APIs",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/large-language-models/ai-functions",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "AI Functions optimized for batch inference (excludes ai_parse_document v2, ai_prep_search, ai_classify v2, ai_extract v2)",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_parse_document",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "AI Function: ai_parse_document v2",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_prep_search",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "AI Functions: ai_prep_search, ai_classify v2, ai_extract v2",
+      "prov": "Model-dependent",
+      "st": "Beta"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/machine-learning/foundation-model-apis/#throughput",
+      "geo": {
+       "Americas": "Available‖",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Provisioned throughput Foundation Model APIs",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/agents/agent-bricks/knowledge-assistant",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Knowledge Assistant and Supervisor Agent",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/mlflow3/genai/eval-monitor/concepts/scorers",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "LLMs as judges (built-in judges)",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/large-language-models/foundation-model-training/",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Not available",
+       "Europe": "Not available",
+       "India": "Not available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Foundation Model Fine-tuning",
+      "prov": "Model-dependent",
+      "st": "Public Preview"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/machine-learning/ai-runtime/",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available¶",
+       "Australia & New Zealand": "Available¶",
+       "Europe": "Available¶",
+       "India": "Available¶",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "AI Runtime",
+      "prov": "Not applicable",
+      "st": "Public Preview"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/ai-search/query-ai-search#rerank",
+      "geo": {
+       "Americas": "Available (US model)",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI Search reranker",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/comments/ai-comments",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available‡",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available‡",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI-generated comments",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/notebooks/code-assistant#autocomplete-code",
+      "geo": {
+       "Americas": "Available (US model)",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI-based autocomplete",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/genie-code/#requirements",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Code agentic capabilities",
+      "prov": "Azure AI Services, OpenAI on Databricks, and Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/genie-code/navigate-genie-code#pane",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available‡",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available‡",
+       "India": "Available",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Code chat and cell actions",
+      "prov": "Azure AI Services and OpenAI on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/genie-agents/",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available§",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available‡",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Agents chat mode",
+      "prov": "Azure AI Services and OpenAI on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/genie-agents/",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Agents Agent mode",
+      "prov": "OpenAI on Databricks and Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/genie-one/chat",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Chat in Genie One",
+      "prov": "OpenAI on Databricks and Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/dev-tools/databricks-apps/genie-app-builder",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Genie App Builder",
+      "prov": "OpenAI on Databricks and Anthropic on Databricks",
+      "st": "Beta"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/ai-bi/",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available‡",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available‡",
+       "India": "Available",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI/BI dashboards",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/aws/en/data-governance/unity-catalog/data-classification",
+      "geo": {
+       "Americas": "Available (US model)",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Data classification",
+      "prov": "Databricks",
+      "st": "GA"
+     }
+    ],
+    "sec": "availability-of-designated-services-in-each-geo",
+    "src": "https://docs.databricks.com/aws/en/resources/designated-services#availability-of-designated-services-in-each-geo"
+   },
    "feature_sources": {
     "Genie App Builder (product page)": "https://docs.databricks.com/aws/en/dev-tools/databricks-apps/genie-app-builder",
     "Lakebase (product page)": "https://docs.databricks.com/aws/en/oltp/projects/manage-projects"
@@ -250,7 +654,7 @@
      "us-west-1": false,
      "us-west-2": true
     },
-    "Foundation Model APIs (provisioned throughput) **": {
+    "Foundation Model APIs (provisioned throughput)": {
      "ap-northeast-1": true,
      "ap-northeast-2": true,
      "ap-south-1": true,
@@ -758,6 +1162,476 @@
      "us-west-2": true
     }
    },
+   "geo": {
+    "ap-northeast-1": {
+     "country": "Japan",
+     "geo": "Asia"
+    },
+    "ap-northeast-2": {
+     "country": "South Korea",
+     "geo": "Asia"
+    },
+    "ap-south-1": {
+     "country": "India",
+     "geo": "India"
+    },
+    "ap-southeast-1": {
+     "country": "Singapore",
+     "geo": "Asia"
+    },
+    "ap-southeast-2": {
+     "country": "Australia",
+     "geo": "Australia & New Zealand"
+    },
+    "ap-southeast-3": {
+     "country": "Indonesia",
+     "geo": "Asia"
+    },
+    "ca-central-1": {
+     "country": "Canada",
+     "geo": "Americas"
+    },
+    "eu-central-1": {
+     "country": "Germany",
+     "geo": "Europe"
+    },
+    "eu-west-1": {
+     "country": "Ireland",
+     "geo": "Europe"
+    },
+    "eu-west-2": {
+     "country": "United Kingdom",
+     "geo": "Europe"
+    },
+    "eu-west-3": {
+     "country": "France",
+     "geo": "Europe"
+    },
+    "sa-east-1": {
+     "country": "Brazil",
+     "geo": "Americas"
+    },
+    "us-east-1": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-east-2": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-gov-west-1": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-west-1": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-west-2": {
+     "country": "United States",
+     "geo": "Americas"
+    }
+   },
+   "legend": {
+    "agent-features-availability": {
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled. Foundation Model API workloads that rely on GPU compute availability, such as workloads that use models from the Meta Llama family, require cross geography routing."
+     }
+    },
+    "ai-and-machine-learning-features-availability": {
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled. Foundation Model API workloads that rely on GPU compute availability, such as workloads that use models from the Meta Llama family, require cross geography routing."
+     }
+    },
+    "ai-function-availability": {
+     "‡": {
+      "c": false,
+      "t": "Asia Geo traffic can be sent for processing within regions in Japan, South Korea, or Singapore. If your workspace is in a region in Japan or South Korea, then traffic is processed within that country."
+     },
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled."
+     }
+    },
+    "model-serving-features-availability": {
+     "**": {
+      "c": false,
+      "t": "Includes GPU support"
+     },
+     "‡": {
+      "c": false,
+      "t": "Asia Geo traffic can be sent for processing within regions in Japan, South Korea, or Singapore. If your workspace is in a region in Japan or South Korea, then traffic is processed within that country."
+     },
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled. Foundation Model API workloads that rely on GPU compute availability require cross geography routing."
+     }
+    },
+    "serverless-availability": {
+     "†": {
+      "c": false,
+      "t": "Serverless compute for notebooks, jobs, and Lakeflow pipelines is Public Preview in Databricks on AWS GovCloud and Databricks on AWS GovCloud DoD. Serverless compute for sql warehouses is Public Preview in Databricks on AWS GovCloud and Beta in Databricks on AWS GovCloud DoD. See Databricks on AWS GovCloud."
+     }
+    }
+   },
+   "marks": {
+    "Foundation Model APIs (pay-per-token)": {
+     "ap-northeast-1": "‡",
+     "ap-northeast-2": "⥂",
+     "ap-south-1": "⥂",
+     "ap-southeast-1": "⥂",
+     "ap-southeast-2": "⥂"
+    },
+    "Foundation Model APIs (provisioned throughput)": {
+     "ap-northeast-1": "‡",
+     "ap-northeast-2": "‡",
+     "ap-southeast-1": "‡"
+    },
+    "Foundation Model Fine-tuning": {
+     "ap-southeast-1": "⥂"
+    },
+    "Knowledge Assistant": {
+     "ap-northeast-1": "⥂",
+     "ap-northeast-2": "⥂",
+     "ap-southeast-1": "⥂",
+     "ap-southeast-2": "⥂"
+    },
+    "Other AI functions (v1)": {
+     "ap-northeast-1": "⥂",
+     "ap-northeast-2": "⥂",
+     "ap-southeast-1": "‡"
+    },
+    "Serverless compute (notebooks, jobs, pipelines, and SQL warehouses)": {
+     "us-gov-west-1": "†"
+    },
+    "Supervisor Agent": {
+     "ap-northeast-1": "⥂",
+     "ap-northeast-2": "⥂",
+     "ap-southeast-1": "⥂",
+     "ap-southeast-2": "⥂"
+    },
+    "ai_decide": {
+     "ap-northeast-2": "‡",
+     "ap-southeast-1": "‡"
+    },
+    "ai_enrich": {
+     "ap-northeast-2": "‡",
+     "ap-southeast-1": "‡"
+    },
+    "ai_extract and ai_classify v2": {
+     "ap-northeast-2": "‡",
+     "ap-southeast-1": "‡"
+    },
+    "ai_parse_document v2": {
+     "ap-northeast-2": "‡",
+     "ap-southeast-1": "‡"
+    },
+    "ai_prep_search": {
+     "ap-northeast-1": "‡",
+     "ap-northeast-2": "⥂",
+     "ap-southeast-1": "⥂"
+    },
+    "ai_query (batch inference)": {
+     "ap-northeast-1": "‡",
+     "ap-northeast-2": "⥂",
+     "ap-southeast-1": "‡"
+    },
+    "ai_transcribe": {
+     "ap-northeast-1": "⥂",
+     "ap-northeast-2": "⥂",
+     "ap-south-1": "⥂",
+     "ap-southeast-1": "⥂",
+     "ap-southeast-2": "⥂",
+     "ca-central-1": "⥂",
+     "sa-east-1": "⥂"
+    }
+   },
+   "meta": {
+    "AI Search": {
+     "cat": "AI and machine learning features",
+     "doc": "https://docs.databricks.com/aws/en/ai-search/ai-search",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "CMK": {
+     "cat": "Security features",
+     "doc": "https://docs.databricks.com/aws/en/security/keys/customer-managed-keys",
+     "sec": "security-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#security-features-availability",
+     "st": "GA"
+    },
+    "Custom Agents on Model Serving and Evaluation": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/aws/en/agents/retrieval-augmented-generation",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Custom Model Serving capability (CPU serving)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/aws/en/machine-learning/model-serving/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Custom Model Serving capability (GPU serving)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/aws/en/machine-learning/model-serving/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Data Quality Monitoring": {
+     "cat": "AI and machine learning features",
+     "doc": "https://docs.databricks.com/aws/en/data-governance/unity-catalog/data-quality-monitoring/",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "Databricks Apps": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/dev-tools/databricks-apps/",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Databricks Sandbox (Beta)": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/compute/serverless/sandbox",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "Beta"
+    },
+    "Default storage": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/storage/default-storage",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "External models": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/aws/en/machine-learning/foundation-models/external-models/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Firewall enablement for serverless compute": {
+     "cat": "Security features",
+     "doc": "https://docs.databricks.com/aws/en/security/network/serverless-network-security/serverless-firewall-config",
+     "sec": "security-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#security-features-availability",
+     "st": "GA"
+    },
+    "Foundation Model APIs (pay-per-token)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/aws/en/machine-learning/foundation-model-apis/#token-foundation-apis",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Foundation Model APIs (provisioned throughput)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/aws/en/machine-learning/foundation-model-apis/#throughput",
+     "hm": "**",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Foundation Model Fine-tuning": {
+     "cat": "AI and machine learning features",
+     "doc": "https://docs.databricks.com/aws/en/large-language-models/foundation-model-training/",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "Public Preview"
+    },
+    "Genie App Builder (product page)": {
+     "cat": "Product page",
+     "doc": "https://docs.databricks.com/aws/en/dev-tools/databricks-apps/genie-app-builder",
+     "sec": "requirements-and-availability",
+     "src": "https://docs.databricks.com/aws/en/dev-tools/databricks-apps/genie-app-builder#requirements-and-availability",
+     "st": "Beta"
+    },
+    "Knowledge Assistant": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/aws/en/agents/agent-bricks/knowledge-assistant",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Lakebase (product page)": {
+     "cat": "Product page",
+     "doc": "https://docs.databricks.com/aws/en/oltp/projects/manage-projects",
+     "sec": "region-availability",
+     "src": "https://docs.databricks.com/aws/en/oltp/projects/manage-projects#region-availability",
+     "st": "GA"
+    },
+    "Lakebase Autoscaling": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/oltp/projects/manage-projects#availability",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Lakehouse Real-Time (Beta)": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/compute/sql-warehouse/real-time",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "Beta"
+    },
+    "MLflow traces in Unity Catalog": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/aws/en/mlflow3/genai/tracing/trace-unity-catalog",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Managed connectors in Lakeflow Connect": {
+     "cat": "Ingestion",
+     "doc": "https://docs.databricks.com/aws/en/ingestion/lakeflow-connect/",
+     "sec": "ingestion-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ingestion-availability",
+     "st": "GA"
+    },
+    "Managed disaster recovery": {
+     "cat": "Resilience",
+     "doc": "https://docs.databricks.com/aws/en/admin/managed-disaster-recovery",
+     "sec": "resilience-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#resilience-availability",
+     "st": "GA"
+    },
+    "Model Training - forecasting": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/machine-learning/train-model/serverless-forecasting",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "Public Preview"
+    },
+    "Other AI functions (v1)": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/large-language-models/ai-functions",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "Predictive Optimization": {
+     "cat": "AI and machine learning features",
+     "doc": "https://docs.databricks.com/aws/en/optimizations/predictive-optimization",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "PrivateLink (classic compute plane)": {
+     "cat": "Security features",
+     "doc": "https://docs.databricks.com/aws/en/security/network/classic/privatelink",
+     "sec": "security-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#security-features-availability",
+     "st": "GA"
+    },
+    "Serverless compute (notebooks, jobs, pipelines, and SQL warehouses)": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/compute/serverless/",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Serverless workspaces": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/aws/en/admin/workspace/serverless-workspaces",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Supervisor Agent": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/aws/en/agents/agent-bricks/multi-agent-supervisor",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Unity Gateway": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/aws/en/ai-gateway/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Zerobus Ingest": {
+     "cat": "Ingestion",
+     "doc": "https://docs.databricks.com/aws/en/ingestion/zerobus-overview",
+     "sec": "ingestion-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ingestion-availability",
+     "st": "GA"
+    },
+    "ai_decide": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_decide",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_enrich": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_enrich",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_extract and ai_classify v2": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/large-language-models/ai-functions",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_forecast and ai_detect_anomalies": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_forecast",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "Public Preview"
+    },
+    "ai_parse_document v2": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_parse_document",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_prep_search": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_prep_search",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_query (batch inference)": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_query",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_transcribe": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_transcribe",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/aws/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    }
+   },
+   "products": {
+    "Agentic Dev": "GA",
+    "Bronze": "GA",
+    "Genie": "GA",
+    "Gold": "GA",
+    "Serverless Compute": "GA",
+    "Silver": "GA"
+   },
    "regions": [
     {
      "code": "ap-northeast-1",
@@ -830,6 +1704,518 @@
    ]
   },
   "azure": {
+   "derived": {
+    "MCP servers": {
+     "cat": "MCP and Unity Catalog HTTP connection",
+     "doc": "https://learn.microsoft.com/azure/databricks/agents/mcp-tools/",
+     "from": "Custom Model Serving capability (CPU serving)",
+     "say": "MCP servers and Unity Catalog HTTP connections are supported in the same regions as Custom Model Serving.",
+     "sec": "azure-mcp",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-mcp",
+     "st": "GA"
+    },
+    "Unity Catalog HTTP connections": {
+     "cat": "MCP and Unity Catalog HTTP connection",
+     "doc": "https://learn.microsoft.com/azure/databricks/query-federation/http",
+     "from": "Custom Model Serving capability (CPU serving)",
+     "say": "MCP servers and Unity Catalog HTTP connections are supported in the same regions as Custom Model Serving.",
+     "sec": "azure-mcp",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-mcp",
+     "st": "GA"
+    }
+   },
+   "designated": {
+    "geos": [
+     "United States",
+     "Canada",
+     "Brazil",
+     "Mexico",
+     "Asia Pacific",
+     "Japan",
+     "South Korea",
+     "Australia",
+     "EU Data boundary",
+     "United Kingdom",
+     "UAE",
+     "Qatar",
+     "India",
+     "South Africa"
+    ],
+    "legend": {
+     "*": {
+      "c": true,
+      "t": "This feature is only available when you enable cross-Geo processing on your workspace. Where multiple models are available for a particular feature, some models might only be available if cross-Geo processing has been enabled. See Model availability by region for region availability of each model."
+     }
+    },
+    "local": {},
+    "local_sec": "",
+    "rows": [
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/foundation-model-apis/#token-foundation-apis",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available*",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "Pay-per-token Foundation Model APIs",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/large-language-models/ai-functions",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available*",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "AI Functions optimized for batch inference (excludes ai_parse_document v2, ai_prep_search, ai_classify v2, ai_extract v2)",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_parse_document",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "AI Function: ai_parse_document v2",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_classify",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "AI Functions: ai_classify v2, ai_extract v2",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_prep_search",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "AI Function: ai_prep_search",
+      "prov": "Model-dependent",
+      "st": "Beta"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/foundation-model-apis/#throughput",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available*",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "Provisioned throughput Foundation Model APIs",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/agents/agent-bricks/knowledge-assistant",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available*",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "Knowledge Assistant and Supervisor Agent",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/mlflow3/genai/eval-monitor/concepts/scorers",
+      "geo": {
+       "Asia Pacific": "Available",
+       "Australia": "Available",
+       "Brazil": "Not available",
+       "Canada": "Available",
+       "EU Data boundary": "Available",
+       "India": "Available",
+       "Japan": "Available",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Not available",
+       "UAE": "Not available",
+       "United Kingdom": "Available",
+       "United States": "Available"
+      },
+      "n": "LLMs as judges (built-in judges)",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/large-language-models/foundation-model-training/",
+      "geo": {
+       "Asia Pacific": "Not available",
+       "Australia": "Not available",
+       "Brazil": "Not available",
+       "Canada": "Not available",
+       "EU Data boundary": "Not available",
+       "India": "Not available",
+       "Japan": "Not available",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Not available",
+       "UAE": "Not available",
+       "United Kingdom": "Available",
+       "United States": "Available"
+      },
+      "n": "Foundation Model Fine-tuning",
+      "prov": "Model-dependent",
+      "st": "Public Preview"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/ai-runtime/",
+      "geo": {
+       "Asia Pacific": "Not available",
+       "Australia": "Available",
+       "Brazil": "Not available",
+       "Canada": "Not available",
+       "EU Data boundary": "Available",
+       "India": "Not available",
+       "Japan": "Not available",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Not available",
+       "UAE": "Not available",
+       "United Kingdom": "Not available",
+       "United States": "Available"
+      },
+      "n": "AI Runtime",
+      "prov": "Not applicable",
+      "st": "Public Preview"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/ai-search/query-ai-search#rerank",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Available*",
+       "Qatar": "Available*",
+       "South Africa": "Available*",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "AI Search reranker",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/comments/ai-comments",
+      "geo": {
+       "Asia Pacific": "Available",
+       "Australia": "Available",
+       "Brazil": "Available",
+       "Canada": "Available",
+       "EU Data boundary": "Available",
+       "India": "Available",
+       "Japan": "Available",
+       "Mexico": "Available*",
+       "Qatar": "Not available",
+       "South Africa": "Available*",
+       "South Korea": "Available",
+       "UAE": "Available*",
+       "United Kingdom": "Available",
+       "United States": "Available"
+      },
+      "n": "AI-generated comments",
+      "prov": "Azure AI Services or Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/notebooks/code-assistant#autocomplete-code",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available*",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Available*",
+       "Qatar": "Not available",
+       "South Africa": "Available*",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "AI-based autocomplete",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/genie-code/#requirements",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available",
+       "Mexico": "Available*",
+       "Qatar": "Available*",
+       "South Africa": "Available*",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available",
+       "United States": "Available"
+      },
+      "n": "Genie Code agentic capabilities",
+      "prov": "Azure AI Services and Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/genie-code/navigate-genie-code#pane",
+      "geo": {
+       "Asia Pacific": "Available",
+       "Australia": "Available",
+       "Brazil": "Available",
+       "Canada": "Available",
+       "EU Data boundary": "Available",
+       "India": "Available",
+       "Japan": "Available",
+       "Mexico": "Available*",
+       "Qatar": "Available*",
+       "South Africa": "Available*",
+       "South Korea": "Available",
+       "UAE": "Available*",
+       "United Kingdom": "Available",
+       "United States": "Available"
+      },
+      "n": "Genie Code chat and cell actions",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/genie-agents/",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available",
+       "Canada": "Available",
+       "EU Data boundary": "Available",
+       "India": "Available",
+       "Japan": "Available",
+       "Mexico": "Available*",
+       "Qatar": "Available*",
+       "South Africa": "Available*",
+       "South Korea": "Available",
+       "UAE": "Available*",
+       "United Kingdom": "Available",
+       "United States": "Available"
+      },
+      "n": "Genie Agents chat mode",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/genie-agents/",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available",
+       "Mexico": "Available*",
+       "Qatar": "Available*",
+       "South Africa": "Available*",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "Genie Agents Agent mode",
+      "prov": "Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/genie-one/chat",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available",
+       "Mexico": "Available*",
+       "Qatar": "Available*",
+       "South Africa": "Available*",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "Chat in Genie One",
+      "prov": "Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/dev-tools/databricks-apps/genie-app-builder",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available*",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Not available",
+       "Qatar": "Not available",
+       "South Africa": "Not available",
+       "South Korea": "Not available",
+       "UAE": "Not available",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "Genie App Builder",
+      "prov": "Azure AI Services and Anthropic on Databricks",
+      "st": "Beta"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/ai-bi/",
+      "geo": {
+       "Asia Pacific": "Available",
+       "Australia": "Available",
+       "Brazil": "Available",
+       "Canada": "Available",
+       "EU Data boundary": "Available",
+       "India": "Available",
+       "Japan": "Available",
+       "Mexico": "Available*",
+       "Qatar": "Not available",
+       "South Africa": "Available*",
+       "South Korea": "Available",
+       "UAE": "Available*",
+       "United Kingdom": "Available",
+       "United States": "Available"
+      },
+      "n": "AI/BI dashboards",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://learn.microsoft.com/azure/databricks/data-governance/unity-catalog/data-classification",
+      "geo": {
+       "Asia Pacific": "Available*",
+       "Australia": "Available",
+       "Brazil": "Available*",
+       "Canada": "Available*",
+       "EU Data boundary": "Available",
+       "India": "Available*",
+       "Japan": "Available*",
+       "Mexico": "Not Available",
+       "Qatar": "Not Available",
+       "South Africa": "Not Available",
+       "South Korea": "Available*",
+       "UAE": "Available*",
+       "United Kingdom": "Available*",
+       "United States": "Available"
+      },
+      "n": "Data classification",
+      "prov": "Databricks",
+      "st": "GA"
+     }
+    ],
+    "sec": "availability-of-designated-services-in-each-geo",
+    "src": "https://learn.microsoft.com/azure/databricks/resources/designated-services#availability-of-designated-services-in-each-geo"
+   },
    "feature_sources": {
     "Genie App Builder (product page)": "https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/genie-app-builder",
     "Lakebase (product page)": "https://learn.microsoft.com/en-us/azure/databricks/oltp/projects/manage-projects"
@@ -1324,7 +2710,7 @@
      "westus2": true,
      "westus3": true
     },
-    "Foundation Model APIs (provisioned throughput) **": {
+    "Foundation Model APIs (provisioned throughput)": {
      "australiacentral": false,
      "australiacentral2": false,
      "australiaeast": true,
@@ -2550,6 +3936,639 @@
      "westus3": true
     }
    },
+   "geo": {
+    "australiacentral": {
+     "country": "Australia",
+     "geo": "Australia"
+    },
+    "australiacentral2": {
+     "country": "Australia",
+     "geo": "Australia"
+    },
+    "australiaeast": {
+     "country": "Australia",
+     "geo": "Australia"
+    },
+    "australiasoutheast": {
+     "country": "Australia",
+     "geo": "Australia"
+    },
+    "brazilsouth": {
+     "country": "Brazil",
+     "geo": "Brazil"
+    },
+    "canadacentral": {
+     "country": "Canada",
+     "geo": "Canada"
+    },
+    "canadaeast": {
+     "country": "Canada",
+     "geo": "Canada"
+    },
+    "centralindia": {
+     "country": "India",
+     "geo": "India"
+    },
+    "centralus": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "chinaeast2": {
+     "country": "Mainland China",
+     "geo": null
+    },
+    "chinaeast3": {
+     "country": "Mainland China",
+     "geo": null
+    },
+    "chinanorth2": {
+     "country": "Mainland China",
+     "geo": null
+    },
+    "chinanorth3": {
+     "country": "Mainland China",
+     "geo": null
+    },
+    "eastasia": {
+     "country": "Hong Kong",
+     "geo": "Asia Pacific"
+    },
+    "eastus": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "eastus2": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "francecentral": {
+     "country": "France",
+     "geo": "EU Data boundary"
+    },
+    "germanywestcentral": {
+     "country": "Germany",
+     "geo": "EU Data boundary"
+    },
+    "japaneast": {
+     "country": "Japan",
+     "geo": "Japan"
+    },
+    "japanwest": {
+     "country": "Japan",
+     "geo": "Japan"
+    },
+    "jioindiawest": {
+     "country": "India",
+     "geo": "India"
+    },
+    "koreacentral": {
+     "country": "South Korea",
+     "geo": "South Korea"
+    },
+    "mexicocentral": {
+     "country": "Mexico",
+     "geo": "Mexico"
+    },
+    "northcentralus": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "northeurope": {
+     "country": "Ireland",
+     "geo": "EU Data boundary"
+    },
+    "norwayeast": {
+     "country": "Norway",
+     "geo": "EU Data boundary"
+    },
+    "qatarcentral": {
+     "country": "Qatar",
+     "geo": "Qatar"
+    },
+    "southafricanorth": {
+     "country": "South Africa",
+     "geo": "South Africa"
+    },
+    "southcentralus": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "southeastasia": {
+     "country": "Singapore",
+     "geo": "Asia Pacific"
+    },
+    "southindia": {
+     "country": "India",
+     "geo": "India"
+    },
+    "swedencentral": {
+     "country": "Sweden",
+     "geo": "EU Data boundary"
+    },
+    "switzerlandnorth": {
+     "country": "Switzerland",
+     "geo": "EU Data boundary"
+    },
+    "switzerlandwest": {
+     "country": "Switzerland",
+     "geo": "EU Data boundary"
+    },
+    "uaenorth": {
+     "country": "United Arab Emirates",
+     "geo": "UAE"
+    },
+    "uksouth": {
+     "country": "United Kingdom",
+     "geo": "United Kingdom"
+    },
+    "ukwest": {
+     "country": "United Kingdom",
+     "geo": "United Kingdom"
+    },
+    "usgovaz": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "usgovva": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "westcentralus": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "westeurope": {
+     "country": "Netherlands",
+     "geo": "EU Data boundary"
+    },
+    "westindia": {
+     "country": "India",
+     "geo": "India"
+    },
+    "westus": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "westus2": {
+     "country": "United States",
+     "geo": "United States"
+    },
+    "westus3": {
+     "country": "United States",
+     "geo": "United States"
+    }
+   },
+   "legend": {
+    "agent-features-availability": {
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled. Foundation Model API workloads that rely on GPU compute availability, such as workloads that use models from the Meta Llama family, require cross geography routing."
+     }
+    },
+    "ai-function-availability": {
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled."
+     }
+    },
+    "azure-model-serving": {
+     "**": {
+      "c": false,
+      "t": "Includes GPU support"
+     },
+     "†": {
+      "c": true,
+      "t": "Custom Model Serving is not enabled for uksouth workspaces created after April 30, 2026."
+     },
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled. Foundation Model API workloads that rely on GPU compute availability, such as workloads that use models from the Meta Llama family, require cross geography routing."
+     }
+    }
+   },
+   "marks": {
+    "Foundation Model APIs (pay-per-token)": {
+     "australiaeast": "⥂",
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "koreacentral": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "Foundation Model APIs (provisioned throughput)": {
+     "eastasia": "⥂",
+     "koreacentral": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "Knowledge Assistant": {
+     "australiaeast": "⥂",
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "japaneast": "⥂",
+     "koreacentral": "⥂",
+     "southcentralus": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂",
+     "ukwest": "⥂",
+     "westus2": "⥂"
+    },
+    "Other AI functions (v1)": {
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "japaneast": "⥂",
+     "koreacentral": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "Supervisor Agent": {
+     "australiaeast": "⥂",
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "japaneast": "⥂",
+     "koreacentral": "⥂",
+     "southcentralus": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂",
+     "ukwest": "⥂",
+     "westus2": "⥂"
+    },
+    "ai_decide": {
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "koreacentral": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "ai_enrich": {
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "koreacentral": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "ai_extract and ai_classify v2": {
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "koreacentral": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "ai_parse_document v2": {
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "koreacentral": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "ai_prep_search": {
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "japaneast": "⥂",
+     "koreacentral": "⥂",
+     "southeastasia": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "ai_query (batch inference)": {
+     "canadacentral": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "japaneast": "⥂",
+     "koreacentral": "⥂",
+     "uaenorth": "⥂",
+     "uksouth": "⥂"
+    },
+    "ai_transcribe": {
+     "australiacentral": "⥂",
+     "australiacentral2": "⥂",
+     "australiaeast": "⥂",
+     "australiasoutheast": "⥂",
+     "brazilsouth": "⥂",
+     "canadacentral": "⥂",
+     "canadaeast": "⥂",
+     "centralindia": "⥂",
+     "eastasia": "⥂",
+     "japaneast": "⥂",
+     "japanwest": "⥂",
+     "koreacentral": "⥂",
+     "mexicocentral": "⥂",
+     "qatarcentral": "⥂",
+     "southafricanorth": "⥂",
+     "southeastasia": "⥂",
+     "southindia": "⥂",
+     "uaenorth": "⥂"
+    }
+   },
+   "meta": {
+    "AI Search": {
+     "cat": "AI and machine learning features",
+     "doc": "https://learn.microsoft.com/azure/databricks/ai-search/ai-search",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "Custom Agents and Evaluation": {
+     "cat": "Agent features",
+     "doc": "https://learn.microsoft.com/azure/databricks/agents/retrieval-augmented-generation",
+     "sec": "agent-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Custom Model Serving capability (CPU serving)": {
+     "cat": "Model serving features",
+     "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/model-serving/",
+     "sec": "azure-model-serving",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-model-serving",
+     "st": "GA"
+    },
+    "Custom Model Serving capability (GPU serving)": {
+     "cat": "Model serving features",
+     "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/model-serving/",
+     "sec": "azure-model-serving",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-model-serving",
+     "st": "GA"
+    },
+    "Data Quality Monitoring": {
+     "cat": "AI and machine learning features",
+     "doc": "https://learn.microsoft.com/azure/databricks/data-governance/unity-catalog/data-quality-monitoring/",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "Databricks Apps": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/dev-tools/databricks-apps/",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Databricks Sandbox (Beta)": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/compute/serverless/sandbox",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "Beta"
+    },
+    "Default storage": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/storage/default-storage",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Download visualizations API": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/api/genie/v1/conversation",
+     "sec": "agent-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "External models": {
+     "cat": "Model serving features",
+     "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/foundation-models/external-models/",
+     "sec": "azure-model-serving",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-model-serving",
+     "st": "GA"
+    },
+    "Foundation Model APIs (pay-per-token)": {
+     "cat": "Model serving features",
+     "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/foundation-model-apis/#token-foundation-apis",
+     "sec": "azure-model-serving",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-model-serving",
+     "st": "GA"
+    },
+    "Foundation Model APIs (provisioned throughput)": {
+     "cat": "Model serving features",
+     "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/foundation-model-apis/#throughput",
+     "hm": "**",
+     "sec": "azure-model-serving",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-model-serving",
+     "st": "GA"
+    },
+    "Foundation Model Fine-tuning": {
+     "cat": "AI and machine learning features",
+     "doc": "https://learn.microsoft.com/azure/databricks/large-language-models/foundation-model-training/",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "Public Preview"
+    },
+    "Genie App Builder (product page)": {
+     "cat": "Product page",
+     "doc": "https://learn.microsoft.com/azure/databricks/dev-tools/databricks-apps/genie-app-builder",
+     "sec": "requirements",
+     "src": "https://learn.microsoft.com/azure/databricks/dev-tools/databricks-apps/genie-app-builder#requirements",
+     "st": "Beta"
+    },
+    "Knowledge Assistant": {
+     "cat": "Agent features",
+     "doc": "https://learn.microsoft.com/azure/databricks/agents/agent-bricks/knowledge-assistant",
+     "sec": "agent-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Lakebase (product page)": {
+     "cat": "Product page",
+     "doc": "https://learn.microsoft.com/azure/databricks/oltp/projects/manage-projects",
+     "sec": "availability",
+     "src": "https://learn.microsoft.com/azure/databricks/oltp/projects/manage-projects#availability",
+     "st": "GA"
+    },
+    "Lakebase Autoscaling": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/oltp/projects/manage-projects#availability",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Lakehouse Real-Time (Beta)": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/compute/sql-warehouse/real-time",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "Beta"
+    },
+    "MLflow traces in Unity Catalog": {
+     "cat": "Agent features",
+     "doc": "https://learn.microsoft.com/azure/databricks/mlflow3/genai/tracing/trace-unity-catalog",
+     "sec": "agent-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Managed connectors in Lakeflow Connect": {
+     "cat": "Ingestion",
+     "doc": "https://learn.microsoft.com/azure/databricks/ingestion/lakeflow-connect/",
+     "sec": "ingestion",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ingestion",
+     "st": "GA"
+    },
+    "Managed disaster recovery": {
+     "cat": "Resilience",
+     "doc": "https://learn.microsoft.com/azure/databricks/admin/managed-disaster-recovery",
+     "sec": "resilience-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#resilience-availability",
+     "st": "GA"
+    },
+    "Model Training - forecasting": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/machine-learning/train-model/serverless-forecasting",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "Public Preview"
+    },
+    "Other AI functions (v1)": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/large-language-models/ai-functions",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "Predictive Optimization": {
+     "cat": "AI and machine learning features",
+     "doc": "https://learn.microsoft.com/azure/databricks/optimizations/predictive-optimization",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "Private connectivity": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/security/network/serverless-network-security/serverless-private-link",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Serverless compute for notebooks, jobs, pipelines, and SQL warehouses": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/compute/serverless/",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Serverless workspaces": {
+     "cat": "Serverless",
+     "doc": "https://learn.microsoft.com/azure/databricks/admin/workspace/serverless-workspaces",
+     "sec": "serverless-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Supervisor Agent": {
+     "cat": "Agent features",
+     "doc": "https://learn.microsoft.com/azure/databricks/agents/agent-bricks/multi-agent-supervisor",
+     "sec": "agent-features-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "System tables": {
+     "cat": "System tables",
+     "doc": "https://learn.microsoft.com/azure/databricks/admin/system-tables/",
+     "sec": "system-tables-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#system-tables-availability",
+     "st": "GA"
+    },
+    "Unity Gateway": {
+     "cat": "Model serving features",
+     "doc": "https://learn.microsoft.com/azure/databricks/ai-gateway/",
+     "sec": "azure-model-serving",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#azure-model-serving",
+     "st": "GA"
+    },
+    "Zerobus Ingest": {
+     "cat": "Ingestion",
+     "doc": "https://learn.microsoft.com/azure/databricks/ingestion/zerobus-overview",
+     "sec": "ingestion",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ingestion",
+     "st": "GA"
+    },
+    "ai_decide": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_decide",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_enrich": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_enrich",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_extract and ai_classify v2": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/large-language-models/ai-functions",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_forecast and ai_detect_anomalies": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_forecast",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "Public Preview"
+    },
+    "ai_parse_document v2": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_parse_document",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_prep_search": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_prep_search",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_query (batch inference)": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_query",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_transcribe": {
+     "cat": "AI function",
+     "doc": "https://learn.microsoft.com/azure/databricks/sql/language-manual/functions/ai_transcribe",
+     "sec": "ai-function-availability",
+     "src": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    }
+   },
+   "products": {
+    "Agentic Dev": "GA",
+    "Bronze": "GA",
+    "Genie": "GA",
+    "Gold": "GA",
+    "Serverless Compute": "GA",
+    "Silver": "GA"
+   },
    "regions": [
     {
      "code": "australiacentral",
@@ -2734,6 +4753,357 @@
    ]
   },
   "gcp": {
+   "derived": {
+    "MCP servers": {
+     "cat": "MCP and Unity Catalog HTTP connection",
+     "doc": "https://docs.databricks.com/gcp/en/agents/mcp-tools/",
+     "from": "Custom Model Serving capability (CPU serving)",
+     "say": "MCP servers and Unity Catalog HTTP connections are supported in the same regions as Custom Model Serving.",
+     "sec": "mcp-and-unity-catalog-http-connection-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#mcp-and-unity-catalog-http-connection-availability",
+     "st": "GA"
+    },
+    "Unity Catalog HTTP connections": {
+     "cat": "MCP and Unity Catalog HTTP connection",
+     "doc": "https://docs.databricks.com/gcp/en/query-federation/http",
+     "from": "Custom Model Serving capability (CPU serving)",
+     "say": "MCP servers and Unity Catalog HTTP connections are supported in the same regions as Custom Model Serving.",
+     "sec": "mcp-and-unity-catalog-http-connection-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#mcp-and-unity-catalog-http-connection-availability",
+     "st": "GA"
+    }
+   },
+   "designated": {
+    "geos": [
+     "Americas",
+     "Asia",
+     "Australia & New Zealand",
+     "Europe",
+     "India",
+     "Mainland China",
+     "Middle East and Africa"
+    ],
+    "legend": {
+     "*": {
+      "c": true,
+      "t": "This feature is only available when you enable cross-Geo processing on your workspace. Where multiple models are available for a particular feature, some models might only be available if cross-Geo processing has been enabled. See Model availability by region for model-specific region availability."
+     },
+     "§": {
+      "c": false,
+      "t": "Traffic is processed within the same country as the workspace region for Japan and Korea when you disable cross-Geo processing. Indonesia traffic is processed in Asia Geo. For other countries in the Asia Geo, including Singapore and Hong Kong, this feature requires cross-Geo processing."
+     },
+     "†": {
+      "c": false,
+      "t": "Asia Geo traffic can be sent for processing within regions in Japan, South Korea or Singapore. If your workspace is in a Japan region, then that traffic is processed within that region."
+     },
+     "‡": {
+      "c": false,
+      "t": "Traffic is processed within the same country or territory as the workspace region for Brazil, Canada, Japan, Korea, Singapore, and United Kingdom when you disable cross-Geo processing. For other countries in the Asia Geo, this feature is supported by models in Asia Geo if cross-Geo processing is disabled."
+     }
+    },
+    "local": {
+     "AI-generated comments": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Processed in Singapore",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Processed in Singapore",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     },
+     "AI/BI dashboards": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Processed in Singapore",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Processed in Singapore",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     },
+     "Genie Agents chat mode": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Not available",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Not available",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     },
+     "Genie Code chat and cell actions": {
+      "Brazil": "Processed in Brazil",
+      "Canada": "Processed in Canada",
+      "Hong Kong": "Processed in Singapore",
+      "Indonesia": "Processed in Asia Geo",
+      "Japan": "Processed in Japan",
+      "Singapore": "Processed in Singapore",
+      "South Korea": "Processed in Korea",
+      "United Kingdom": "Processed in the UK"
+     }
+    },
+    "local_sec": "country-specific-processing-for-ai-assistive-features",
+    "rows": [
+     {
+      "doc": "https://docs.databricks.com/gcp/en/machine-learning/foundation-model-apis/#token-foundation-apis",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Not available",
+       "Europe": "Available*",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Pay-per-token Foundation Model APIs",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/large-language-models/ai-functions",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Not available",
+       "Europe": "Available*",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "AI Functions optimized for batch inference (excludes ai_parse_document v2, ai_prep_search, ai_classify v2, ai_extract v2)",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_parse_document",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Not available",
+       "Europe": "Available*",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "AI Function: ai_parse_document v2",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_prep_search",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Not available",
+       "Europe": "Available*",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "AI Functions: ai_prep_search, ai_classify v2, ai_extract v2",
+      "prov": "Model-dependent",
+      "st": "Beta"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/machine-learning/foundation-model-apis/#throughput",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Not available",
+       "Europe": "Available*",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Provisioned throughput Foundation Model APIs",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/agents/agent-bricks/knowledge-assistant",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Not available",
+       "Europe": "Available*",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "Knowledge Assistant and Supervisor Agent",
+      "prov": "Model-dependent",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/mlflow3/genai/eval-monitor/concepts/scorers",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Not available"
+      },
+      "n": "LLMs as judges (built-in judges)",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/ai-search/query-ai-search#rerank",
+      "geo": {
+       "Americas": "Available (US model)",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI Search reranker",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/comments/ai-comments",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available‡",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available‡",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI-generated comments",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/notebooks/code-assistant#autocomplete-code",
+      "geo": {
+       "Americas": "Available (US model)",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available*",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI-based autocomplete",
+      "prov": "Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/genie-code/#requirements",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Code agentic capabilities",
+      "prov": "Azure AI Services, OpenAI on Databricks, and Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/genie-code/navigate-genie-code#pane",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available‡",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available‡",
+       "India": "Available",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Code chat and cell actions",
+      "prov": "Azure AI Services and OpenAI on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/genie-agents/",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available§",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available‡",
+       "India": "Available",
+       "Mainland China": "Not available",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Agents chat mode",
+      "prov": "Azure AI Services and OpenAI on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/genie-agents/",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Genie Agents Agent mode",
+      "prov": "OpenAI on Databricks and Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/genie-one/chat",
+      "geo": {
+       "Americas": "Available",
+       "Asia": "Available†",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Chat in Genie One",
+      "prov": "OpenAI on Databricks and Anthropic on Databricks",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/ai-bi/",
+      "geo": {
+       "Americas": "Available‡",
+       "Asia": "Available‡",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available‡",
+       "India": "Available",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "AI/BI dashboards",
+      "prov": "Azure AI Services",
+      "st": "GA"
+     },
+     {
+      "doc": "https://docs.databricks.com/gcp/en/data-governance/unity-catalog/data-classification",
+      "geo": {
+       "Americas": "Available (US model)",
+       "Asia": "Available*",
+       "Australia & New Zealand": "Available",
+       "Europe": "Available",
+       "India": "Available*",
+       "Mainland China": "Available*",
+       "Middle East and Africa": "Available*"
+      },
+      "n": "Data classification",
+      "prov": "Databricks",
+      "st": "GA"
+     }
+    ],
+    "sec": "availability-of-designated-services-in-each-geo",
+    "src": "https://docs.databricks.com/gcp/en/resources/designated-services#availability-of-designated-services-in-each-geo"
+   },
    "feature_sources": {
     "Genie App Builder (product page)": "https://docs.databricks.com/aws/en/dev-tools/databricks-apps/genie-app-builder",
     "Lakebase (product page)": "https://docs.databricks.com/gcp/en/oltp/projects/manage-projects"
@@ -2892,7 +5262,7 @@
      "us-west1": true,
      "us-west4": false
     },
-    "Foundation Model APIs (provisioned throughput)**": {
+    "Foundation Model APIs (provisioned throughput)": {
      "asia-northeast1": false,
      "asia-south1": true,
      "asia-southeast1": true,
@@ -3267,6 +5637,385 @@
      "us-west4": false
     }
    },
+   "geo": {
+    "asia-northeast1": {
+     "country": "Japan",
+     "geo": "Asia"
+    },
+    "asia-south1": {
+     "country": "India",
+     "geo": "India"
+    },
+    "asia-southeast1": {
+     "country": "Singapore",
+     "geo": "Asia"
+    },
+    "australia-southeast1": {
+     "country": "Australia",
+     "geo": "Australia & New Zealand"
+    },
+    "europe-west1": {
+     "country": "Belgium",
+     "geo": "Europe"
+    },
+    "europe-west2": {
+     "country": "United Kingdom",
+     "geo": "Europe"
+    },
+    "europe-west3": {
+     "country": "Germany",
+     "geo": "Europe"
+    },
+    "me-central2": {
+     "country": "Saudi Arabia",
+     "geo": null
+    },
+    "northamerica-northeast1": {
+     "country": "Canada",
+     "geo": "Americas"
+    },
+    "southamerica-east1": {
+     "country": "Brazil",
+     "geo": "Americas"
+    },
+    "us-central1": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-east1": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-east4": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-west1": {
+     "country": "United States",
+     "geo": "Americas"
+    },
+    "us-west4": {
+     "country": "United States",
+     "geo": "Americas"
+    }
+   },
+   "legend": {
+    "agent-features-availability": {
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled. Foundation Model API workloads that rely on GPU compute availability, such as workloads that use models from the Meta Llama family, require cross geography routing."
+     }
+    },
+    "ai-function-availability": {
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled."
+     }
+    },
+    "model-serving-features-availability": {
+     "**": {
+      "c": false,
+      "t": "Includes GPU support"
+     },
+     "⥂": {
+      "c": true,
+      "t": "Region supported only when cross geography routing is enabled. Foundation Model API workloads that rely on GPU compute availability, such as workloads that use models from the Meta Llama family, require cross geography routing."
+     }
+    }
+   },
+   "marks": {
+    "Foundation Model APIs (pay-per-token)": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "Foundation Model APIs (provisioned throughput)": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "Knowledge Assistant": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "Other AI functions (v1)": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "Supervisor Agent": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "ai_decide": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "ai_enrich": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "ai_extract and ai_classify v2": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "ai_parse_document v2": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "ai_prep_search": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "ai_query (batch inference)": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂",
+     "europe-west2": "⥂",
+     "europe-west3": "⥂"
+    },
+    "ai_transcribe": {
+     "asia-south1": "⥂",
+     "asia-southeast1": "⥂"
+    }
+   },
+   "meta": {
+    "AI Search": {
+     "cat": "AI and machine learning features",
+     "doc": "https://docs.databricks.com/gcp/en/ai-search/ai-search",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "Custom Agents and Evaluation": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/gcp/en/agents/retrieval-augmented-generation",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Custom Model Serving capability (CPU serving)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/gcp/en/machine-learning/model-serving/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Custom Model Serving capability (GPU serving)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/gcp/en/machine-learning/model-serving/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Data Quality Monitoring": {
+     "cat": "AI and machine learning features",
+     "doc": "https://docs.databricks.com/gcp/en/data-governance/unity-catalog/data-quality-monitoring/",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "Databricks Apps": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/gcp/en/dev-tools/databricks-apps/",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Default storage": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/gcp/en/storage/default-storage",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "External models": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/gcp/en/machine-learning/foundation-models/external-models/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "Public Preview"
+    },
+    "Foundation Model APIs (pay-per-token)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/gcp/en/machine-learning/foundation-model-apis/#token-foundation-apis",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Foundation Model APIs (provisioned throughput)": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/gcp/en/machine-learning/foundation-model-apis/#throughput",
+     "hm": "**",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Knowledge Assistant": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/gcp/en/agents/agent-bricks/knowledge-assistant",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Lakebase (product page)": {
+     "cat": "Product page",
+     "doc": "https://docs.databricks.com/gcp/en/oltp/projects/manage-projects",
+     "sec": "region-availability",
+     "src": "https://docs.databricks.com/gcp/en/oltp/projects/manage-projects#region-availability",
+     "st": "Beta"
+    },
+    "Lakehouse Real-Time (Beta)": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/gcp/en/compute/sql-warehouse/real-time",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#serverless-availability",
+     "st": "Beta"
+    },
+    "MLflow traces in Unity Catalog": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/gcp/en/mlflow3/genai/tracing/trace-unity-catalog",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Managed connectors in Lakeflow Connect": {
+     "cat": "Ingestion",
+     "doc": "https://docs.databricks.com/gcp/en/ingestion/lakeflow-connect/",
+     "sec": "ingestion-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ingestion-availability",
+     "st": "GA"
+    },
+    "Other AI functions (v1)": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/large-language-models/ai-functions",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "Predictive Optimization": {
+     "cat": "AI and machine learning features",
+     "doc": "https://docs.databricks.com/gcp/en/optimizations/predictive-optimization",
+     "sec": "ai-and-machine-learning-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-and-machine-learning-features-availability",
+     "st": "GA"
+    },
+    "Serverless compute for notebooks, jobs, pipelines, and SQL warehouses": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/gcp/en/compute/serverless/",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Serverless workspaces": {
+     "cat": "Serverless",
+     "doc": "https://docs.databricks.com/gcp/en/admin/workspace/serverless-workspaces",
+     "sec": "serverless-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#serverless-availability",
+     "st": "GA"
+    },
+    "Supervisor Agent": {
+     "cat": "Agent features",
+     "doc": "https://docs.databricks.com/gcp/en/agents/agent-bricks/multi-agent-supervisor",
+     "sec": "agent-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#agent-features-availability",
+     "st": "GA"
+    },
+    "Unity Gateway": {
+     "cat": "Model serving features",
+     "doc": "https://docs.databricks.com/gcp/en/ai-gateway/",
+     "sec": "model-serving-features-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#model-serving-features-availability",
+     "st": "GA"
+    },
+    "Zerobus Ingest": {
+     "cat": "Ingestion",
+     "doc": "https://docs.databricks.com/gcp/en/ingestion/zerobus-overview",
+     "sec": "ingestion-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ingestion-availability",
+     "st": "GA"
+    },
+    "ai_decide": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_decide",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_enrich": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_enrich",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_extract and ai_classify v2": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/large-language-models/ai-functions",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_forecast and ai_detect_anomalies": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_forecast",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "Public Preview"
+    },
+    "ai_parse_document v2": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_parse_document",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_prep_search": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_prep_search",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    },
+    "ai_query (batch inference)": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_query",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "GA"
+    },
+    "ai_transcribe": {
+     "cat": "AI function",
+     "doc": "https://docs.databricks.com/gcp/en/sql/language-manual/functions/ai_transcribe",
+     "sec": "ai-function-availability",
+     "src": "https://docs.databricks.com/gcp/en/resources/feature-region-support#ai-function-availability",
+     "st": "Beta"
+    }
+   },
+   "products": {
+    "Agentic Dev": "GA",
+    "Bronze": "GA",
+    "Genie": "GA",
+    "Gold": "GA",
+    "Serverless Compute": "GA",
+    "Silver": "GA"
+   },
    "regions": [
     {
      "code": "asia-northeast1",
@@ -3334,15 +6083,21 @@
  "generated": "2026-10-18",
  "sources": {
   "aws": {
+   "designated": "https://docs.databricks.com/aws/en/resources/designated-services",
    "feature": "https://docs.databricks.com/aws/en/resources/feature-region-support",
+   "geos": "https://docs.databricks.com/aws/en/resources/databricks-geos",
    "supported": "https://docs.databricks.com/aws/en/resources/supported-regions"
   },
   "azure": {
-   "feature": "https://learn.microsoft.com/en-us/azure/databricks/resources/feature-region-support",
-   "supported": "https://learn.microsoft.com/en-us/azure/databricks/resources/supported-regions"
+   "designated": "https://learn.microsoft.com/azure/databricks/resources/designated-services",
+   "feature": "https://learn.microsoft.com/azure/databricks/resources/feature-region-support",
+   "geos": "https://learn.microsoft.com/azure/databricks/resources/databricks-geos",
+   "supported": "https://learn.microsoft.com/azure/databricks/resources/supported-regions"
   },
   "gcp": {
+   "designated": "https://docs.databricks.com/gcp/en/resources/designated-services",
    "feature": "https://docs.databricks.com/gcp/en/resources/feature-region-support",
+   "geos": "https://docs.databricks.com/gcp/en/resources/databricks-geos",
    "supported": "https://docs.databricks.com/gcp/en/resources/supported-regions"
   }
  }

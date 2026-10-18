@@ -184,6 +184,11 @@ with patched(ss, get=get, CONNECTOR_INDEXES=["saas-overview"]):
     except SystemExit as e:
         check("a curated connector path that is not a landing page stops the scrape", "not a connector landing page" in str(e), str(e))
 
+API_PAGE = '<dt><span class="apiAttr__name">execution_mode</span><span class="apiAttr__stage apiAttr__stage--beta">Beta</span></dt>'
+check("an API reference stage badge reads Beta", ss.api_stage(API_PAGE) == "Beta")
+check("the least mature API badge wins", ss.api_stage(API_PAGE + '<span class="apiOp__stage--public-preview">x</span>') == "Beta")
+check("an API page without a badge reads GA", ss.api_stage("<dt>name</dt>") == "GA")
+
 check("prose 'GA' counts only in capitals", [s for _, s in ss.prose_hits("A saga in Galway went GA.")] == ["GA"])
 check("prose stage words are canonical", [s for _, s in ss.prose_hits("generally available, in beta, Private Preview, public preview")] == ["GA", "Beta", "Private Preview", "Public Preview"])
 check("a bare 'preview' is not a stage word", not list(ss.prose_hits("turn on the workspace preview")))

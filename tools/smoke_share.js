@@ -158,6 +158,7 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
     ['stage', () => pick('#stage-btn', '#stage-menu [data-stage="beta"]')],
     ['highlights', () => pick('#hl-btn', '#hl-menu [data-hl="story"]')],
     ['region', () => pick('#region-btn', '#region-menu button[data-region]:not([data-region-all])')],
+    ['close the region panel', () => page.click('#dclose')],
     ['zoom into Teams', () => page.click('.pockhead [data-zoom="ppl"]')],
     ['open a box', () => page.evaluate(() => atomsNamed('Data Engineers')[0].click())],
     ['dock the panel', () => page.click('#side-btn')],

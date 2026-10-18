@@ -25,6 +25,7 @@ CANON = {"ga": "GA", "generally available": "GA", "general availability": "GA",
          "coming soon": "Coming soon"}
 NOTICE = re.compile(r"\b(?:is|are)\s+(?:now\s+)?(?:available\s+)?in\s+(public preview|private preview|beta)\b", re.I)
 QUALIFIED = re.compile(r"^(.+?)\s*\([^():]+:\s*([^()]+?)\s*\)$")
+API_MARK = re.compile(r'__stage--([a-z-]+)"')
 LEARN_BOXES = {"NOTE", "IMPORTANT", "CAUTION", "WARNING", "TIP"}
 CAPABILITY_TABLES = {"LTAP"}
 LC = "ingestion/lakeflow-connect/"
@@ -134,6 +135,12 @@ def capability_stage(page_html):
     raise ValueError("no Capability | Status table on the page")
 
 
+def api_stage(page_html):
+    marks = [CANON.get(m.replace("-", " ")) for m in API_MARK.findall(page_html)]
+    marks = [m for m in marks if m]
+    return min(marks, key=LADDER.index) if marks else "GA"
+
+
 def landing_crumb(page):
     for i in range(1, len(page.crumbs)):
         if page.crumbs[i - 1][0].lower().endswith("connectors"):
@@ -157,13 +164,13 @@ def index_links(page_html):
 _PAGES = {}
 
 
-def get(url):
+def get(url, fetch=None):
     if url in _PAGES:
         return _PAGES[url]
     body = None
     for attempt in range(3):
         try:
-            body = sr.fetch(url)
+            body = (fetch or sr.fetch)(url)
             break
         except urllib.error.HTTPError as e:
             if e.code == 404:
@@ -178,9 +185,9 @@ def get(url):
     return body
 
 
-def prefetch(urls):
+def prefetch(urls, fetch=None):
     with concurrent.futures.ThreadPoolExecutor(12) as ex:
-        list(ex.map(get, sorted(set(urls))))
+        list(ex.map((lambda u: get(u, fetch)) if fetch else get, sorted(set(urls))))
 
 
 def node_json(script):

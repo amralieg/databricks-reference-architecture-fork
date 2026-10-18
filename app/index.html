@@ -2459,6 +2459,34 @@
     border:1px solid var(--line); border-radius:20px; padding:4px 10px; font-size:11.5px; transition:.12s; background:var(--well); }
   .d-conn:hover { border-color:var(--brand); color:var(--brand); }
   .d-conn-n { font-weight:600; }
+  .rg-tools { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:0 0 10px; }
+  .rg-tools input, .rg-tools select, .rg-tools button { font:inherit; font-size:12px; color:inherit; background:var(--card);
+    border:1px solid var(--line); border-radius:7px; padding:6px 9px; }
+  .rg-tools input { flex:1 1 150px; min-width:0; }
+  .rg-tools button { cursor:pointer; font-weight:700; }
+  .rg-tools button:hover { border-color:var(--brand); color:var(--brand); }
+  .rg-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:12px; }
+  .rg-table th { text-align:start; font-size:10.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--faint);
+    font-weight:800; padding:6px 5px; border-bottom:1px solid var(--line-strong); overflow-wrap:anywhere; vertical-align:bottom; }
+  .rg-table td { padding:7px 5px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; line-height:1.35; }
+  .rg-table .c-n { width:31%; } .rg-table .c-st { width:15%; } .rg-table .c-av { width:18%; } .rg-table .c-no { width:36%; }
+  .rg-n { font-weight:700; color:inherit; text-decoration:none; }
+  .rg-n:hover { color:var(--brand); text-decoration:underline; }
+  .rg-cat { display:block; font-size:10.5px; color:var(--faint); margin-top:2px; }
+  .rg-av { display:inline-block; font-size:11px; font-weight:800; padding:1px 7px; border-radius:9px; white-space:nowrap;
+    max-width:100%; box-sizing:border-box; overflow:hidden; text-overflow:ellipsis; vertical-align:top; }
+  .rg-av.yes { background:rgba(31,157,85,.14); color:#1a7f45; }
+  .rg-av.cond { background:rgba(214,140,0,.16); color:#9a6100; }
+  .rg-av.no { background:rgba(214,48,49,.13); color:#b42318; }
+  .rg-av.unlisted { background:var(--well); color:var(--muted); }
+  body.theme-dark .rg-av.yes { color:#6ee7a0; } body.theme-dark .rg-av.cond { color:#fcd34d; } body.theme-dark .rg-av.no { color:#fca5a5; }
+  .rg-no { color:var(--muted); font-size:11.5px; }
+  .rg-src { white-space:nowrap; color:var(--faint); text-decoration:none; font-size:10.5px; }
+  .rg-src:hover { color:var(--brand); }
+  .rg-foot { margin-top:10px; }
+  body.rg-open header.top { z-index:60; }
+  body.rg-open .drawer { top:var(--headerh,56px); height:calc(100% - var(--headerh,56px)); }
+  body.rg-open:not(.docked):not(.zoom) .drawer { width:min(max(var(--drawer-w), 640px), 96vw); max-width:96vw; }
   .d-conn-st { font-size:9.5px; font-weight:800; letter-spacing:.03em; padding:1px 5px; border-radius:8px; }
   .d-conn-st.st-ga { background:rgba(34,150,83,.16); color:#1f9d55; }
   .d-conn-st.st-pp { background:rgba(214,138,0,.18); color:#b5730a; }
@@ -2695,7 +2723,7 @@
      visitor never sees a white flash. The rest of the theme code only syncs the
      button and re-fits; it deliberately repeats this test rather than depending
      on load order. -->
-<script>var URL_STATE_KEYS=["industry","cloud","shape","pal","theme","platform","zoom","display","lang","stage","region","hl","dock","box","boxn"];
+<script>var URL_STATE_KEYS=["industry","cloud","shape","pal","theme","platform","zoom","display","lang","stage","region","hl","dock","box","boxn","panel"];
 (function(){try{
   /* A shared link carries the look it was shared in, and it has to win here
      rather than three scripts down, or the visitor sees this browser's own
@@ -4260,7 +4288,7 @@ async function applyIndustry(id, remember){
   updatePageTitle();
   /* build() rewrites every tile, so a drawer left open is pointing at a node
      that no longer exists and is captioned for the previous industry. */
-  if(openId && byId[openId]) openDetail(openId, "keep"); else closeDrawer();
+  refreshDrawer();
   fitBoard();
   if(remember) playIntro("short");
 }
@@ -6035,6 +6063,7 @@ function openDetail(id, via){
   if(via === "nav"){ if(openId && openId !== id) navStack.push(openId); }
   else if(!via){ navStack = []; }
   openId = id;
+  regionPanel = false; document.body.classList.remove("rg-open");
   if(!via) ideaTrack("tile", [rec.tile && rec.tile.n]);
   const t = rec.tile;
   document.getElementById("d-eyebrow").textContent = T(rec.section);
@@ -6197,7 +6226,7 @@ function openDetail(id, via){
   (t.rel||[]).forEach(r=> nameIndex[r] && byId[nameIndex[r]].el.classList.add("hit"));
   syncUrl();
 }
-function closeDrawer(){ openId = null; navStack = []; drawer.classList.remove("hasback"); scrim.classList.remove("show"); drawer.classList.remove("show"); document.body.classList.remove("detail-open"); clearHits(); syncUrl(); }
+function closeDrawer(){ openId = null; navStack = []; regionPanel = false; document.body.classList.remove("rg-open"); drawer.classList.remove("hasback"); scrim.classList.remove("show"); drawer.classList.remove("show"); document.body.classList.remove("detail-open"); clearHits(); syncUrl(); }
 function drawerBack(){ if(!navStack.length) return; openDetail(navStack.pop(), "back"); }
 function clearHits(){ document.querySelectorAll(".hit").forEach(e=>e.classList.remove("hit")); }
 document.getElementById("dclose").onclick = closeDrawer;
@@ -6378,7 +6407,7 @@ function rebuildBoard(){
   document.body.classList.toggle("ind-active", ARCH.industry !== "generic");
   build();
   paintSeg(); paintDisplaySeg(); paintIndustryMenu(); syncIndustryBtn();
-  if(openId && byId[openId]) openDetail(openId, "keep"); else closeDrawer();
+  refreshDrawer();
 }
 function selectTab(tab){
   const id = tab.dataset.tab;
@@ -6586,7 +6615,7 @@ function paintSeg(){
       updatePageTitle();
       /* build() rewrites the tiles, so a drawer left open would be pointing at
          a detached element and showing the previous cloud's documentation */
-      if(openId && byId[openId]) openDetail(openId, "keep"); else closeDrawer(); };
+      refreshDrawer(); };
     seg.appendChild(b);
   });
 }
@@ -6628,7 +6657,7 @@ function paintDisplaySeg(){
       if(displayMode === k) return;
       displayMode = k; store.set(DISPLAY_LS, k);
       paintDisplaySeg(); build();
-      if(openId && byId[openId]) openDetail(openId, "keep"); else closeDrawer(); };
+      refreshDrawer(); };
     seg.appendChild(b);
   });
 }
@@ -7407,6 +7436,143 @@ function regionsFor(t){
   return new Set(all.filter(c=>col[c]));
 }
 function regionAvail(t, code){ const r = regionsFor(t); return !r || r.has(code); }
+let regionPanel = false, regionRowsNow = [], regionNotOnCloud = [], regionQ = "", regionF = "";
+const RG_AVAIL = { yes:"Yes", cond:"Conditional", no:"No", unlisted:"Not listed" };
+const RG_MARK = /\*\*|[*†‡§¶‖⥂]/g;
+function rgMarks(s){ return String(s || "").match(RG_MARK) || []; }
+function rgName(lab){ return String(lab).replace(/ \(product page\)$/, "").replace(/\s*\((?:Beta|Public Preview|Private Preview)\)\s*$/i, ""); }
+function rgStage(st){ const k = stageKey(st), s = STAGES.find(x=> x.k === k); return s ? s.label : (st || ""); }
+function regionRows(){
+  const cr = cloudRegions(), code = regionSel;
+  regionNotOnCloud = [];
+  if(!cr || !code) return [];
+  const rows = [], meta = cr.meta || {}, legend = cr.legend || {}, feats = cr.features || {}, marks = cr.marks || {};
+  const boxes = {}, plain = {};
+  Object.values(byId).forEach(rec=>{
+    const t = rec && rec.tile;
+    if(!t || !t.n || !isPlatformProduct(t, rec)) return;
+    const lab = regionFeatureLabel(t);
+    if(lab){ if(!boxes[lab]) boxes[lab] = canonName(t.n); }
+    else if(!plain[canonName(t.n)]) plain[canonName(t.n)] = { t, rec };
+  });
+  const note = (leg, mk, r)=>{ const e = leg[mk]; if(e){ r.notes.push(e.t); if(e.c && r.avail === "yes") r.avail = "cond"; } };
+  Object.keys(meta).forEach(lab=>{
+    const m = meta[lab], on = !!(feats[lab] || {})[code];
+    const r = { n:rgName(lab), cat:m.cat, st:m.st, avail:on ? "yes" : "no", notes:[], doc:m.doc, src:m.src, box:boxes[lab] || "" };
+    if(on) rgMarks((marks[lab] || {})[code]).forEach(mk=> note(legend[m.sec] || {}, mk, r));
+    rgMarks(m.hm).forEach(mk=> note(legend[m.sec] || {}, mk, r));
+    if(/ \(product page\)$/.test(lab)) r.notes.push("Region list from the product's own docs page.");
+    rows.push(r);
+  });
+  Object.entries(cr.derived || {}).forEach(([name, d])=>{
+    const on = !!(feats[d.from] || {})[code], m = meta[d.from] || {};
+    const r = { n:name, cat:d.cat, st:d.st, avail:on ? "yes" : "no", notes:[d.say], doc:d.doc, src:d.src, box:"" };
+    if(on) rgMarks((marks[d.from] || {})[code]).forEach(mk=> note(legend[m.sec] || {}, mk, r));
+    rows.push(r);
+  });
+  const ds = cr.designated || {}, g = (cr.geo || {})[code] || {}, dleg = ds.legend || {};
+  (ds.rows || []).forEach(d=>{
+    const r = { n:d.n, cat:"Designated Services", st:d.st, avail:"unlisted", notes:[], doc:d.doc, src:ds.src, box:"" };
+    if(!g.geo) r.notes.push("The Designated Services page lists no Geo for this region.");
+    else {
+      const v = (d.geo || {})[g.geo] || "", m = /^(Available|Not available|Not applicable)\s*(?:\(([^)]*)\))?(.*)$/i.exec(v);
+      const s = m ? m[1].toLowerCase() : "";
+      r.notes.push("Geo: " + g.geo);
+      if(s === "available"){ r.avail = "yes"; if(m[2]) r.notes.push(m[2]); rgMarks(m[3]).forEach(mk=> note(dleg, mk, r)); }
+      else if(s === "not available"){ r.avail = "cond"; r.notes.push("Not available in this Geo; needs cross-Geo processing."); }
+      else if(v) r.notes.push(v);
+    }
+    const local = ((ds.local || {})[d.n] || {})[g.country];
+    if(local && /^not available/i.test(local)){
+      if(r.avail === "yes") r.avail = "cond";
+      r.notes.push("Not processed in this country; needs cross-Geo processing.");
+    } else if(local) r.notes.push(local);
+    if(d.prov && !/^not applicable$/i.test(d.prov)) r.notes.push("Model provider: " + d.prov);
+    rows.push(r);
+  });
+  const supported = ((REGIONS.sources || {})[curCloud()] || {}).supported || "";
+  Object.entries(plain).forEach(([name, { t, rec }])=>{
+    const path = docPath(LINKS[name]);
+    if(!path) return;
+    const sd = STAGEDATA && STAGEDATA.products && STAGEDATA.products[name];
+    const st = (sd && sd[curCloud()]) || (cr.products || {})[name] || stageFor(t);
+    if(stageKey(st) === "soon"){ regionNotOnCloud.push(name); return; }
+    rows.push({ n:name, cat:rec.section || "", st, avail:"yes", notes:["Runs in every supported region."],
+      doc:docUrl(path), src:supported, box:name });
+  });
+  Object.keys(feats).forEach(lab=>{ if(!meta[lab] && / \(product page\)$/.test(lab)) regionNotOnCloud.push(rgName(lab)); });
+  regionNotOnCloud = [...new Set(regionNotOnCloud)].sort((a, b)=> a.localeCompare(b));
+  const rank = { yes:0, cond:1, no:2, unlisted:3 };
+  return rows.sort((a, b)=> (a.cat === "Designated Services") - (b.cat === "Designated Services") ||
+    String(a.cat).localeCompare(String(b.cat)) || a.n.localeCompare(b.n) || rank[a.avail] - rank[b.avail]);
+}
+function regionVisible(){
+  const q = regionQ.trim().toLowerCase();
+  return regionRowsNow.filter(r=> (!regionF || r.avail === regionF) &&
+    (!q || [r.n, T(r.n), r.cat, T(r.cat), r.notes.join(" ")].join(" ").toLowerCase().indexOf(q) >= 0));
+}
+function regionCsv(rows){
+  const cr = cloudRegions(), reg = cr && cr.regions.find(r=> r.code === regionSel);
+  const head = ["Cloud", "Region", "Location", "Product or feature", "Category", "Stage", "Available", "Notes",
+    "Docs page", "Source", "On the board", "Data updated"];
+  const q = v=>{ v = String(v == null ? "" : v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  return [head].concat((rows || regionVisible()).map(r=> [cloudLabelNow(), regionSel, reg ? reg.loc : "", r.n, r.cat, rgStage(r.st),
+    RG_AVAIL[r.avail], r.notes.join(" "), r.doc, r.src, r.box ? "Yes" : "No", dataUpdated()]))
+    .map(l=> l.map(q).join(",")).join("\r\n") + "\r\n";
+}
+function paintRegionRows(){
+  const tb = document.querySelector("#d-body .rg-table tbody");
+  if(!tb) return;
+  const link = (u, cls, txt)=> isDatabricksUrl(u) ? `<a class="${cls}" href="${esc(u)}" target="_blank" rel="noopener">${txt}</a>` : txt;
+  tb.innerHTML = regionVisible().map(r=> `<tr class="rg-row rg-${r.avail}"><td>${link(r.doc, "rg-n", esc(T(r.n)))}` +
+    `<span class="rg-cat">${esc(T(r.cat))}${r.box ? " &middot; " + esc(T("On the board")) : ""}</span></td>` +
+    `<td>${esc(T(rgStage(r.st)))}</td><td><span class="rg-av ${r.avail}" title="${esc(T(RG_AVAIL[r.avail]))}">${esc(T(RG_AVAIL[r.avail]))}</span></td>` +
+    `<td class="rg-no">${r.notes.map(x=> esc(/^Model provider: /.test(x) ? T("Model provider") + ": " + x.slice(16) : T(x))).join("<br>")}${r.src ? (r.notes.length ? " " : "") +
+      link(r.src, "rg-src", esc(T("Source")) + " &#8599;") : ""}</td></tr>`).join("");
+}
+function paintRegionPanel(){
+  const cr = cloudRegions();
+  if(!cr || !regionSel) return;
+  const reg = cr.regions.find(r=> r.code === regionSel) || { code:regionSel, loc:"" };
+  regionRowsNow = regionRows();
+  const count = k=> regionRowsNow.filter(r=> r.avail === k).length;
+  if(regionF && !count(regionF)) regionF = "";
+  document.getElementById("d-eyebrow").textContent = cloudLabelNow() + " · " + T("Region availability");
+  document.getElementById("d-title").textContent = (reg.loc ? reg.loc + " " : "") + "(" + reg.code + ")";
+  document.getElementById("d-tagline").textContent = Object.keys(RG_AVAIL).filter(k=> count(k))
+    .map(k=> T(RG_AVAIL[k]) + ": " + count(k)).join(" · ");
+  const body = document.getElementById("d-body");
+  body.setAttribute("dir", I18N.dir);
+  body.innerHTML = `<div class="rg-tools"><input type="search" class="rg-q" placeholder="${esc(T("Search products and features"))}" value="${esc(regionQ)}">` +
+    `<select class="rg-f"><option value="">${esc(T("All"))} (${regionRowsNow.length})</option>` +
+    Object.keys(RG_AVAIL).filter(k=> count(k)).map(k=> `<option value="${k}"${regionF === k ? " selected" : ""}>${esc(T(RG_AVAIL[k]))} (${count(k)})</option>`).join("") +
+    `</select><button type="button" class="rg-csv">${esc(T("Download CSV"))}</button></div>` +
+    `<table class="rg-table"><colgroup><col class="c-n"><col class="c-st"><col class="c-av"><col class="c-no"></colgroup>` +
+    `<thead><tr><th>${esc(T("Product or feature"))}</th><th>${esc(T("Stage"))}</th><th>${esc(T("Available"))}</th><th>${esc(T("Notes"))}</th></tr></thead>` +
+    `<tbody></tbody></table><p class="d-note rg-foot">${esc(T("Data from the public Databricks docs"))} · ${esc(dataUpdated())}` +
+    (regionNotOnCloud.length ? `<br>${esc(T("Not on this cloud yet"))}: ${regionNotOnCloud.map(n=> esc(T(n))).join(", ")}` : "") + `</p>`;
+  const qi = body.querySelector(".rg-q"), fi = body.querySelector(".rg-f");
+  qi.oninput = ()=>{ regionQ = qi.value; paintRegionRows(); };
+  fi.onchange = ()=>{ regionF = fi.value; paintRegionRows(); };
+  body.querySelector(".rg-csv").onclick = ()=> dlBlob(new Blob(["\ufeff" + regionCsv()], { type:"text/csv;charset=utf-8" }),
+    "databricks-" + curCloud() + "-" + regionSel + "-availability.csv");
+  paintRegionRows();
+}
+function openRegionPanel(){
+  if(!regionSel || !cloudRegions()) return;
+  regionPanel = true; openId = null; navStack = [];
+  document.body.classList.add("rg-open");
+  paintRegionPanel();
+  drawer.classList.remove("hasback");
+  scrim.classList.add("show"); drawer.classList.add("show");
+  document.body.classList.add("detail-open");
+  clearHits();
+  syncUrl();
+}
+function refreshDrawer(){
+  if(openId && byId[openId]) openDetail(openId, "keep");
+  else if(!regionPanel) closeDrawer();
+}
 
 function applyRegionFilter(){
   const cr = cloudRegions();
@@ -7426,13 +7592,13 @@ function applyRegionFilter(){
     });
   }
   paintRegionMenu();
+  if(regionPanel){ if(regionSel) paintRegionPanel(); else closeDrawer(); }
 }
 function setRegion(code){
   regionSel = code;
   store.set(REGION_STORE, code);
   applyRegionFilter();
   syncUrl();   /* region does not re-fit the board, so mirror the URL here */
-  if(openId && byId[openId]) openDetail(openId, "keep");  /* refresh the drawer line */
 }
 function paintRegionMenu(){
   const cr = cloudRegions();
@@ -7471,7 +7637,9 @@ function paintRegionMenu(){
   }
   regionMenu.querySelectorAll("button").forEach(b=> b.onclick = e=>{
     e.stopPropagation();
-    setRegion(b.dataset.regionAll ? "" : b.dataset.region);
+    const code = b.dataset.regionAll ? "" : b.dataset.region;
+    setRegion(code);
+    if(code) openRegionPanel();
   });
   document.getElementById("region-lbl").textContent = regionSel || "Region";
   regionBtn.classList.toggle("on", !!regionSel);
@@ -7739,6 +7907,7 @@ function stateParams(){
   const hlOff = HL_ORDER.filter(k=> document.body.classList.contains("hl-off-" + k));
   if(hlOff.length) q.set("hl", hlOff.join(","));
   if(document.body.classList.contains("docked")) q.set("dock", "1");
+  if(regionPanel) q.set("panel", "region");
   const box = openBox();
   if(box){ q.set("box", box.n); if(box.i) q.set("boxn", String(box.i)); }
   return q;
@@ -12230,6 +12399,7 @@ function seedViewFromUrl(){
   paintHighlights();
   regionSel = urlParam("region") || "";
   applyRegionFilter();
+  if(regionSel && urlParam("panel") === "region") openRegionPanel();
   const z = urlParam("zoom");
   if(z && ZOOM_REGIONS[z]) applyZoom(z);
   const bx = urlParam("box");
