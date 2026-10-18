@@ -66,7 +66,7 @@ DRIVER = r"""
      in h90, so a group name that fits the Z clips there; checking only the
      default shape passed "Industry Messaging" as clean. */
   var SHAPES = ["z", "s", "t", "rt", "h90"];
-  var ids = ["generic"].concat(INDUSTRY_CATALOG.map(function(row){ return row[0]; })
+  var ids = (window.HG_ONLY && window.HG_ONLY.length) ? window.HG_ONLY : ["generic"].concat(INDUSTRY_CATALOG.map(function(row){ return row[0]; })
     .filter(function(id){ return !INDUSTRY_BUILT || INDUSTRY_BUILT.has(id); }));
   var res = {}, failed = [];
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
@@ -79,7 +79,9 @@ DRIVER = r"""
   async function run(){
     for(var i = 0; i < ids.length; i++){
       var id = ids[i];
-      if(!(await loadIndustry(id))){ failed.push(id + " (" + (await whyNot(id)) + ")"); continue; }
+      let loaded = false;
+      for(let attempt = 0; attempt < 3 && !loaded; attempt++){ loaded = await loadIndustry(id); if(!loaded) await wait(500); }
+      if(!loaded){ failed.push(id + " (" + (await whyNot(id)) + ")"); continue; }
       for(var j = 0; j < SHAPES.length; j++){
         await applyIndustry(id, false);
         try { applyShape(SHAPES[j], false); } catch(e){}
@@ -114,14 +116,17 @@ def serve(page_bytes):
         def log_message(self, *args):
             pass
 
-    httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Handler, directory=APP_DIR))
+    class Server(http.server.ThreadingHTTPServer):
+        request_queue_size = 128
+
+    httpd = Server(("127.0.0.1", 0), functools.partial(Handler, directory=APP_DIR))
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     return httpd
 
 
-def render(app_path):
+def render(app_path, only=None):
     page_html = open(app_path, encoding="utf-8").read()
-    inject = ("<script>window.addEventListener('load',function(){"
+    inject = ("<script>window.HG_ONLY=" + json.dumps(list(only or [])) + ";window.addEventListener('load',function(){"
               + DRIVER + "});</script>\n</body>")
     page_html = page_html.replace("</body>", inject, 1)
     httpd = serve(page_html.encode("utf-8"))
@@ -179,6 +184,16 @@ def save_baseline(baseline, path=BASELINE):
         f.write("\n")
 
 
+def failed_ids(out):
+    return [f.split(" (")[0] for f in out.get("failed") or []]
+
+
+def merged(first, second):
+    res = dict(first["res"])
+    res.update(second["res"])
+    return {"res": res, "failed": second["failed"], "expected": first["expected"]}
+
+
 def coverage(out):
     if out["failed"] or len(out["res"]) != out["expected"]:
         return ("measured %d of %d boards; did not load: %s"
@@ -226,6 +241,10 @@ def main():
     args = ap.parse_args()
 
     out = render(args.app)
+    again = failed_ids(out)
+    if again:
+        print("measuring again the boards that did not load: " + ", ".join(again))
+        out = merged(out, render(args.app, again))
     gap = coverage(out)
     if gap:
         print("FAIL: " + gap)

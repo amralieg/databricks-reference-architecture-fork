@@ -45,6 +45,11 @@ check("tightening never adds a board over the budget with no recorded height", "
 
 check("every board measured is full coverage", hg.coverage({"res": {"a": 1, "b": 2}, "failed": [], "expected": 2}) is None)
 check("a board that was not measured fails coverage", hg.coverage({"res": {"a": 1}, "failed": [], "expected": 2}))
+check("a board's id is read back from its failure reason", hg.failed_ids({"failed": ["media_broadcasting (fetched but did not parse)", "x"]}) == ["media_broadcasting", "x"])
+first = {"res": {"a@z": 1}, "failed": ["b (Failed to fetch)"], "expected": 2}
+check("a board that loads on the second pass completes coverage", hg.coverage(hg.merged(first, {"res": {"b@z": 2}, "failed": [], "expected": 1})) is None)
+check("a board that fails both passes still fails coverage and is named",
+      "b (HTTP 404)" in (hg.coverage(hg.merged(first, {"res": {}, "failed": ["b (HTTP 404)"], "expected": 1})) or ""))
 check("a board that did not load fails coverage and is named",
       "retail" in (hg.coverage({"res": {"a": 1, "b": 2}, "failed": ["retail"], "expected": 2}) or ""))
 
