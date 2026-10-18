@@ -4566,6 +4566,7 @@ async function applyLang(code, persist){
    English via the glossary; the generic "Data + AI Platform" localises),
    and its click identity is preserved by the data-en stamped on .plat-head. */
 const STATIC_HEADS = { zsrc:"Sources", zcons:"Consumers", zfunnel:"External Ingestion", people:"Teams" };
+const ZX_TITLE = { src:"Zoom into Sources", ing:"Zoom into External Ingestion", ppl:"Zoom into Teams", cons:"Zoom into Consumers" };
 function setLeadText(el, english){
   /* The platform heading holds its title in a dedicated .ph-title span (so the
      "for <Industry>" qualifier can sit beside it without the localiser touching
@@ -4605,6 +4606,13 @@ function translateContent(){
      no-op that restores the source. */
   const ph = document.querySelector(".plat-head[data-en]");
   if(ph) setLeadText(ph, ph.getAttribute("data-en"));
+  document.querySelectorAll(".zx[data-zoom]").forEach(b=>{ b.title = T(ZX_TITLE[b.dataset.zoom] || "Zoom in"); });
+  const rs = document.getElementById("d-resize");
+  if(rs) rs.title = T("Drag to resize, double-click to reset");
+  const bk = document.getElementById("d-back");
+  if(bk){ bk.title = T("Back to the previous box"); bk.setAttribute("aria-label", bk.title); }
+  if(typeof dockTitle === "function") dockTitle();
+  if(typeof syncPlatMax === "function") syncPlatMax(document.body.classList.contains("plat-only"));
   if(!_staticOrigHTML){
     _staticOrigHTML = {};
     STATIC_BLOCKS.forEach(b => { const el = document.querySelector(b.sel); if(el) _staticOrigHTML[b.sel] = el.innerHTML; });
@@ -5148,7 +5156,7 @@ function renderHBand(target, zone, chip, secs){
   });
   target.appendChild(cols);
   const zkey = target.id === "topband" ? "apps" : "cloud";
-  target.insertAdjacentHTML("beforeend", `<button class="zx" type="button" data-zoom="${zkey}" aria-pressed="false" title="Zoom in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="zx-out" d="M6 2H2v4M10 2h4v4M10 14h4v-4M6 14H2v-4"/><path class="zx-in" d="M2 6h4V2M14 6h-4V2M14 10h-4v4M2 10h4v4"/></svg></button>`);
+  target.insertAdjacentHTML("beforeend", `<button class="zx" type="button" data-zoom="${zkey}" aria-pressed="false" title="${esc(T("Zoom in"))}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="zx-out" d="M6 2H2v4M10 2h4v4M10 14h4v-4M6 14H2v-4"/><path class="zx-in" d="M2 6h4V2M14 6h-4V2M14 10h-4v4M2 10h4v4"/></svg></button>`);
 }
 function renderCloud(target){
   const c = ARCH.cloud;
@@ -6262,10 +6270,13 @@ document.getElementById("d-back").onclick = drawerBack;
    and the board reserves --dock-w and scales into the width that is left. */
 const ddock = document.getElementById("ddock");
 const sideBtn = document.getElementById("side-btn");
+function dockTitle(){
+  ddock.title = T(document.body.classList.contains("docked") ? "Undock panel" : "Dock panel to the side");
+  ddock.setAttribute("aria-label", ddock.title);
+}
 function setDocked(on){
   document.body.classList.toggle("docked", on);
-  ddock.title = on ? "Undock panel" : "Dock panel to the side";
-  ddock.setAttribute("aria-label", ddock.title);
+  dockTitle();
   ddock.setAttribute("aria-pressed", on ? "true" : "false");
   /* The toolbar side-panel toggle mirrors the in-drawer dock pin: same state,
      two entry points. */
@@ -7010,9 +7021,9 @@ if(shareMenu) shareMenu.addEventListener("click", e=>{
    still offering to zoom it. */
 function syncPlatMax(on){
   platMaxBtn.setAttribute("aria-pressed", String(on));
-  platMaxBtn.title = on
+  platMaxBtn.title = T(on
     ? "Show the whole architecture again: sources, consumers, the apps band and cloud services"
-    : "Zoom into the platform on its own: hides sources, consumers, the apps band and cloud services";
+    : "Zoom into the platform on its own: hides sources, consumers, the apps band and cloud services");
 }
 
 const ZOOM_REGIONS = {
@@ -7462,9 +7473,9 @@ function regionsFor(t){
 }
 function regionAvail(t, code){ const r = regionsFor(t); return !r || r.has(code); }
 const REGION_GLOBE = '<svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18Z"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>';
-function flagHtml(code, cls){
+function flagHtml(code, cls, translate){
   const g = ((cloudRegions() || {}).geo || {})[code], svg = g && FLAGDATA && FLAGDATA.flags[g.iso];
-  return svg ? `<span class="rg-flag${cls ? " " + cls : ""}" title="${esc(g.country)}">${svg}</span>` : "";
+  return svg ? `<span class="rg-flag${cls ? " " + cls : ""}" title="${esc(translate ? T(g.country) : g.country)}">${svg}</span>` : "";
 }
 let regionPanel = false, regionRowsNow = [], regionQ = "", rgSort = { col:"", dir:1 }, rgPick = { st:null, avail:null }, rgPop = "";
 const RG_AVAIL = { yes:"Yes", cond:"Conditional", no:"No", unlisted:"Not listed" };
@@ -7482,8 +7493,8 @@ function seedRegionPanel(){
   rgSort = RG_SORT[col] ? { col, dir:so.charAt(0) === "-" ? -1 : 1 } : { col:"", dir:1 };
   regionQ = urlParam("rq") || "";
 }
-const RG_LABELS = ["Model provider", "Hosting provider, partner-powered AI features on", "Hosting provider, partner-powered AI features off"];
-function rgNote(x){ const l = RG_LABELS.find(k=> x.indexOf(k + ": ") === 0); return l ? T(l) + ": " + x.slice(l.length + 2) : T(x); }
+const RG_LABELS = ["Model provider", "Geo", "Hosting provider, partner-powered AI features on", "Hosting provider, partner-powered AI features off"];
+function rgNote(x){ const l = RG_LABELS.find(k=> x.indexOf(k + ": ") === 0); return l ? T(l) + ": " + T(x.slice(l.length + 2)) : T(x); }
 function rgDocElsewhere(L){ return !!(L && L.doc) && ["aws", "azure", "gcp"].some(k=> k !== curCloud() && (!L.docClouds || L.docClouds.indexOf(k) >= 0)); }
 function regionRows(){
   const cr = cloudRegions(), code = regionSel;
@@ -7641,14 +7652,15 @@ function xlsxEsc(v){
 function xlsxCol(i){ let s = ""; for(i++; i; i = Math.floor((i - 1) / 26)) s = String.fromCharCode(65 + (i - 1) % 26) + s; return s; }
 function regionSheet(rows){
   const cr = cloudRegions(), reg = cr && cr.regions.find(r=> r.code === regionSel);
-  return [["Cloud", "Region", "Location", "Product or feature", "Category", "Stage", "Available", "Notes", "Docs page", "Source", "On the board", "Data updated"]]
-    .concat((rows || regionVisible()).map(r=> [cloudLabelNow(), regionSel, reg ? reg.loc : "", r.n, r.cat, rgStage(r.st), RG_AVAIL[r.avail],
-      r.notes.join(" "), r.doc, r.src, r.box ? "Yes" : "No", dataUpdated()]));
+  return [["Cloud", "Region", "Location", "Product or feature", "Category", "Stage", "Available", "Notes", "Docs page", "Source", "On the board", "Data updated"].map(T)]
+    .concat((rows || regionVisible()).map(r=> [cloudLabelNow(), regionSel, reg ? T(reg.loc) : "", T(r.n), T(r.cat), rgStage(r.st) ? T(rgStage(r.st)) : "",
+      T(RG_AVAIL[r.avail]), r.notes.map(rgNote).join(" "), r.doc, r.src, T(r.box ? "Yes" : "No"), dataUpdated()]));
 }
 function xlsxParts(sheet){
   const NS = "http://schemas.openxmlformats.org/", REL = NS + "officeDocument/2006/relationships", MAIN = NS + "spreadsheetml/2006/main";
   const PKG = NS + "package/2006/relationships", CT = "application/vnd.openxmlformats-officedocument.spreadsheetml.";
   const last = xlsxCol(sheet[0].length - 1) + sheet.length, links = [];
+  const name = String(T("Availability")).replace(/[\[\]:*?\/\\]/g, "").slice(0, 31) || "Availability", rtl = I18N.dir === "rtl" ? ' rightToLeft="1"' : "";
   const body = sheet.map((row, ri)=> `<row r="${ri + 1}">` + row.map((v, ci)=>{
     const ref = xlsxCol(ci) + (ri + 1), url = ri > 0 && /^https?:\/\//.test(v);
     if(url) links.push([ref, v]);
@@ -7660,8 +7672,8 @@ function xlsxParts(sheet){
       `<Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="${CT}sheet.main+xml"/>` +
       `<Override PartName="/xl/worksheets/sheet1.xml" ContentType="${CT}worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="${CT}styles+xml"/></Types>` },
     { name:"_rels/.rels", data:XD + `<Relationships xmlns="${PKG}"><Relationship Id="rId1" Type="${REL}/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
-    { name:"xl/workbook.xml", data:XD + `<workbook xmlns="${MAIN}" xmlns:r="${REL}"><sheets><sheet name="Availability" sheetId="1" r:id="rId1"/></sheets>` +
-      `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">Availability!$A$1:$${xlsxCol(sheet[0].length - 1)}$${sheet.length}</definedName></definedNames></workbook>` },
+    { name:"xl/workbook.xml", data:XD + `<workbook xmlns="${MAIN}" xmlns:r="${REL}"><sheets><sheet name="${xlsxEsc(name)}" sheetId="1" r:id="rId1"/></sheets>` +
+      `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">${xlsxEsc("'" + name.replace(/'/g, "''") + "'")}!$A$1:$${xlsxCol(sheet[0].length - 1)}$${sheet.length}</definedName></definedNames></workbook>` },
     { name:"xl/_rels/workbook.xml.rels", data:XD + `<Relationships xmlns="${PKG}"><Relationship Id="rId1" Type="${REL}/worksheet" Target="worksheets/sheet1.xml"/>` +
       `<Relationship Id="rId2" Type="${REL}/styles" Target="styles.xml"/></Relationships>` },
     { name:"xl/styles.xml", data:XD + `<styleSheet xmlns="${MAIN}"><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font>` +
@@ -7670,7 +7682,7 @@ function xlsxParts(sheet){
       `<cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf>` +
       `<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="top"/></xf></cellXfs>` +
       `<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>` },
-    { name:"xl/worksheets/sheet1.xml", data:XD + `<worksheet xmlns="${MAIN}" xmlns:r="${REL}"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>` +
+    { name:"xl/worksheets/sheet1.xml", data:XD + `<worksheet xmlns="${MAIN}" xmlns:r="${REL}"><sheetViews><sheetView workbookViewId="0"${rtl}><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>` +
       `<cols>${widths.map((w, i)=> `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join("")}</cols><sheetData>${body}</sheetData><autoFilter ref="A1:${last}"/>` +
       (links.length ? `<hyperlinks>${links.map(([ref], i)=> `<hyperlink ref="${ref}" r:id="rId${i + 1}"/>`).join("")}</hyperlinks>` : "") + `</worksheet>` },
     { name:"xl/worksheets/_rels/sheet1.xml.rels", data:XD + `<Relationships xmlns="${PKG}">` +
@@ -7689,7 +7701,7 @@ function paintRegionPanel(){
   });
   const count = k=> regionRowsNow.filter(r=> r.avail === k).length;
   document.getElementById("d-eyebrow").textContent = cloudLabelNow() + " · " + T("Region availability");
-  document.getElementById("d-title").innerHTML = flagHtml(reg.code, "rg-flag-title") + " " + esc((reg.loc ? reg.loc + " " : "") + "(" + reg.code + ")");
+  document.getElementById("d-title").innerHTML = flagHtml(reg.code, "rg-flag-title", true) + " " + esc((reg.loc ? T(reg.loc) + " " : "") + "(" + reg.code + ")");
   document.getElementById("d-tagline").innerHTML = esc(Object.keys(RG_AVAIL).filter(k=> count(k)).map(k=> T(RG_AVAIL[k]) + ": " + count(k)).join(" · ")) +
     `<span class="rg-asof">${esc(T("Data from the public Databricks docs"))} · ${esc(dataUpdated())}</span>`;
   const body = document.getElementById("d-body");
@@ -12721,7 +12733,7 @@ function bootLangMeta(){
      steps cover the board without the spotlight crossing back over itself. */
   const STEPS = [
     { sel:"#ind-btn", place:"bottom", title:"Pick your industry",
-      body:"Start here. Choose any of 70 industries and everything around the platform changes with it: sources, ingestion, teams, use cases and consumers. Press <kbd>\u2318K</kbd> or <kbd>Ctrl&nbsp;K</kbd> to search them." },
+      body:"Start here. Choose any of 70 industries and everything around the platform changes with it: sources, ingestion, teams, use cases and consumers. Press {k1} or {k2} to search them." },
     { sel:"#topband", place:"bottom", title:"Use cases and Genie agents",
       body:"What the platform does in this industry. Click a use case for its story: the problem it solves, who benefits, how it is built, the products it uses and real Databricks customer stories." },
     { sel:".col.src", place:"right", title:"Sources in, answers out",
@@ -12835,17 +12847,17 @@ function bootLangMeta(){
     pop.dataset.step = idx;
     const last = idx === STEPS.length - 1;
     pop.innerHTML = "";
-    const h4 = document.createElement("h4"); h4.textContent = step.title;
-    const p = document.createElement("p"); p.innerHTML = step.body;
+    const h4 = document.createElement("h4"); h4.textContent = T(step.title);
+    const p = document.createElement("p"); p.innerHTML = esc(T(step.body)).replace("{k1}", "<kbd>\u2318K</kbd>").replace("{k2}", "<kbd>Ctrl&nbsp;K</kbd>");
     const row = document.createElement("div"); row.className = "tour-row";
     const st = document.createElement("span"); st.className = "tour-step"; st.textContent = (idx+1) + " / " + STEPS.length;
-    const skip = document.createElement("button"); skip.className = "tour-skip"; skip.type = "button"; skip.textContent = "Skip"; skip.addEventListener("click", () => stop());
+    const skip = document.createElement("button"); skip.className = "tour-skip"; skip.type = "button"; skip.textContent = T("Skip"); skip.addEventListener("click", () => stop());
     row.append(st, skip);
     if(idx > 0){
-      const back = document.createElement("button"); back.className = "tour-btn"; back.type = "button"; back.textContent = "Back"; back.addEventListener("click", () => go(-1));
+      const back = document.createElement("button"); back.className = "tour-btn"; back.type = "button"; back.textContent = T("Back"); back.addEventListener("click", () => go(-1));
       row.append(back);
     }
-    const next = document.createElement("button"); next.className = "tour-btn accent"; next.type = "button"; next.textContent = last ? "Done" : "Next"; next.addEventListener("click", () => go(1));
+    const next = document.createElement("button"); next.className = "tour-btn accent"; next.type = "button"; next.textContent = T(last ? "Done" : "Next"); next.addEventListener("click", () => go(1));
     row.append(next);
     pop.append(h4, p, row);
     position(H, step.place || "bottom");

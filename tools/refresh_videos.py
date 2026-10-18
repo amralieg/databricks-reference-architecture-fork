@@ -57,6 +57,15 @@ def plan(links, feed, skip=SKIP, cap=CAP):
     return add, full
 
 
+def unnamed(links, feed, skip=SKIP):
+    linked = {v.get("id") for L in links.values() if isinstance(L, dict) for v in (L.get("videos") or []) if isinstance(v, dict)}
+    names, out = box_names(links), []
+    for vid, title in feed:
+        if vid not in linked and vid not in skip and (vid, title) not in out and not boxes_named(title, names):
+            out.append((vid, title))
+    return out
+
+
 def verify(links):
     jobs = [(n, v) for n, L in links.items() if isinstance(L, dict)
             for v in (L.get("videos") or []) if isinstance(v, dict) and v.get("id")]
@@ -108,6 +117,8 @@ def main():
                         ("new upload names a box", add), ("box already holds %d videos" % CAP, full)):
         for n, vid, detail in rows:
             print(f"  {label}: {vid} -> {n}: {detail}")
+    for vid, title in unnamed(links, feed):
+        print(f"  names no box (link it with an alias 'a' if it belongs to one): {vid}: {title}")
     for e in ferr:
         print("  " + e)
     if args.check:

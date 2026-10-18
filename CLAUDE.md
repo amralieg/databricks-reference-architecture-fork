@@ -67,6 +67,15 @@ The full tree is in `README.md` under "Repository layout". Two files it does not
    field jargon, no meeting or design named after the customer. "Databricks customer stories"
    and an industry's own customers are fine. `linkgate` fails on the phrases in
    `SELLER_PHRASES` in any tracked file.
+8. **Check every translation before any PR.** After the Content refresh, run
+   `node tools/verify_ui_i18n.js` and fix what it reports. Every string a reader sees in a
+   non-English language is translated, with the sense it has on the board: the board, the details
+   and region panels, the tour, tooltips and the Excel download. Product, feature and brand names,
+   region codes and titles quoted as published stay English, and so do the toolbar and its menus.
+   A word that is truly the same in a language goes in `tools/i18n_same.json` for that language
+   only. A wrong sense found once (ingestion read as eating, work teams as sports teams, cloud as
+   weather) goes in the gate's sense list so it cannot come back. A machine translation of a short
+   label is never final until it has been read in context.
 
 ## 4. Links policy
 
@@ -163,7 +172,9 @@ the rules and reads the dots the board actually draws:
   title carries the box name or an alias `a` declared on the video. `tools/refresh_videos.py`
   follows title changes, drops videos that are gone, and links each new upload whose title names
   a box. Review what it links; an upload that should not be linked goes in its `SKIP` with the
-  reason.
+  reason. It also lists the recent uploads whose title names no box: one that belongs to a box gets
+  a video entry with an alias `a` taken from its title. The feeds hold only each channel's latest 15
+  uploads, so an older video is added by hand the same way.
 - `tools/build_demos.py` owns every demo list through its path → tile `MAP`; never add a demo to
   `links.json` by hand. A tour that should not show maps to an empty list.
 
@@ -181,8 +192,9 @@ python3 tools/refresh_content.py --check     # Content: demos and videos current
 python3 tools/regiongate.py --live          # region data consistent, every limited column owned by a board product or explained, every region-table row linked to its cloud's docs with a stage and its markers explained, the same rows on every cloud, every region in a Geo and with a flag, alias parity, source docs live
 node   tools/verify_all_sections.js         # 70 industries + the generic board, uc/genie/dash/app = 10/4/4/4, the deck's editable board slide builds, 0 page errors
 node   tools/verify_i18n_coverage.js        # translation coverage over the DATA corpus
+node   tools/verify_ui_i18n.js                # every string a reader sees is translated with the right sense in all fifteen languages: wrong-sense terms, leftover tokens and the tour offline; the board, the panels, the tour, tooltips and the Excel headers on screen
 node   tools/verify_highlights.js           # every tile on every board and cloud draws the dots of the highlights that match it: one connector list for dot and callout, aliases, no orphaned resources
-node   tools/verify_label_fit.js            # every panel, card and band label fits its box in all sixteen languages and every board shape
+node   tools/verify_label_fit.js            # every panel, card, heading and band label fits its box, and no heading runs under its zoom button, in all sixteen languages and every board shape
 python3 tools/linkgate.py                    # structural completeness, retired names, seller phrasing, outcome-map use cases still on their boards, every chip alias names a chip on some board and a LINKS entry (add --urls for live link check, --scope highlights to skip third-party citations)
 python3 tools/heightgate.py                  # every board in every shape against the reference height, no clipping, a board that does not load measured once more; a board already over it holds its height in tools/heightgate_baseline.json and may not grow (--tighten after one shrinks)
 node   tools/perfgate.js                     # motion rests at idle, reduced motion honoured, boot fetches once and in parallel; the opening intro plays once the board is built, ends on input and leaves nothing behind
@@ -221,6 +233,7 @@ git fetch upstream && git checkout -b <feature> upstream/main   # branch off the
 python3 tools/refresh_public_data.py && python3 tools/refresh_content.py   # §3 rule 6: Platform, then Content
 # ...edit, bump BUILD + version.json (+ SCHEMA if persisted content changed), run §6 gates...
 python3 tools/refresh_public_data.py && python3 tools/regiongate.py --live   # §5: regional availability checked against the public docs
+node tools/verify_ui_i18n.js                                                     # §3 rule 8: every translation checked in all fifteen languages
 git push origin <feature>                                        # to your fork
 gh pr create --repo databricks-industry-solutions/databricks-reference-architecture \
   --base main --head <your-github-user>:<feature>

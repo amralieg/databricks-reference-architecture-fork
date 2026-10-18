@@ -29,7 +29,17 @@ const LANGS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "app", "tran
         pairs.push([el, card || pn, card ? "card" : "panel"]);
       }));
       document.querySelectorAll(".band").forEach(bd => bd.querySelectorAll(":scope > .band-lbl, :scope > .band-rlbl").forEach(el => pairs.push([el, bd, "band"])));
+      document.querySelectorAll(".colhead, .pockhead").forEach(h => {
+        const node = [...h.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+        if (!node) return;
+        const r = document.createRange(); r.selectNodeContents(node);
+        const t = r.getBoundingClientRect(), b = h.getBoundingClientRect(), zx = h.querySelector(".zx");
+        pairs.push([node, h, "heading"]);
+        if (Math.max(b.left - t.left, t.right - b.right) > 0.5) out.push(`'${node.textContent.trim().slice(0, 48)}' runs outside its heading`);
+        if (zx) { const z = zx.getBoundingClientRect(); if (t.right > z.left + 0.5 && t.left < z.right - 0.5) out.push(`'${node.textContent.trim().slice(0, 48)}' runs under its zoom button`); }
+      });
       for (const [el, box, kind] of pairs) {
+        if (kind === "heading") continue;
         const e = el.getBoundingClientRect(), b = box.getBoundingClientRect();
         if (!e.width || !b.width) continue;
         const over = Math.max(b.left - e.left, e.right - b.right);
@@ -45,5 +55,5 @@ const LANGS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "app", "tran
   console.log(`languages: ${LANGS.length}, shapes: ${SHAPES.length}, labels checked: ${checked}`);
   if (errs.length) fails.push(...errs.slice(0, 5).map(e => "page error: " + e));
   if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.forEach(f => console.log("  - " + f)); process.exit(1); }
-  console.log("PASS: every panel, card and band label fits its box in every language and shape");
+  console.log("PASS: every panel, card, heading and band label fits its box in every language and shape");
 })().catch(e => { console.error(e); process.exit(2); });

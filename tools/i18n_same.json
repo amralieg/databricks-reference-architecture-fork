@@ -1,0 +1,100 @@
+{
+ "_all": [
+  "Airflow / Dagster",
+  "SQL Data Warehousing",
+  "AI/BI Dashboards",
+  "Cloud ETL"
+ ],
+ "da": [
+  "Business Intelligence",
+  "Onboarding",
+  "Beta",
+  "Cloud",
+  "Doha, Qatar (qatarcentral)",
+  "Geo: Qatar",
+  "Qatar",
+  "Enterprise Data Warehouse",
+  "Service",
+  "Data Warehouse",
+  "Transformation",
+  "Region",
+  "Download Excel"
+ ],
+ "de": [
+  "Business Intelligence",
+  "Marketing",
+  "Onboarding",
+  "Beta",
+  "Cloud",
+  "Enterprise Data Warehouse",
+  "Service",
+  "Data Warehouse",
+  "Transformation",
+  "Region",
+  "Demos",
+  "Videos"
+ ],
+ "es": [
+  "Marketing",
+  "Beta",
+  "Capital",
+  "Open Banking"
+ ],
+ "fi": [
+  "Business Intelligence",
+  "Doha, Qatar (qatarcentral)",
+  "Geo: Qatar",
+  "Qatar",
+  "Enterprise Data Warehouse"
+ ],
+ "fr": [
+  "Business Intelligence",
+  "Marketing",
+  "Onboarding",
+  "Cloud",
+  "Doha, Qatar (qatarcentral)",
+  "Geo: Qatar",
+  "Qatar",
+  "Service",
+  "Capital",
+  "Transformation",
+  "Open Banking",
+  "Certifications",
+  "Core Banking",
+  "Finance",
+  "Source"
+ ],
+ "it": [
+  "Marketing",
+  "Onboarding",
+  "Beta",
+  "Cloud",
+  "Doha, Qatar (qatarcentral)",
+  "Geo: Qatar",
+  "Qatar"
+ ],
+ "nl": [
+  "Marketing",
+  "Onboarding",
+  "Cloud"
+ ],
+ "pt": [
+  "Marketing",
+  "Beta",
+  "Capital"
+ ],
+ "sv": [
+  "Business Intelligence",
+  "Onboarding",
+  "Beta",
+  "Doha, Qatar (qatarcentral)",
+  "Geo: Qatar",
+  "Qatar",
+  "Enterprise Data Warehouse",
+  "Service",
+  "Data Warehouse",
+  "Region",
+  "Demos",
+  "Risk"
+ ]
+}

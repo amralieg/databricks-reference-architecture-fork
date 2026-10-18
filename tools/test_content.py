@@ -43,6 +43,10 @@ check("an undocumented Databricks box is a candidate, a competitor and an everyd
 check("a title about Genie ZeroOps goes to Genie ZeroOps, not to Genie",
       rv.plan({"Genie": {"doc": "genie/"}, **BOX}, [("z1", "Resolving incidents with Genie ZeroOps")])[0] == [("Genie ZeroOps", "z1", "Resolving incidents with Genie ZeroOps")])
 check("an everyday word in a title links nothing", rv.plan(BOX, [("t1", "Governing Cyber Agent Teams")]) == ([], []))
+check("a recent upload that names no box is listed for a decision, once, unless it is linked or skipped",
+      rv.unnamed(LINKS, feed + [("v1", "Vibe Data Modeling: AI Data Models That Match Your Business"), ("v1", "Vibe Data Modeling: AI Data Models That Match Your Business")],
+                 skip={"s9": "event recap"}) == [("c3", "Competitor launch"), ("v1", "Vibe Data Modeling: AI Data Models That Match Your Business")],
+      rv.unnamed(LINKS, feed, skip={"s9": "event recap"}))
 L2 = {"Unity Catalog": {"videos": [{"id": "u1", "t": "Old title", "a": "UC"}, {"id": "u2", "t": "Gone"}]}, "Lakebase": {"videos": [{"id": "g", "t": "x"}]}}
 out = rv.apply(L2, [("Unity Catalog", "u1", "New title")], [("Unity Catalog", "u2", "HTTP Error 404"), ("Lakebase", "g", "HTTP Error 401")],
                [("Unity Catalog", "n1", "Unity Catalog deep dive")])
