@@ -62,10 +62,8 @@ DRIVER = r"""
              scale: Math.round(board.getBoundingClientRect().width / dw * 1000) / 1000,
              clip: clip, squeezed: squeezed, clipped: clipped };
   }
-  /* Every shape, not just the one the board opens on. The pockets are half-width
-     in h90, so a group name that fits the Z clips there; checking only the
-     default shape passed "Industry Messaging" as clean. */
-  var SHAPES = ["z", "s", "t", "rt", "h90"];
+  /* Every shape, not just the one the board opens on. */
+  var SHAPES = ["z", "s", "t", "rt"];
   var ids = (window.HG_ONLY && window.HG_ONLY.length) ? window.HG_ONLY : ["generic"].concat(INDUSTRY_CATALOG.map(function(row){ return row[0]; })
     .filter(function(id){ return !INDUSTRY_BUILT || INDUSTRY_BUILT.has(id); }));
   var res = {}, failed = [];
@@ -228,10 +226,9 @@ def main():
     # 32px sits between the two things this gate has to tell apart. A row added to
     # a corner pocket costs ~45px and is the regression worth failing on, because
     # the platform block beside the pocket grows to match it. A top band carrying
-    # more industry tiles legitimately measures up to ~25px taller in h90, where
-    # its tiles are narrow enough for a sublabel to take a second line, and that
-    # is content, not a layout fault. Verified: airlines fails at 8 on the top
-    # band alone, and still fails at 32 with one pocket tile added.
+    # more industry tiles legitimately measures taller when its tiles are narrow
+    # enough for a sublabel to take a second line, and that is content, not a
+    # layout fault.
     ap.add_argument("--tolerance", type=int, default=32,
                     help="design px an industry may exceed the reference by; "
                          "under one pocket row, over a top-band content difference")
@@ -251,7 +248,7 @@ def main():
         return 1
     res = out["res"]
     # The reference board is the budget, per shape: a shape legitimately has its
-    # own height, so comparing an industry in h90 against the reference in z
+    # own height, so comparing an industry in t against the reference in z
     # would convict the shape rather than the industry.
     for key in sorted(k for k in res if k.startswith("generic@")):
         r = res[key]

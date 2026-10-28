@@ -16,10 +16,10 @@ def board(h, clip=0, squeezed=0):
     return {"h": h, "scale": .7, "clip": clip, "squeezed": squeezed, "clipped": []}
 
 
-RES = {"generic@z": board(1200), "generic@h90": board(1500),
+RES = {"generic@z": board(1200), "generic@t": board(1500),
        "fits@z": board(1232), "over@z": board(1233), "held@z": board(1300), "grew@z": board(1301),
        "shrank@z": board(1280), "fitsnow@z": board(1220), "clipped@z": board(1100, clip=1),
-       "squeezed@z": board(1100, squeezed=1), "tall@h90": board(1530)}
+       "squeezed@z": board(1100, squeezed=1), "tall@t": board(1530)}
 BASE = {"held@z": 1300, "grew@z": 1300, "shrank@z": 1300, "fitsnow@z": 1300, "gone@z": 1400}
 
 rows, stale = hg.judge(RES, BASE, 32)
@@ -31,7 +31,7 @@ check("a held board one pixel past its recorded height fails", by["grew@z"]["fai
 check("a held board that shrank passes", not by["shrank@z"]["fail"], by["shrank@z"])
 check("a clipped label fails whatever the height", by["clipped@z"]["fail"])
 check("a squeezed label fails whatever the height", by["squeezed@z"]["fail"])
-check("each shape is judged against its own reference", not by["tall@h90"]["fail"] and by["tall@h90"]["ref"] == 1500)
+check("each shape is judged against its own reference", not by["tall@t"]["fail"] and by["tall@t"]["ref"] == 1500)
 check("the reference boards are not judged against themselves", not any(n.startswith("generic@") for n in by))
 check("a recorded board that is no longer measured is reported stale", stale == ["gone@z"], stale)
 
@@ -63,7 +63,7 @@ with tempfile.TemporaryDirectory() as d:
 committed = hg.load_baseline()
 check("the committed baseline holds positive heights keyed industry@shape and no reference board",
       committed and all(isinstance(v, int) and v > 0 and k.count("@") == 1 and not k.startswith("generic@")
-                        and k.split("@")[1] in ("z", "s", "t", "rt", "h90") for k, v in committed.items()), len(committed))
+                        and k.split("@")[1] in ("z", "s", "t", "rt") for k, v in committed.items()), len(committed))
 
 failed = [r for r in results if not r[1]]
 for name, ok, detail in results:

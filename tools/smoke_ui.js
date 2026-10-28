@@ -8,7 +8,7 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 const MENUS = [['#ind-btn', 'ind-wrap'], ['#region-btn', 'region-wrap'], ['#stage-btn', 'stage-wrap'], ['#hl-btn', 'hl-wrap'],
-  ['#pal-btn', 'pal-wrap'], ['#shape-btn', 'shape-wrap'], ['#dl-btn', 'dl-wrap'], ['#lang-btn', 'lang-wrap'], ['#share-btn', 'share-wrap']];
+  ['#pal-btn', 'pal-wrap'], ['#shape-btn', 'shape-wrap'], ['#dl-btn', 'dl-wrap'], ['#lang-btn', 'lang-wrap'], ['#opt-btn', 'opt-wrap']];
 const openMenus = page => page.evaluate(() => [...document.querySelectorAll('.pal-wrap.open, .dl-wrap.open')].map(w => w.id));
 
 (async () => {
@@ -48,6 +48,25 @@ const openMenus = page => page.evaluate(() => [...document.querySelectorAll('.pa
     await page.click('#hl-btn');
     await page.mouse.click(8, 990);
     check('a click outside closes the open menu', (await openMenus(page)).length === 0);
+    await ctx.close();
+  }
+
+  {
+    const { ctx, page } = await open('?industry=banking');
+    await page.click('#opt-btn');
+    await page.click('#side-btn');
+    const docked = await page.evaluate(() => ({ docked: document.body.classList.contains('docked'), open: document.getElementById('opt-wrap').classList.contains('open') }));
+    await page.click('#opt-btn');
+    const ticked = await page.evaluate(() => document.getElementById('side-btn').classList.contains('on'));
+    await page.click('#share-menu button[data-share="copy"]');
+    await sleep(300);
+    const flash = await page.evaluate(() => ({ lbl: document.getElementById('opt-lbl').textContent, open: document.getElementById('opt-wrap').classList.contains('open') }));
+    await page.click('#opt-btn');
+    await page.click('#tour-btn');
+    await page.waitForSelector('.tour-pop');
+    const tour = await page.evaluate(() => !document.getElementById('opt-wrap').classList.contains('open'));
+    check('each Options row acts and closes the menu: the dock docks the panel and shows its tick, Copy link flashes on the Options label, the tour starts',
+      docked.docked && !docked.open && ticked && flash.lbl === 'Link copied' && !flash.open && tour, JSON.stringify({ docked, ticked, flash, tour }));
     await ctx.close();
   }
 
@@ -119,7 +138,7 @@ const openMenus = page => page.evaluate(() => [...document.querySelectorAll('.pa
     for (let i = 0; i < 10 && (await title()) !== 'Highlights on every box'; i++) { await page.click('.tour-btn.accent'); await sleep(300); }
     await sleep(900);
     const hl = await page.evaluate(() => {
-      const h = document.querySelector('.tour-hole').getBoundingClientRect(), boxes = [...document.querySelectorAll('#plat-top .atom, #plat-waist .atom, #platform .atom')];
+      const h = document.querySelector('.tour-hole').getBoundingClientRect(), boxes = [...document.querySelectorAll('#plat-top .atom, #platform .atom')];
       const dots = el => el.querySelectorAll(':scope > .badge-dot[data-hl]').length;
       const box = boxes.find(el => { const b = el.getBoundingClientRect(); return b.width && Math.abs(b.left - h.left - 6) < 2 && Math.abs(b.top - h.top - 6) < 2; });
       return { id: box ? box.dataset.id : '', dots: box ? dots(box) : 0, most: Math.max(...boxes.map(dots)), x: h.left + h.width / 2, y: h.top + h.height / 2,

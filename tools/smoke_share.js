@@ -25,15 +25,17 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
   await boardReady(page);
   await page.waitForTimeout(400);
 
-  // ---- structure: share button exists and sits immediately after feedback ----
-  check('share button exists', await page.evaluate(() => !!document.getElementById('share-btn')));
-  check('share button is to the right of feedback', await page.evaluate(() => {
-    const fb = document.getElementById('feedback-btn');
-    const sw = document.getElementById('share-wrap');
-    if (!fb || !sw) return false;
-    // share-wrap is the next element sibling after the feedback button
-    return fb.nextElementSibling === sw;
+  // ---- structure: Options is the last toolbar control and holds the tour, dock, feedback and share ----
+  check('Options is the last control in the toolbar', await page.evaluate(() => {
+    const tools = document.querySelector('.htools');
+    return !!tools && tools.lastElementChild === document.getElementById('opt-wrap');
   }));
+  check('the Options menu holds the tour, the dock, feedback and then the share section', await page.evaluate(() => {
+    const ids = [...document.getElementById('opt-menu').children].map(e => e.id);
+    return ids.join() === 'tour-btn,side-btn,feedback-btn,share-menu';
+  }));
+  check('no tour, dock, feedback or share button is left on the toolbar itself', await page.evaluate(() =>
+    !document.querySelector('.htools > #tour-btn, .htools > #side-btn, .htools > #feedback-btn, #share-btn, #share-wrap')));
 
   // ---- default OG tags on index.html (the reference-board card LinkedIn scrapes) ----
   const head = await page.evaluate(() => document.head.innerHTML);
@@ -47,7 +49,7 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
   const IND = 'banking';
   const data = await page.evaluate(async (ind) => {
     await applyIndustry(ind, true);
-    document.getElementById('share-btn').click();
+    document.getElementById('opt-btn').click();
     const menu = document.getElementById('share-menu');
     const title = menu.querySelector('.sh-title').textContent;
     const land = shareLandingUrl();
@@ -136,8 +138,8 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
   // ---- generic board titles without an industry (still names the cloud) ----
   const gen = await page.evaluate(async () => {
     await applyIndustry('generic', true);
-    document.getElementById('share-wrap').classList.remove('open'); // close first (outside-click does this for a real user)
-    document.getElementById('share-btn').click();                    // reopen -> rebuild with the current board
+    document.getElementById('opt-wrap').classList.remove('open'); // close first (outside-click does this for a real user)
+    document.getElementById('opt-btn').click();                    // reopen -> rebuild with the current board
     return { title: document.getElementById('share-menu').querySelector('.sh-title').textContent, land: shareLandingUrl(), pageTitle: document.title };
   });
   check('generic board titles without an industry (with cloud)', /^Databricks Reference Architecture on (AWS|Azure|GCP)$/.test(gen.title), gen.title);
@@ -155,6 +157,7 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
     ['palette', () => pick('#pal-btn', '#pal-menu [data-pal="mono"]')],
     ['theme', () => page.click('#theme-btn')],
     ['display', () => page.click('#display-seg button:has-text("Branded")')],
+    ['view', () => page.click('#view-seg button:has-text("Detailed")')],
     ['stage', () => pick('#stage-btn', '#stage-menu [data-stage="beta"]')],
     ['highlights', () => pick('#hl-btn', '#hl-menu [data-hl="story"]')],
     ['region', () => pick('#region-btn', '#region-menu button[data-region]:not([data-region-all])')],
@@ -164,7 +167,7 @@ function check(name, cond, detail) { results.push({ name, ok: !!cond, detail });
     ['close the region panel', () => page.click('#dclose')],
     ['zoom into Teams', () => page.click('.pockhead [data-zoom="ppl"]')],
     ['open a box', () => page.evaluate(() => atomsNamed('Data Engineers')[0].click())],
-    ['dock the panel', () => page.click('#side-btn')],
+    ['dock the panel', () => pick('#opt-btn', '#side-btn')],
     ['language', () => pick('#lang-btn', '#lang-menu [data-lang="fr"]')],
   ];
   for (const [label, act] of steps) {

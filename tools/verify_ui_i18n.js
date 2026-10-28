@@ -32,6 +32,9 @@ const SENSE = [
     bad: { zh: /内存/ } },
   { what: 'compute instances read as examples or cases', src: /\binstances?\b/i,
     bad: { hi: /उदाहरण/, he: /מקרים/, ar: /حالات/ } },
+  { what: 'a GovCloud region read as a governor or a government', src: /^US Gov\b/,
+    bad: { de: /gouverneur|regierung/i, es: /gobern/i, pt: /governa|governo/i, it: /governat|governo/i, fr: /gouvern/i, nl: /regering/i,
+           sv: /regering/i, fi: /hallitus/i, da: /regering|guvern/i, ja: /知事|政府/, ko: /주지사|정부/, zh: /政府/, ar: /حكوم|حاكم/, he: /ממשל|מושל/ } },
 ];
 const prose = s => { const w = s.trim().split(/\s+/); return w.length >= 3 && w.some(x => /^[a-z]{2,}/.test(x)); };
 

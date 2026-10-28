@@ -24,7 +24,7 @@ function u8FromB64(b64) { return Buffer.from(b64, "base64"); }
 
 const LIVE = process.argv.includes("--live");
 const DRAW_CASES = CASES.map(([ind, cloud]) => [`industry=${ind}&cloud=${cloud}`, `${ind}_${cloud}`])
-  .concat(["z", "s", "t", "rt", "h90"].map(s => [`industry=banking&cloud=azure&shape=${s}`, `banking_${s}`]))
+  .concat(["z", "s", "t", "rt"].map(s => [`industry=banking&cloud=azure&shape=${s}`, `banking_${s}`]))
   .concat([
     ["industry=banking&cloud=azure&lang=ar", "banking_ar"],
     ["industry=banking&cloud=azure&lang=ja", "banking_ja"],

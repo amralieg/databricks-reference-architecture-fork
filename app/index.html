@@ -65,7 +65,7 @@
     /* --- the nine groups, light --- */
 
     /* --- neutrals --- */
-    --ink:#1b1f24; --muted:#5b6570; --faint:#8a939e; --sep:#828a91;
+    --ink:#1b1f24; --muted:#5b6570; --faint:#68717d; --sep:#828a91;
     --line:#e3e7ec; --line-strong:#cfd5dc;
     --bg:#f4f6f8; --card:#fff; --well:#f3f5f8; --panel:#f6f4f2;
     --on-accent:#fff;
@@ -80,6 +80,7 @@
     /* the brand red is 3.6:1 on white, so small bold text on a light surface
        uses this darkened form of it instead of the brand colour itself */
     --brand-ink:#c0261a;
+    --brand-fill:#c0261a;
     --danger:#b42318; --danger-bd:#ffd7d0; --danger-bg:#fff2f0;
 
     /* --- connectors. A connector is coloured by what it lands IN, so it can be
@@ -477,19 +478,19 @@
      inside it, and the export clones the board itself so the values travel. */
   body.pal-mono #board {
     --brand:#4a4a4a; --brand-bd:#c9c9c9; --brand-soft:#dedede; --brand-wash:#f6f6f6;
-    --brand-ink:#3a3a3a;
+    --brand-ink:#3a3a3a; --brand-fill:#4a4a4a;
     --flow-neutral:#767676; --flow-medal:#4f4f4f;
-    --m-bronze:#6b6b6b; --m-silver:#8a8a8a; --m-gold:#585858;
+    --m-bronze:#525252; --m-silver:#5f5f5f; --m-gold:#444444;
     /* the neutrals carry a slight blue cast everywhere else, which is right for
        a screen and wrong for the one palette whose job is to have no hue. Each
        value keeps its lightness and loses only the cast, so nothing shifts
        weight and every contrast pair holds. */
-    --ink:#1f1f1f; --muted:#616161; --faint:#949494; --sep:#888888;
+    --ink:#1f1f1f; --muted:#5f5f5f; --faint:#707070; --sep:#888888;
     --line:#e6e6e6; --line-strong:#d4d4d4;
     --well:#f4f4f4; --panel:#f5f5f5; --plat-fill:#fbfbfb; --logo-ink:#303030; }
   body.pal-mono.theme-dark #board {
     --brand:#cfcfcf; --brand-bd:#5a5a5a; --brand-soft:#444444; --brand-wash:#1e1e1e;
-    --brand-ink:#e2e2e2;
+    --brand-ink:#e2e2e2; --brand-fill:#5e5e5e;
     --flow-neutral:#9c9c9c; --flow-medal:#9c9c9c;
     --m-bronze:#b4b4b4; --m-silver:#cccccc; --m-gold:#9d9d9d;
     --ink:#eeeeee; --muted:#b0b0b0; --faint:#8c8c8c; --sep:#838383;
@@ -497,6 +498,11 @@
     --card:#1a1a1a; --well:#242424; --panel:#191919; --plat-fill:#171717;
     --logo-ink:#eeeeee; }
   body.pal-mono .fmt-logo, body.pal-mono .ms-logo { filter:grayscale(1); }
+  body.pal-solid:not(.theme-dark) { --muted:#535c66; --m-bronze:#884d17; --m-silver:#565c64; --m-gold:#6f5914; }
+  body.pal-solid.theme-dark { --m-bronze:#dba46f; }
+  body.pal-jewel:not(.theme-dark) { --muted:#57616b; --m-bronze:#8e5018; --m-silver:#5a6069; --m-gold:#745d15; }
+  body.pal-pop:not(.theme-dark) { --m-silver:#5d646d; --m-gold:#7a6116; }
+  body.pal-neon:not(.theme-dark) { --m-silver:#606770; --m-gold:#7c6317; }
 
   * { box-sizing:border-box; }
   html,body { margin:0; padding:0; }
@@ -594,7 +600,7 @@
     height:28px; border:1px solid var(--line); background:var(--card);
     font:inherit; font-size:11px; font-weight:700; color:var(--muted); border-radius:7px; padding:0 9px; cursor:pointer; }
   .hbtn:hover { color:var(--ink); border-color:var(--line-strong); }
-  .hbtn.on { background:var(--brand); border-color:var(--brand); color:var(--on-accent); }
+  .hbtn.on { background:var(--brand-fill); border-color:var(--brand-fill); color:var(--on-accent); }
   .hbtn.ico-only.on { background:var(--card); border-color:var(--brand); box-shadow:inset 0 0 0 1px var(--brand); color:var(--brand); }
   /* Icon-only controls collapse to a square glyph button (reference .iconbtn:
      30x28, 9px radius) so the bar reads Industry-first. */
@@ -625,7 +631,7 @@
     border:none; background:none; font:inherit; font-size:11px; font-weight:700; color:var(--muted);
     padding:0 11px; cursor:pointer; border-right:1px solid var(--line); }
   .seg button:last-child { border-right:none; }
-  .seg button.on { background:var(--g-amber-line); color:var(--on-accent); }
+  .seg button.on { background:var(--g-amber-head); color:var(--on-accent); }
   /* Nothing to switch on this board (e.g. the generic reference board): the
      control is greyed and inert rather than flipping the mode with no visible
      effect, which read as broken. */
@@ -682,7 +688,7 @@
   /* the page grey and the header white are four units apart, so the fill alone
      cannot carry the shape: a brand cap on top and hairlines down the sides give
      the tab a readable edge while the base stays open into the sheet below */
-  .tab.active { color:var(--brand); background:var(--bg); z-index:2;
+  .tab.active { color:var(--brand-ink); background:var(--bg); z-index:2;
     box-shadow:inset 0 2px 0 var(--brand), inset 1px 0 0 var(--line), inset -1px 0 0 var(--line); }
   .tab.active:hover { background:var(--bg); }
   .tab.active::before, .tab.active::after {
@@ -715,13 +721,13 @@
   #tab-add { display:none !important; }
   .tab-add { display:flex; align-items:center; justify-content:center; gap:5px;
     border:1.5px dashed var(--brand-bd); background:var(--brand-wash); font:inherit;
-    font-size:12.5px; font-weight:700; color:var(--brand); height:27px; padding:0 10px;
+    font-size:12.5px; font-weight:700; color:var(--brand-ink); height:27px; padding:0 10px;
     border-radius:9px; cursor:pointer; flex:0 0 auto;
     margin-left:calc(var(--tabr) + 5px); margin-bottom:4px;
     transition:background .16s ease, border-color .16s ease, color .16s ease,
       transform .16s ease, box-shadow .16s ease; }
   .tab-add .plus { font-size:16px; line-height:1; margin-top:-1px; }
-  .tab-add:hover { background:var(--brand); border-style:solid; border-color:var(--brand);
+  .tab-add:hover { background:var(--brand-fill); border-style:solid; border-color:var(--brand-fill);
     color:var(--on-accent); transform:translateY(-1px); box-shadow:0 3px 10px var(--brand-glow); }
   .tab-add:active { transform:translateY(0); box-shadow:none; }
   /* one gentle pull on first paint, so the affordance is noticed once and then
@@ -744,7 +750,7 @@
   .ref-card h3 { margin:0 0 3px; font-size:15px; }
   .ref-card p { margin:0 0 8px; color:var(--muted); font-size:12.5px; }
   .ref-legend { font-size:11.5px; color:var(--muted); }
-  .ref-legend b { color:var(--brand); }
+  .ref-legend b { color:var(--brand-ink); }
 
   /* ============================= board ============================= */
   /* symmetric top and bottom padding: the leftover height is split evenly above
@@ -863,7 +869,7 @@
     grid-template-columns:var(--c-src) var(--c-gutl) var(--armw) minmax(0,1fr)
                           var(--armw) var(--c-gutr) var(--c-cons);
     grid-template-rows:[r-head] calc(var(--headh) + var(--headgap))
-                       [r-top] auto [r-waist] var(--waistr, 0px) [r-body] auto [r-end]; }
+                       [r-top] auto [r-body] auto [r-end]; }
   /* --zo is the zone outline's standoff: outline-offset plus outline-width. Every
      connector is inset by it at both ends, so an arrow starts and lands on the
      OUTER box of a zone rather than disappearing under it. --gut and --pgap are
@@ -871,19 +877,15 @@
   :root { --designw:2036px; --railw:290px; --gut:60px; --armw:230px; --pgap:48px;
     --headh:38px; --headgap:6px; --zo:6px; --as:4px;
     --c-src:var(--railw); --c-cons:var(--railw); --c-gutl:var(--gut); --c-gutr:var(--gut); }
-  /* Rows are addressed by NAME, not by number. The waist was added between the
-     two bars long after everything else was placed, and every rule that said
-     "row 3" would have silently meant the new row instead of the lower block. */
   .col.src    { grid-column:1; grid-row:r-head / r-end; }
   /* the head caps the upper block only: the right pocket is external to the
      platform, so the brand bar must stop short of it */
   .plat-head  { grid-column:3 / 5; grid-row:r-head; margin-bottom:var(--headgap); }
   .plat-top   { grid-column:3 / 5; grid-row:r-top; }
-  .plat-waist { grid-column:4 / 5; grid-row:r-waist; display:none; }
   .plat-body  { grid-column:4 / 6; grid-row:r-body; }
   /* the margins cut the notch: without them the pockets would touch the platform */
   .pocket.ing { grid-column:3; grid-row:r-body / r-end; margin:var(--pgap) var(--pgap) 0 0; }
-  .pocket.ppl { grid-column:5; grid-row:r-head / r-waist; margin:0 0 var(--pgap) var(--pgap); }
+  .pocket.ppl { grid-column:5; grid-row:r-head / r-body; margin:0 0 var(--pgap) var(--pgap); }
   .col.cons   { grid-column:7; grid-row:r-head / r-end; }
   .pocket { display:flex; flex-direction:column; gap:5px; min-width:0; position:relative; }
 
@@ -1210,13 +1212,6 @@
   .rtiles { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:4px; align-items:stretch; }
   /* the pockets are one arm wide, so their tiles stack rather than pair up */
   .rail.ing .rtiles, .rail.ppl .rtiles { grid-template-columns:minmax(0,1fr); }
-  /* Each pocket group reads as its own box wherever the two sit side by side.
-     --zone-tile and --zone-bd only exist once a palette class is on the body, so
-     both carry a fallback or the boxes lose their edges on the default theme. */
-  body.shape-h90 .rail.ing > .rgroup, body.shape-h90 .rail.ppl > .rgroup {
-    padding:7px; border-radius:8px;
-    background:var(--zone-tile, var(--card));
-    box-shadow:0 0 0 1.5px var(--zone-bd, var(--g-accent)); }
   .rtile { position:relative; display:flex; align-items:center; gap:5px; width:100%; text-align:left; font:inherit;
     border:1px solid var(--zone-bd, var(--line)); border-left:3px solid var(--rail-accent);
     border-radius:6px;
@@ -1237,14 +1232,9 @@
      reads as a single Z-shaped outline instead of two stacked cards. The eraser
      starts 2px in and stops one arm short, which is exactly where the two reflex
      corners sit — erase past them and the outline breaks open. */
-  .plat-top, .plat-waist, .plat-body { border:2px solid var(--brand); background:var(--plat-fill);
+  .plat-top, .plat-body { border:2px solid var(--brand); background:var(--plat-fill);
     padding:7px; gap:7px; }
   .plat-top, .plat-body { display:flex; }
-  /* Declared here rather than with the grid placement above, because THIS is
-     the rule the waist would otherwise inherit display:flex from, and a waist
-     that is 14px of padding instead of nothing breaks the seam between the two
-     bars in every shape that has no waist, which takes the outline with it. */
-  .plat-waist { display:none; }
   .plat-top  { border-radius:14px 14px 0 14px; box-shadow:var(--shadow-seam); }
   .plat-body { border-radius:0 14px 14px 14px; position:relative; box-shadow:var(--shadow); }
   /* absolute offsets here are measured from the padding box, so the strip has to
@@ -1264,7 +1254,7 @@
        exported GIF instead of freezing while everything else moves */
     stroke-dashoffset:calc(var(--dash-t,0) * -24); }
   @keyframes zdash { to { stroke-dashoffset:-24; } }
-  body.zring-on .plat-top, body.zring-on .plat-waist,
+  body.zring-on .plat-top,
   body.zring-on .plat-body { border-color:transparent; }
   /* the ring is the platform's zone box as well as its moving edge, so reduced
      motion freezes the dashes rather than hiding the box */
@@ -1291,7 +1281,7 @@
   .arm .band-lbl { flex:0 0 auto; padding-top:0; }
   .arm .band-lbl .bl-name { font-size:15px; }
 
-  /* ---------- platform style: Z, S, T, T180, H90 ----------
+  /* ---------- platform style: Z, S, T, T180 ----------
      Four shapes out of two independent facts, so nothing here is written four
      times over: does the UPPER block own the left arm column, and does it own
      the right one. `ul-top` means the upper block reaches out over the left arm
@@ -1320,146 +1310,16 @@
     body.ur-top .plat-body { grid-column-end:5; }
     body.ur-bot .plat-body { grid-column-end:6; }
 
-    /* ---------- H90, the I-beam ----------
-       Both bars reach out over both arms, so the two of them together are a
-       rectangle and the shape comes from the WAIST between them being narrow:
-       the two notches it leaves are what the pockets sit in, which is the only
-       shape here where they are inside the platform rather than beside it.
-
-       This is also the only shape symmetric on both axes, so it is the one that
-       shows a misaligned pocket the most plainly, which is why the pockets take
-       equal margins top and bottom. */
-    body.ul-both .plat-head, body.ul-both .plat-top,
-    body.ul-both .plat-body { grid-column-start:3; }
-    body.ur-both .plat-head, body.ur-both .plat-top,
-    body.ur-both .plat-body { grid-column-end:6; }
-    body.shape-h90 .plat-waist { display:flex; }
-    /* Wider arms and a wider design canvas than the other four shapes. Each pocket
-       holds two single-column boxes side by side inside its own arm column, which
-       is what keeps them clear of the crossbar. That takes width off the middle
-       stack, but the fit here is height-bound, so the extra canvas width costs
-       nothing and buys the type size back. 2200x1266 also lands on ~16:9, which is
-       what the slide exports want.
-
-       The vertical notch is smaller than --pgap because it has nothing to cross:
-       it carries one arrow into the bar above and it is doubled, once at each end
-       of the pocket, so a full --pgap at both ends padded the waist out past both
-       bars for nothing. */
-    body.shape-h90 { --pgapv:26px; --waistr:auto; --armw:330px; --pgaph:18px; --designw:2256px; }
-    /* Each pocket in its own arm column, never a span across the middle. Spanning
-       3/6 at half width apiece covered the crossbar bar a sliver, which both hid
-       whatever WAIST_BANDS routed there and left the middle reading as a void. */
-    body.shape-h90 .pocket.ing { grid-row:r-waist; grid-column:3;
-      margin:var(--pgapv) var(--pgaph) var(--pgapv) 0; }
-    body.shape-h90 .pocket.ppl { grid-row:r-waist; grid-column:5;
-      margin:var(--pgapv) 0 var(--pgapv) var(--pgaph); }
-    /* Wide and short: the groups sit beside each other and their tiles pair up,
-       which is what buys the height back. */
-    body.shape-h90 .rail.ing, body.shape-h90 .rail.ppl {
-      flex-direction:row; flex-wrap:wrap; align-items:flex-start; gap:12px; }
-    body.shape-h90 .rail.ppl .t-name, body.shape-h90 .rail.ing .t-name,
-    body.shape-h90 .rail.src .t-name {
-      white-space:normal; line-height:1.15; }
-    /* Two boxes per row, wrapping to a second row beyond that. `flex:1 1 0` gave
-       every group an equal share of one row, which is right for the two the
-       generic board has and wrong the moment there are more: an industry People
-       pocket carrying Executive, Commercial, Operations and Technical split the
-       arm four ways and clipped every label in it. A half-width basis keeps the
-       two-group case pixel-identical and lets four wrap into 2x2 instead. */
-    body.shape-h90 .rail.ing > .rgroup, body.shape-h90 .rail.ppl > .rgroup {
-      flex:1 1 calc(50% - 6px); }
-    /* One tile column per box. The two boxes already sit side by side, so pairing
-       the tiles as well splits one arm four ways and every label clipped. */
-    body.shape-h90 .rail.ing .rtiles, body.shape-h90 .rail.ppl .rtiles {
-      grid-template-columns:minmax(0,1fr); grid-auto-rows:1fr; align-content:stretch; }
-    /* ONE hand-over per pocket, up into the bar above it, the same single arrow
-       every other shape gives it. It used to hand over up AND down, which is two
-       arrows saying one thing: a reader cannot act on the difference between
-       them because there is no difference. */
-    body.shape-h90 .pocket.ing::before, body.shape-h90 .pocket.ppl::before {
-      top:calc(var(--pgapv) * -1 + var(--zo) + 10px); bottom:auto;
-      animation-name:flowdashu; background-position:center calc((1 - var(--dash-t,0)) * 100%), center 0; }
-    body.shape-h90 .pocket.ing::after, body.shape-h90 .pocket.ppl::after {
-      top:calc(var(--pgapv) * -1 + var(--zo)); bottom:auto;
-      border-bottom-width:10px; border-bottom-style:solid; border-top:0; }
-    /* Teams (people) receive inbound in this shape too: the dot drops toward the
-       pocket and the head lands on it, the reverse of the ingest pocket's climb. */
-    body.shape-h90 .pocket.ppl::before { animation-name:flowdashv;
-      background-position:center calc(var(--dash-t,0) * 100%), center 0; }
-    body.shape-h90 .pocket.ppl::after { top:auto;
-      bottom:calc(100% + var(--zo)); border-top-width:10px; border-top-style:solid;
-      border-top-color:var(--g-violet-line); border-bottom:0; }
-    body.shape-h90 .flow.ingtuck,
-    body.shape-h90 .flow.left.ppl.tuck { display:none; }
-    /* The pocket is in the middle of the platform in this shape, not at its
-       edge, so the two connectors that run from a pocket out to a horizontal
-       band would have to cross a whole bar to get there. */
-    body.shape-h90 .flow.down.ingdown, body.shape-h90 .flow.up.pplup { display:none; }
-    /* Four connectors on the outside, one per relationship, exactly as in the
-       other four shapes. The pocket sits in the waist row here, so the two that
-       serve a pocket move to that row with it; pointing them at the second half
-       of an arm instead is what lost Sources -> third-party ingestion and left
-       two arrows into Ingest doing the same job. */
-    body.ul-both .gutter.g1 { grid-row:r-top; align-items:flex-start; }
-    body.ul-both .gutter.g1 > .flow { margin-top:calc(var(--upper-mid, 44px) - 7px); margin-bottom:0; }
-    body.ul-both .gutter.g0 { grid-row:r-waist; align-items:center; }
-    body.ul-both .gutter.g0 > .flow { margin:0; }
-    body.ur-both .gutter.g2 { grid-row:r-waist; align-items:center; }
-    body.ur-both .gutter.g2 > .flow { margin:0; }
-    body.ur-both .gutter.g3 { grid-row:r-body; align-items:flex-end; }
-    body.ur-both .gutter.g3 > .flow { margin-bottom:calc(var(--lower-mid, 85px) - 7px); margin-top:0; }
-    /* Three blocks means TWO seams to hide rather than one, and each is only as
-       wide as the waist. The upper one is painted by the waist, which comes
-       after the upper bar in the document and so lands on top of it; the lower
-       one has to be painted by the lower bar for the same reason, inset by one
-       arm column on each side because that is exactly where the waist ends. */
-    body.shape-h90 .plat-waist { position:relative; border-radius:0; }
-    body.shape-h90 .plat-waist::before { content:""; position:absolute;
-      left:2px; right:2px; top:-7px; height:12px; background:var(--plat-fill); }
-    body.shape-h90 .plat-top { border-radius:14px 14px 0 0; }
-    body.shape-h90 .plat-body { border-radius:0 0 14px 14px; }
-    body.shape-h90 .plat-body::before { left:var(--armw); right:var(--armw); }
-    /* Stretched, not centred. The waist takes its height from the pockets in the
-       notches beside it, so a centred band leaves a band's worth of bare fill
-       above it and below it; filling the waist is what every other block on the
-       board does with the space it is given. */
-    /* The waist takes its height from the pockets beside it and the lower bar is
-       held level with the upper one, so in both the bands are shorter than the
-       space they sit in. Let them stretch and spend the slack on their own rows
-       instead of leaving it as a gap under the last band. */
-    /* Stretched, not centred. The waist and the lower bar are both held to a
-       height they did not ask for, the waist by the pockets in the notches
-       beside it and the lower bar by the upper one, so in both the bands are
-       shorter than the space they sit in. Let them spend the slack on their own
-       rows instead of leaving it as a gap under the last band. */
-    body.shape-h90 .plat-waist .plat-stack,
-    body.shape-h90 .plat-body .plat-stack { justify-content:stretch; }
-    body.shape-h90 .plat-waist .band,
-    body.shape-h90 .plat-body .band { flex:1 1 auto; }
-    /* The waist is one band in a row the pockets made twice its natural height,
-       so the band spends the difference the same way an arm does: the cards take
-       the slack and centre their own contents in it, rather than sitting at the
-       top of a panel with a band's worth of bare fill under them. The label
-       centres with them instead of staying pinned to the first line. */
-    body.shape-h90 .plat-waist .band-lbl { align-self:center; padding-top:0; }
-    body.shape-h90 .plat-waist .band-body { justify-content:stretch; }
-    body.shape-h90 .plat-waist .band-row { flex:1 1 auto; align-items:stretch; }
-    body.shape-h90 .plat-waist .pcard { align-items:center; }
-
     /* Each pocket keeps its own side of the diagram and moves rows instead: it
        tucks into the notch left by whichever block does NOT reach over its arm.
        The gap on the side facing the platform is what cuts the notch. */
-    /* H90 is excluded: it places both pockets in the waist row itself, and these
-       four rules land later in the sheet at the same specificity, so without the
-       guard a corner class dragged the pocket back into the platform's own rows
-       and it drew on top of the upper block. */
-    body.ul-top:not(.shape-h90) .pocket.ing { grid-row:r-body / r-end;
+    body.ul-top .pocket.ing { grid-row:r-body / r-end;
       margin:var(--pgap) var(--pgap) 0 0; }
-    body.ul-bot:not(.shape-h90) .pocket.ing { grid-row:r-head / r-waist;
+    body.ul-bot .pocket.ing { grid-row:r-head / r-body;
       margin:0 var(--pgap) var(--pgap) 0; }
-    body.ur-top:not(.shape-h90) .pocket.ppl { grid-row:r-body / r-end;
+    body.ur-top .pocket.ppl { grid-row:r-body / r-end;
       margin:var(--pgap) 0 0 var(--pgap); }
-    body.ur-bot:not(.shape-h90) .pocket.ppl { grid-row:r-head / r-waist;
+    body.ur-bot .pocket.ppl { grid-row:r-head / r-body;
       margin:0 0 var(--pgap) var(--pgap); }
 
     /* The pocket's own hand-over climbs into the arm above it or drops into the
@@ -1531,9 +1391,9 @@
        default (Apps midline). Re-anchor it to the Teams-card centre to match the
        left arm; keyed by ur-position so it uses margin-top when the card is in
        r-top and margin-bottom when the mirror puts it in r-body. */
-    body.ur-bot:not(.shape-h90) .gutter .flow.ppl {
+    body.ur-bot .gutter .flow.ppl {
       margin-top:calc(var(--ppl-mid, var(--upper-mid, 44px)) - 7px); margin-bottom:0; }
-    body.ur-top:not(.shape-h90) .gutter .flow.ppl {
+    body.ur-top .gutter .flow.ppl {
       margin-bottom:calc(var(--ppl-mid-b, var(--lower-mid, 85px)) - 7px); margin-top:0; }
     body.ul-top .flow.ingtuck { grid-row:r-body; align-self:end;
       margin-bottom:calc(var(--lower-mid, 85px) - 7px); margin-top:0; }
@@ -1576,8 +1436,8 @@
      different x, which reads as a zig-zag down the arm instead of a column.
      Centring the card contents then puts the icons of the taller Serve cards on
      the same axis as their text block. */
-  .arm .band-row.cards { flex-direction:column; gap:5px; flex:1 1 auto; align-items:stretch; }
-  .arm .band-row.cards > * { flex:1 1 auto; }
+  .arm .band-row.cards { flex-direction:column; gap:5px; flex:1 1 auto; align-items:stretch; justify-content:space-around; }
+  .arm .band-row.cards > .pcard { flex:0 0 auto; }
   .arm .pcard { padding:5px 7px; align-items:center; }
   .arm .pcard .p-name { font-size:13px; }
   .arm .pcard .p-sub { font-size:10.5px; }
@@ -1724,7 +1584,7 @@
     border:1px solid var(--gc-bd); background:var(--gc-tile); border-radius:7px; padding:4px 5px;
     font:inherit; font-size:10.5px; font-weight:700; color:var(--ink); cursor:pointer; text-align:center;
     line-height:1.22; transition:.12s; }
-  .schip:hover { border-color:var(--brand); color:var(--brand); }
+  .schip:hover { border-color:var(--brand); color:var(--brand-ink); }
 
   /* Stacked panels (Genie, Agent Bricks) put the head on top and their tiles
      full-width beneath it. Sharing one horizontal row with a fixed 104px chip
@@ -1893,7 +1753,7 @@
   .fmt { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--gc-line); background:var(--gc-tile);
     border-radius:7px; padding:4px 9px; font:inherit; font-size:11.5px; font-weight:800; letter-spacing:.04em;
     text-transform:uppercase; color:var(--ink); cursor:pointer; transition:.12s; white-space:nowrap; flex:0 0 auto; }
-  .fmt:hover { border-color:var(--brand); color:var(--brand); }
+  .fmt:hover { border-color:var(--brand); color:var(--brand-ink); }
   .fmt svg { width:14px; height:14px; color:var(--brand); flex:0 0 auto; }
   /* margin-left:auto keeps the group right-aligned, and grouping the three means
      they wrap together onto the next line instead of one at a time. */
@@ -1997,21 +1857,30 @@
   .badge-dot.hl-p7 { top:var(--dot-top); left:calc(var(--dot-edge) + var(--dot-pitch)*6); bottom:auto; right:auto; transform:none; }
   .badge-dot.hl-p8 { top:var(--dot-top); left:calc(var(--dot-edge) + var(--dot-pitch)*7); bottom:auto; right:auto; transform:none; }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p1,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p1 { left:auto; right:var(--dot-edge); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p1,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p1 { left:auto; right:var(--dot-edge); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p2,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p2 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p2,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p2 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p3,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p3 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*2); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p3,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p3 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*2); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p4,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p4 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*3); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p4,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p4 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*3); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p5,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p5 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*4); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p5,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p5 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*4); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p6,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p6 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*5); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p6,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p6 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*5); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p7,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p7 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*6); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p7,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p7 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*6); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p8,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p8 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*7); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p8,
+  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p8 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*7); }
+  .band-lbl, .cloud-lbl { --dot-top:calc(-1 * var(--dot-sz) - 1.5px); }
   /* A highlight switched off in the Highlights menu hides that colour everywhere;
      paintHighlights re-packs the survivors into the corners after each toggle. */
   body.hl-off-accel  .badge-dot.hl-accel,
@@ -2091,12 +1960,6 @@
      occupied lets the same layout re-fit against a narrower design width, so the
      platform is genuinely zoomed rather than just re-centred. */
   body.plat-only { --designw:1320px; --c-src:0; --c-cons:0; --c-gutl:0; --c-gutr:0; }
-  /* H90's arms are wide only so the notch can hold two boxes side by side, and this
-     view hides the pockets, so the width buys nothing here and costs a great deal:
-     the canvas drops to 1320 while the arms stay 330, which left 660px for a middle
-     stack that needs 860 and pushed Lakewatch, CustomerLake, Agent Mode and the
-     Medallion labels into each other. */
-  body.shape-h90.plat-only { --armw:230px; }
   body.plat-only .hband.top, body.plat-only .cloudwrap, body.plat-only .downflow,
   body.plat-only .col.src, body.plat-only .col.cons,
   body.plat-only .pocket, body.plat-only .gutter,
@@ -2177,7 +2040,7 @@
 
   .zoom-exit { display:none; position:fixed; z-index:55; top:calc(var(--headerh,56px) + 12px); left:22px;
     align-items:center; gap:7px; padding:8px 14px 8px 11px; border-radius:10px;
-    border:1px solid var(--brand); background:var(--brand); color:var(--on-accent);
+    border:1px solid var(--brand-fill); background:var(--brand-fill); color:var(--on-accent);
     font:inherit; font-size:13px; font-weight:750; cursor:pointer; box-shadow:var(--shadow); }
   .zoom-exit svg { width:15px; height:15px; flex:0 0 auto; }
   .zoom-exit:hover { filter:brightness(1.08); }
@@ -2226,7 +2089,7 @@
     border-top:1px dashed var(--line); padding-top:13px; }
   body.zoom.zoom-band .zsolo .cloud-body { grid-template-columns:repeat(auto-fill, minmax(230px,1fr)) !important; }
 
-  #ind-btn.on { background:var(--brand); border-color:var(--brand); color:var(--on-accent); }
+  #ind-btn.on { background:var(--brand-fill); border-color:var(--brand-fill); color:var(--on-accent); }
   /* Forty entries do not fit a menu. The filter stays pinned and only the list
      below it scrolls, so the outer box gives up the .pal-menu scroll it would
      otherwise apply to both. */
@@ -2300,7 +2163,7 @@
     padding:7px 9px; border-radius:8px; cursor:pointer; }
   .pal-menu button:hover { background:var(--well); }
   .pal-menu button.on { background:var(--well); }
-  .pal-menu button.on::after { content:"✓"; margin-left:auto; font-size:11px; color:var(--brand); }
+  .pal-menu button.on::after { content:"✓"; margin-left:auto; font-size:11px; color:var(--brand-ink); }
   .pal-dots { display:inline-flex; gap:2px; }
   .pal-dots i { width:6px; height:11px; border-radius:2px; display:block; }
   .pal-menu .pal-dots i { width:7px; height:13px; }
@@ -2315,7 +2178,8 @@
   /* Share menu: brand glyphs keep their own colours (recognition), so they use
      fill, not the stroke the toolbar icons use. The sub-header echoes the exact
      text that will be posted so the sharer sees it before choosing a network. */
-  .share-menu { min-width:216px; }
+  .opt-menu { min-width:236px; }
+  .opt-menu .share-menu { border-top:1px solid var(--line); margin-top:5px; padding-top:1px; }
   .share-menu .sh-title { font-size:11px; font-weight:650; color:var(--ink); padding:1px 9px 7px;
     line-height:1.35; border-bottom:1px solid var(--line); margin-bottom:4px; }
   .share-menu button .sh-ic { width:16px; height:16px; flex:0 0 auto; }
@@ -2370,7 +2234,7 @@
   body.ref-mode .atom:not(.mapped) { opacity:.26; }
   body.ref-mode .mapped { cursor:help; }
   .map-badge { position:absolute; top:-5px; right:-5px; font-size:9px; font-weight:800; color:var(--on-accent);
-    background:var(--brand); border-radius:20px; padding:0 5px; line-height:15px; min-width:15px; text-align:center; }
+    background:var(--brand-fill); border-radius:20px; padding:0 5px; line-height:15px; min-width:15px; text-align:center; }
   .rtile, .ctile, .pcol, .schip, .plaincol, .fmt, .anyx { position:relative; }
 
   /* ---------- edit mode ---------- */
@@ -2379,7 +2243,7 @@
     color:var(--brand); opacity:.75; }
   .addbtn { border:1px dashed var(--line-strong); background:transparent; color:var(--faint); border-radius:8px;
     font:inherit; font-size:10.5px; font-weight:700; padding:5px 9px; cursor:pointer; align-self:center; }
-  .addbtn:hover { border-color:var(--brand); color:var(--brand); }
+  .addbtn:hover { border-color:var(--brand); color:var(--brand-ink); }
   .addbtn.wide { width:100%; }
 
   /* ---------- drawer ---------- */
@@ -2403,7 +2267,7 @@
   body.d-resizing { cursor:ew-resize !important; user-select:none; }
   body.d-resizing .drawer { transition:none; }
   .d-head { padding:20px 24px 15px; border-bottom:1px solid var(--line); }
-  .d-eyebrow { font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; font-weight:800; color:var(--brand); }
+  .d-eyebrow { font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; font-weight:800; color:var(--brand-ink); }
   .d-title { font-size:21px; font-weight:800; margin:6px 0 3px; display:flex; gap:10px; align-items:center; letter-spacing:-.02em; }
   .d-title .d-ic { width:23px; height:23px; flex:0 0 auto; color:var(--brand); }
   .d-tagline { color:var(--muted); font-size:13px; }
@@ -2426,7 +2290,8 @@
   .d-course { align-items:center; }
   .d-course .dl-main { display:flex; flex-direction:column; gap:2px; flex:1 1 auto; min-width:0; }
   .d-course .dl-lvl { flex:0 0 auto; font-weight:800; font-size:11px; white-space:nowrap; text-align:right; }
-  .d-course .dl-lvl.course { color:#e6398a; }
+  .d-course .dl-lvl.course { color:#d61b72; }
+  body.theme-dark .d-course .dl-lvl.course { color:#e95097; }
   .d-course .dl-lvl.cert { color:#4d7c0f; }
   body.theme-dark .d-course .dl-lvl.cert { color:#a3e635; }
   .d-course .dl-go { margin-left:8px; flex:0 0 auto; }
@@ -2462,32 +2327,32 @@
   .d-conns { display:flex; flex-wrap:wrap; gap:6px; }
   .d-conn { display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:inherit;
     border:1px solid var(--line); border-radius:20px; padding:4px 10px; font-size:11.5px; transition:.12s; background:var(--well); }
-  .d-conn:hover { border-color:var(--brand); color:var(--brand); }
+  .d-conn:hover { border-color:var(--brand); color:var(--brand-ink); }
   .d-conn-n { font-weight:600; }
   .rg-tools { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:0 0 10px; }
   .rg-tools input, .rg-tools select, .rg-tools button { font:inherit; font-size:12px; color:inherit; background:var(--card);
     border:1px solid var(--line); border-radius:7px; padding:6px 9px; }
   .rg-tools input { flex:1 1 150px; min-width:0; }
   .rg-tools button { cursor:pointer; font-weight:700; }
-  .rg-tools button:hover { border-color:var(--brand); color:var(--brand); }
+  .rg-tools button:hover { border-color:var(--brand); color:var(--brand-ink); }
   .rg-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:12px; }
   .rg-table th { text-align:start; font-size:10.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--faint);
     font-weight:800; padding:6px 5px; border-bottom:1px solid var(--line-strong); overflow-wrap:anywhere; vertical-align:bottom; }
   .rg-table td { padding:7px 5px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; line-height:1.35; }
   .rg-table .c-n { width:31%; } .rg-table .c-st { width:15%; } .rg-table .c-av { width:18%; } .rg-table .c-no { width:36%; }
   .rg-n { font-weight:700; color:inherit; text-decoration:none; }
-  .rg-n:hover { color:var(--brand); text-decoration:underline; }
+  .rg-n:hover { color:var(--brand-ink); text-decoration:underline; }
   .rg-cat { display:block; font-size:10.5px; color:var(--faint); margin-top:2px; }
   .rg-av { display:inline-block; font-size:11px; font-weight:800; padding:1px 7px; border-radius:9px; white-space:nowrap;
     max-width:100%; box-sizing:border-box; overflow:hidden; text-overflow:ellipsis; vertical-align:top; }
-  .rg-av.yes { background:rgba(31,157,85,.14); color:#1a7f45; }
-  .rg-av.cond { background:rgba(214,140,0,.16); color:#9a6100; }
+  .rg-av.yes { background:rgba(31,157,85,.14); color:#18753f; }
+  .rg-av.cond { background:rgba(214,140,0,.16); color:#905b00; }
   .rg-av.no { background:rgba(214,48,49,.13); color:#b42318; }
   .rg-av.unlisted { background:var(--well); color:var(--muted); }
   body.theme-dark .rg-av.yes { color:#6ee7a0; } body.theme-dark .rg-av.cond { color:#fcd34d; } body.theme-dark .rg-av.no { color:#fca5a5; }
   .rg-no { color:var(--muted); font-size:11.5px; }
   .rg-src { white-space:nowrap; color:var(--faint); text-decoration:none; font-size:10.5px; }
-  .rg-src:hover { color:var(--brand); }
+  .rg-src:hover { color:var(--brand-ink); }
   .rg-asof { display:block; font-size:11px; color:var(--faint); margin-top:3px; }
   .rg-flag { display:inline-flex; vertical-align:middle; flex:0 0 auto; }
   .rg-flag svg { display:block; width:18px; height:12px; border-radius:2px; box-shadow:0 0 0 1px rgba(0,0,0,.14); }
@@ -2503,10 +2368,10 @@
   .rg-table thead th { position:sticky; top:var(--rg-top, 44px); z-index:3; background:var(--card); will-change:transform; }
   .rg-th { display:flex; align-items:flex-end; gap:3px; }
   .rg-sort { all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:4px; font:inherit; color:inherit; text-transform:inherit; letter-spacing:inherit; overflow-wrap:anywhere; }
-  .rg-sort:hover, .rg-sort:focus-visible { color:var(--brand); }
+  .rg-sort:hover, .rg-sort:focus-visible { color:var(--brand-ink); }
   .rg-arrow { font-style:normal; font-size:8px; }
   .rg-filt { all:unset; cursor:pointer; flex:0 0 auto; font-size:10px; line-height:14px; padding:0 4px; border:1px solid var(--line); border-radius:4px; color:var(--faint); }
-  .rg-filt:hover, .rg-filt.on, .rg-filt:focus-visible { color:var(--brand); border-color:var(--brand); }
+  .rg-filt:hover, .rg-filt.on, .rg-filt:focus-visible { color:var(--brand-ink); border-color:var(--brand); }
   .rg-pop { position:absolute; top:100%; inset-inline-end:0; z-index:6; min-width:170px; background:var(--card); border:1px solid var(--line-strong);
     border-radius:8px; box-shadow:var(--shadow-drawer); padding:6px 8px; text-transform:none; letter-spacing:0; font-weight:600; font-size:12px; color:var(--ink); }
   .rg-pop label { display:flex; gap:6px; align-items:center; padding:3px 2px; cursor:pointer; white-space:nowrap; }
@@ -2541,10 +2406,10 @@
   .d-vid:hover .dl-go { color:var(--brand); }
   .chip { display:inline-block; font-size:11.5px; padding:4px 9px; border:1px solid var(--line); border-radius:20px;
     margin:0 5px 5px 0; cursor:pointer; background:var(--well); }
-  .chip:hover { border-color:var(--brand); color:var(--brand); }
+  .chip:hover { border-color:var(--brand); color:var(--brand-ink); }
   .chip.static { cursor:default; } .chip.static:hover { border-color:var(--line); color:var(--ink); }
   a.chip, a.chip.ext { text-decoration:none; color:inherit; }
-  a.chip.ext:hover { border-color:var(--brand); color:var(--brand); }
+  a.chip.ext:hover { border-color:var(--brand); color:var(--brand-ink); }
   .d-close { position:absolute; top:14px; right:16px; border:none; background:var(--well); width:29px; height:29px;
     border-radius:8px; cursor:pointer; font-size:15px; color:var(--muted); }
   /* Pin the overlay panel open as a side dock. Sits left of the close button in
@@ -2601,7 +2466,7 @@
   .ed-actions { display:flex; gap:8px; margin-top:22px; }
   .ed-actions button { font:inherit; font-size:13px; font-weight:700; border-radius:9px; padding:9px 15px;
     cursor:pointer; border:1px solid var(--line); background:var(--card); color:var(--ink); }
-  .ed-save { background:var(--brand) !important; border-color:var(--brand) !important; color:var(--on-accent) !important; }
+  .ed-save { background:var(--brand-fill) !important; border-color:var(--brand-fill) !important; color:var(--on-accent) !important; }
   .ed-del { margin-left:auto; color:var(--danger) !important;
     border-color:var(--danger-bd) !important; background:var(--danger-bg) !important; }
 
@@ -2682,6 +2547,64 @@
     .fmt-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
   }
 
+  body.view-simple { --glabelh:18px; --headh:44px; }
+  body.view-simple .rtiles { grid-template-columns:minmax(0,1fr); gap:6px; }
+  body.view-simple .rgroup { gap:5px; }
+  body.view-simple .rgroup-t { font-size:13px; }
+  body.view-simple .rtile { gap:8px; padding:7px 9px; }
+  body.view-simple .rtile .ic, body.view-simple .rtile svg.mark { width:18px; height:18px; }
+  body.view-simple .rtile .t-name { font-size:17px; line-height:1.18; }
+  body.view-simple .colhead { font-size:18px; }
+  body.view-simple .pockhead { font-size:15px; }
+  body.view-simple .colhead > svg:not(.ph-mark) { width:20px; height:20px; }
+  body.view-simple .pockhead > svg { width:17px; height:17px; }
+  body.view-simple .plat-head { font-size:24px; }
+  body.view-simple .ph-mark { width:24px; height:24px; }
+  body.view-simple .band-lbl { flex-basis:168px; }
+  body.view-simple .arm .band-lbl { flex-basis:auto; }
+  body.view-simple .band-lbl .bl-name, body.view-simple .arm .band-lbl .bl-name { font-size:20px; }
+  body.view-simple .arm .pcard .p-name { font-size:18px; }
+  body.view-simple .b-work .band-lbl, body.view-simple .b-work .band-rlbl { flex-basis:96px; }
+  body.view-simple .b-work .band-lbl .bl-name { flex-direction:column; align-items:flex-start; gap:4px; }
+  body.view-simple .b-work .band-rlbl .bl-name { flex-direction:column; align-items:flex-end; gap:4px; }
+  body.view-simple .b-work .bl-name .bl-ic { margin:0; }
+  body.view-simple .pcard { gap:10px; padding:5px 7px; }
+  body.view-simple .pico { width:40px; height:40px; }
+  body.view-simple .pico svg { width:24px; height:24px; }
+  body.view-simple .p-name { font-size:19px; }
+  body.view-simple .b-apps .pcard { flex-direction:column; align-items:flex-start; gap:6px; }
+  body.view-simple .b-apps .ptxt { width:100%; }
+  body.view-simple .panel-head .pico { width:34px; height:34px; }
+  body.view-simple .panel-head .pico svg { width:21px; height:21px; }
+  body.view-simple .ph-name { font-size:20px; }
+  body.view-simple .plaincol .pl-name { font-size:19px; }
+  body.view-simple .foot-chip { gap:9px; padding:5px 15px; }
+  body.view-simple .foot-chip svg { width:20px; height:20px; }
+  body.view-simple .foot-chip .fc-name { font-size:17px; }
+  body.view-simple .oi-lbl { font-size:16px; }
+  body.view-simple .band-row.medallion .oi-lbl { flex-basis:110px; max-width:110px; }
+  body.view-simple .fmt-grid .fmt { font-size:13px; padding:5px 7px; }
+  body.view-simple .fmt.has-logo .fmt-logo { height:30px; }
+  body.view-simple .fmt.logo-mark .fmt-logo { height:20px; }
+  body.view-simple .mstage { flex-basis:84px; }
+  body.view-simple .mstage svg { width:38px; height:38px; }
+  body.view-simple .mstage .ms-n { font-size:14px; }
+  body.view-simple .medal-arrow { margin-top:36px; }
+  body.view-simple .cloud-lbl .cl-name { font-size:19px; }
+  body.view-simple .hband .cloud-lbl { flex-basis:220px; }
+  body.view-simple .provlogo { height:42px; }
+  body.view-simple .cloud-body { gap:9px; }
+  body.view-simple .ctile { gap:9px; padding:7px 10px; }
+  body.view-simple .ctile .ic { width:20px; height:20px; }
+  body.view-simple .ctile .ct-name { font-size:17px; line-height:1.18; }
+  body.view-simple .hband.top .cloud-lbl { flex-basis:150px; }
+  body.view-simple .hband.top .ctile { flex-direction:column; align-items:flex-start; gap:5px; padding:7px 8px; }
+  body.view-simple .hband.top .ctile .ct { width:100%; }
+  body.view-simple .hband.top .ctile .ct-name { font-size:16px; }
+  body.view-simple .rail.ing .rtile, body.view-simple .rail.ppl .rtile { gap:6px; padding:6px 7px; }
+  body.view-simple .rail.ing .rtile .ic, body.view-simple .rail.ing .rtile svg.mark,
+  body.view-simple .rail.ppl .rtile .ic, body.view-simple .rail.ppl .rtile svg.mark { width:16px; height:16px; }
+  body.view-simple .rail.ing .t-name, body.view-simple .rail.ppl .t-name { font-size:15px; }
   /* ── First-visit guided tour ──────────────────────────────────────────────
      A spotlight walk-through of the board, ported from the model-viewer tour.
      The hole is one element whose huge outer box-shadow dims the whole page
@@ -2709,13 +2632,13 @@
     font-variant-numeric:tabular-nums}
   .tour-skip{font:inherit;font-size:12.5px;font-weight:650;cursor:pointer;border-radius:8px;
     padding:6px 11px;border:1px solid color-mix(in srgb,var(--brand) 32%,transparent);
-    background:var(--brand-wash);color:var(--brand)}
+    background:var(--brand-wash);color:var(--brand-ink)}
   .tour-skip:hover{border-color:var(--brand)}
   .tour-btn{font:inherit;font-size:12.5px;font-weight:650;cursor:pointer;
     border-radius:8px;padding:6px 13px;border:1px solid var(--line-strong);
     background:var(--card);color:var(--ink)}
-  .tour-btn:hover{border-color:var(--brand);color:var(--brand)}
-  .tour-btn.accent{background:var(--brand);border-color:var(--brand);color:var(--on-accent)}
+  .tour-btn:hover{border-color:var(--brand);color:var(--brand-ink)}
+  .tour-btn.accent{background:var(--brand-fill);border-color:var(--brand-fill);color:var(--on-accent)}
   .tour-btn.accent:hover{filter:brightness(1.05);color:var(--on-accent)}
   @media (prefers-reduced-motion:reduce){ .tour-hole,.tour-pop{transition:none}
     .tour-pop h4,.tour-pop p,.tour-pop .tour-row{animation:none} }
@@ -2750,7 +2673,7 @@
      visitor never sees a white flash. The rest of the theme code only syncs the
      button and re-fits; it deliberately repeats this test rather than depending
      on load order. -->
-<script>var URL_STATE_KEYS=["industry","cloud","shape","pal","theme","platform","zoom","display","lang","stage","region","hl","dock","box","boxn","panel","rstage","ravail","rsort","rq"];
+<script>var URL_STATE_KEYS=["industry","cloud","shape","pal","theme","platform","zoom","display","view","lang","stage","region","hl","dock","box","boxn","panel","rstage","ravail","rsort","rq"];
 (function(){try{
   /* A shared link carries the look it was shared in, and it has to win here
      rather than three scripts down, or the visitor sees this browser's own
@@ -2785,15 +2708,11 @@
   <div class="htools">
   <!-- Industry leads the toolbar, ahead of the cloud switch: it decides what the
        whole board is about, where the cloud switch only decides one band. -->
-  <button class="hbtn" id="feedback-btn" title="Share your feedback on this reference architecture (opens a form in a new tab)"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg> <span id="feedback-lbl">Feedback</span><sup class="ext-mark" aria-hidden="true">&#8599;</sup></button>
-  <div class="pal-wrap" id="share-wrap">
-    <button class="hbtn" id="share-btn" title="Share this reference architecture on LinkedIn, X, Reddit and more (links straight to this industry)"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.1 10.9l7.8-3.7M8.1 13.1l7.8 3.7"/></svg> <span id="share-lbl">Share</span></button>
-    <div class="pal-menu share-menu" id="share-menu"></div>
-  </div>
   <div class="pal-wrap" id="ind-wrap">
     <button class="hbtn" id="ind-btn" title="Specialise the boxes outside the platform for one industry: sources, ingestion, teams, use cases, apps and consumers"><span id="ind-ico">◈</span> <span id="ind-lbl">Pick an Industry (70 available)</span></button>
     <div class="pal-menu ind-menu" id="ind-menu"></div>
   </div>
+  <div class="seg" id="view-seg" title="Show the essential boxes in larger type, or every box with its captions"></div>
   <div class="seg" id="display-seg" title="Show products by commercial brand name, or rooted back to their generic category"></div>
   <div class="seg" id="cloud-seg" title="Switch the cloud services band"></div>
   <div class="pal-wrap" id="region-wrap">
@@ -2846,13 +2765,20 @@
     </div>
     <input type="file" id="arch-import" accept=".yaml,.yml,text/yaml" hidden>
   </div>
-  <button class="hbtn ico-only" id="side-btn" type="button" title="Show the details panel docked on the side" aria-label="Show the details panel docked on the side" aria-pressed="false"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
   <div class="pal-wrap" id="lang-wrap">
     <button class="hbtn ico-only" id="lang-btn" title="Translate the architecture content. The toolbar and menus stay in English; product and brand names are never translated."><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></button>
     <div class="pal-menu" id="lang-menu"></div>
   </div>
   <button class="hbtn ico-only" id="theme-btn" title="Switch between the light and dark palette. Downloads follow whichever is on screen."><span id="theme-ico">◐</span> <span id="theme-lbl" class="btn-lbl">Dark</span></button>
-  <button class="hbtn ico-only" id="tour-btn" type="button" aria-label="Take a guided tour of the board" title="Take a guided tour of the board"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.6 8.4-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1Z"/></svg></button>
+  <div class="pal-wrap" id="opt-wrap">
+    <button class="hbtn" id="opt-btn" type="button" title="Take the guided tour, dock the details panel, send feedback or share this board"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg> <span id="opt-lbl">Options</span></button>
+    <div class="pal-menu opt-menu" id="opt-menu">
+      <button id="tour-btn" type="button" title="Take a guided tour of the board"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.6 8.4-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1Z"/></svg><span>Take the guided tour</span></button>
+      <button id="side-btn" type="button" title="Show the details panel docked on the side" aria-pressed="false"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg><span>Dock the details panel</span></button>
+      <button id="feedback-btn" type="button" title="Share your feedback on this reference architecture (opens a form in a new tab)"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><span>Send feedback<sup class="ext-mark" aria-hidden="true">&#8599;</sup></span></button>
+      <div class="share-menu" id="share-menu"></div>
+    </div>
+  </div>
   </div>
 </header>
 
@@ -2899,10 +2825,6 @@
       <svg class="ph-mark" viewBox="0 0 516 537.3" fill="currentColor" aria-hidden="true"><g transform="translate(-124,-115.5)"><path fill="currentColor" d="M 333 142.128 C 305.775 156.913, 247.613 188.455, 203.750 212.223 L 124 255.436 124.034 262.968 L 124.069 270.500 182.784 302.262 C 215.078 319.731, 263.100 345.748, 289.500 360.078 C 315.900 374.408, 347.562 391.563, 359.859 398.200 L 382.218 410.266 385.859 408.533 C 389.145 406.968, 475.580 359.984, 573.814 306.367 C 594.336 295.165, 611.556 286, 612.081 286 C 612.667 286, 612.931 295.844, 612.767 311.582 L 612.500 337.164 574.500 357.884 C 553.600 369.281, 501.886 397.448, 459.579 420.479 L 382.658 462.352 376.079 458.797 C 346.542 442.833, 275.833 404.429, 184.337 354.656 C 158.397 340.545, 136.694 329, 136.109 329 C 135.523 329, 132.559 330.219, 129.522 331.708 L 124 334.417 124.008 382.958 L 124.015 431.500 143.258 441.900 C 153.841 447.621, 175.550 459.394, 191.500 468.064 C 311.018 533.027, 381.536 571, 382.658 571 C 383.384 571, 388.371 568.592, 393.739 565.648 C 399.108 562.705, 417.225 552.858, 434 543.767 C 450.775 534.675, 496 510.148, 534.500 489.261 C 573 468.375, 606.413 450.312, 608.750 449.123 L 613 446.959 613 472.755 L 613 498.550 567.750 523.196 C 542.862 536.752, 491.029 564.983, 452.564 585.931 L 382.628 624.019 345.064 603.632 C 324.404 592.419, 294.450 576.155, 278.500 567.488 C 201.854 525.841, 167.136 506.989, 152.130 498.869 L 135.759 490.011 129.880 493.145 L 124 496.279 124.004 504.389 L 124.008 512.500 142.254 522.400 C 152.289 527.846, 189.525 548.026, 225 567.245 C 260.475 586.465, 294.675 605.016, 301 608.469 C 307.325 611.923, 326 622.055, 342.500 630.984 C 359 639.913, 374.776 648.474, 377.557 650.009 L 382.614 652.799 399.557 643.551 C 417.049 634.003, 486.777 596.109, 568 552.012 C 593.575 538.126, 620.237 523.640, 627.250 519.820 L 640 512.875 639.999 464.187 L 639.998 415.500 635.102 412.750 C 632.409 411.237, 629.637 410, 628.943 410 C 628.249 410, 621.566 413.324, 614.091 417.387 C 606.616 421.450, 571.250 440.632, 535.500 460.015 C 499.750 479.397, 452.050 505.263, 429.500 517.494 C 406.950 529.725, 387.112 540.440, 385.414 541.307 L 382.329 542.881 363.414 532.598 C 353.012 526.942, 324.700 511.611, 300.500 498.527 C 276.300 485.444, 237.600 464.510, 214.500 452.007 C 191.400 439.504, 168.116 426.926, 162.759 424.056 C 157.401 421.185, 152.783 418.458, 152.498 417.996 C 151.809 416.882, 151.678 367.988, 152.362 367.305 C 152.654 367.013, 173.054 377.687, 197.696 391.026 C 222.338 404.364, 261.625 425.617, 285 438.255 C 308.375 450.892, 335.150 465.386, 344.500 470.463 C 353.850 475.541, 366.271 482.238, 372.103 485.347 L 382.706 490.998 392.603 485.621 C 398.046 482.664, 415.550 473.153, 431.500 464.486 C 447.450 455.820, 468.375 444.467, 478 439.258 C 487.625 434.050, 498.413 428.198, 501.972 426.254 C 515.892 418.655, 588.234 379.350, 601 372.451 C 608.425 368.438, 620.125 362.083, 627 358.328 L 639.500 351.500 639.500 303.169 L 639.500 254.839 633.500 251.536 L 627.500 248.233 607.500 259.174 C 596.500 265.192, 578.950 274.746, 568.500 280.405 C 558.050 286.065, 512.058 311.014, 466.296 335.848 C 420.533 360.681, 382.873 381, 382.607 381 C 382.154 381, 348.309 362.806, 258 314.015 C 237.375 302.872, 208.350 287.223, 193.500 279.241 C 178.650 271.258, 165.951 264.224, 165.281 263.608 C 164.357 262.761, 168.477 260.091, 182.281 252.590 C 205.699 239.864, 294.417 191.761, 344.057 164.874 L 382.613 143.989 472.557 192.853 L 562.500 241.717 570.231 237.609 L 577.961 233.500 577.981 227.453 L 578 221.407 549.250 205.809 C 533.438 197.230, 489.675 173.465, 452 152.997 C 414.325 132.530, 383.275 115.663, 383 115.515 C 382.725 115.367, 360.225 127.343, 333 142.128" stroke="none" fill-rule="evenodd"/></g></svg><span class="ph-line"><span class="ph-title">Databricks Data + AI Platform</span><span class="ph-ind" hidden></span></span><button class="ph-max" id="plat-max" type="button" aria-pressed="false" title="Zoom into the platform on its own: hides sources, consumers, the apps band and cloud services"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="ph-max-out" d="M6 2H2v4M10 2h4v4M10 14h4v-4M6 14H2v-4"/><path class="ph-max-in" d="M2 6h4V2M14 6h-4V2M14 10h-4v4M2 10h4v4"/></svg></button>
     </div>
     <section class="plat-top" id="plat-top"></section>
-    <!-- The waist of the H90 I-beam, and nothing at all in the other four
-         shapes: empty it collapses to zero height, which leaves the two bars
-         seam to seam exactly as before. -->
-    <section class="plat-waist" id="plat-waist"></section>
     <section class="plat-body" id="platform"></section>
     <div class="pocket ing">
       <div class="pockhead" data-ic="zfunnel">External Ingestion<button class="zx" type="button" data-zoom="ing" aria-pressed="false" title="Zoom into External Ingestion"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="zx-out" d="M6 2H2v4M10 2h4v4M10 14h4v-4M6 14H2v-4"/><path class="zx-in" d="M2 6h4V2M14 6h-4V2M14 10h-4v4M2 10h4v4"/></svg></button></div>
@@ -3759,9 +3681,8 @@ const ARCH = {
     /* Eight tiles is the measured capacity of this pocket, not a taste call. In
        the Z family the two boxes stack in one narrow column, so the ninth tile
        adds 42 design px to the board and drops the fit from 0.818 to 0.789,
-       shrinking every label on the diagram by 3.5%. In h90 the boxes sit side by
-       side, so what binds there is the TALLER box: keep either box at five or
-       under. Re-measure with tools/heightgate.py before exceeding either.
+       shrinking every label on the diagram by 3.5%. Re-measure with
+       tools/heightgate.py before exceeding it.
 
        A tile NAME here also has a one-line budget of 120 design px, about 105px
        of text at 11px/650. "Revenue Management" needs 122 and wrapped to two
@@ -4668,6 +4589,42 @@ function translateContent(){
 
 const DISPLAY_LS = "dbxarch.dais2026.display";
 let displayMode = (function(){ const v = store.get(DISPLAY_LS); return v === "commercial" ? "commercial" : "category"; })();
+const VIEW_LS = "dbxarch.dais2026.view";
+let viewMode = store.get(VIEW_LS) === "detailed" ? "detailed" : "simple";
+function simpleView(){ return viewMode === "simple" && !editMode; }
+const SIMPLE_RAIL_CAP = { src:1, ing:1, cons:1, ppl:2 };
+const SIMPLE_TOP_CAP = { "Genie Agents":2, "Genie Spaces":2, "Business Use Cases":5, "Use Cases":5 };
+const SIMPLE_PLATFORM = {
+  serve:["SQL Warehouses","Lakehouse//RT","Lakebase","Model Serving"], infra:["Apache Spark","Delta Lake","Apache Iceberg"],
+};
+function inView(tile, essential){ return !simpleView() || !!essential || !!(tile && tile.hl === true); }
+function viewTopTiles(sec){
+  const tiles = (sec && Array.isArray(sec.tiles)) ? sec.tiles : [];
+  const cap = SIMPLE_TOP_CAP[sec && sec.title];
+  return cap ? tiles.filter((t, i)=> inView(t, i < cap)) : tiles;
+}
+function viewCloudKeep(p){
+  const first = (arr, role)=> (arr || []).find(t=> t && t.role === role);
+  return {
+    services:[first(p.services, "storage"), first(p.services, "network"), (p.identity || [])[0]].filter(Boolean),
+    integrations:[(p.govcat || [])[0], (p.aisvc || [])[0], (p.cicd || [])[0]].filter(Boolean),
+  };
+}
+function viewBand(band){
+  const keep = SIMPLE_PLATFORM[band.id];
+  if(!simpleView() || !keep) return band;
+  const pick = list=> (list || []).filter(t=> inView(t, keep.indexOf(t.n) >= 0));
+  let kept = 0;
+  const rows = (band.rows || []).map(r=>{
+    if(r.kind === "cards"){ const items = pick(r.items); kept += items.length; return Object.assign({}, r, { items }); }
+    if(r.kind === "infra" && Array.isArray(r.formats)){
+      const formats = pick(r.formats); kept += formats.length;
+      return Object.assign({}, r, { formats, grid: formats.length || r.grid });
+    }
+    return r;
+  });
+  return kept ? Object.assign({}, band, { rows }) : band;
+}
 function dispName(n){ const label = (displayMode === "category" && nameToCat[n]) ? nameToCat[n] : n; return T(label); }
 /* A tile's own label reads its `cat` straight off the object, not through the
    nameToCat map: renderRail computes the label before reg() has filled the map
@@ -4804,12 +4761,13 @@ function addBtn(arr, section, host, wide){
 function productCard(t, arr, section, grow){
   const b = document.createElement("button");
   b.className = "pcard" + (grow ? " grow" : "");
+  const full = !simpleView();
   b.innerHTML =
     `<span class="pico">${titleIcon(t,"")}</span>` +
     `<span class="ptxt">` +
       `<span class="p-name">${escWrap(t.n)}</span>` +
-      (t.s ? `<span class="p-sub">${esc(T(t.s))}</span>` : "") +
-      capsHtml(t.caps) +
+      (full && t.s ? `<span class="p-sub">${esc(T(t.s))}</span>` : "") +
+      (full ? capsHtml(t.caps) : "") +
     `</span>`;
   reg(b, t, arr, section);
   return b;
@@ -4817,6 +4775,7 @@ function productCard(t, arr, section, grow){
 
 /* ---------- Genie / Agent Bricks inner panel ---------- */
 function panelEl(g, section){
+  const full = !simpleView();
   const p = document.createElement("div");
   p.className = "panel" + (g.stack ? " stack" : "");
   if(g.flex) p.style.flex = g.flex;
@@ -4829,7 +4788,7 @@ function panelEl(g, section){
   hb.innerHTML =
     `<span class="ph-top"><span class="pico">${titleIcon(g.head,"")}</span>` +
       `<span class="ph-name">${esc(T(g.head.n))}</span></span>` +
-    (g.head.s ? `<span class="ph-sub">${esc(T(g.head.s))}</span>` : "");
+    (full && g.head.s ? `<span class="ph-sub">${esc(T(g.head.s))}</span>` : "");
   reg(hb, g.head, null, section);
   head.appendChild(hb);
   p.appendChild(head);
@@ -4841,7 +4800,7 @@ function panelEl(g, section){
     col.className = "pcol";
     col.innerHTML =
       `<span class="pc-top"><span class="tagpill">${titleIcon(c,"")}${esc(T(c.tag || c.n))}</span></span>` +
-      (c.desc ? `<span class="pc-desc">${esc(T(c.desc))}</span>` : "");
+      (full && c.desc ? `<span class="pc-desc">${esc(T(c.desc))}</span>` : "");
     reg(col, c, g.cols, section);
     cols.appendChild(col);
   });
@@ -4875,7 +4834,7 @@ function plainCol(item, arr, section){
   b.innerHTML =
     `<span class="pl-name">${item.ic ? titleIcon(item,"pl-ic") : ""}` +
       `<span>${esc(T(item.n))}</span></span>` +
-    (item.s ? `<span class="pl-sub">${esc(T(item.s))}</span>` : "");
+    (item.s && !simpleView() ? `<span class="pl-sub">${esc(T(item.s))}</span>` : "");
   reg(b, item, arr, section);
   return b;
 }
@@ -4929,7 +4888,7 @@ function infraRow(row, section){
       /* name above the store, caption under it: the layer name reads first, the
          cylinder sits in the middle, and the description closes the stage */
       b.innerHTML = `<span class="ms-n">${esc(s.n)}</span>` + svg(s.ic,"") +
-        (s.s ? `<span class="ms-s">${esc(T(s.s))}</span>` : "");
+        (s.s && !simpleView() ? `<span class="ms-s">${esc(T(s.s))}</span>` : "");
       reg(b, s, row.stages, section);
       st.appendChild(b);
     });
@@ -4951,9 +4910,10 @@ function renderBand(band, target){
   const lbl = document.createElement("div");
   lbl.className = "band-lbl";
   lbl.dataset.en = band.name;
+  const full = !simpleView();
   lbl.innerHTML = `<div class="bl-name">${band.ic ? svg(band.ic,"bl-ic") : ""}` +
       `<span>${esc(T(band.name))}</span></div>` +
-    (band.sub ? `<div class="bl-sub">${esc(T(band.sub))}</div>` : "");
+    (full && band.sub ? `<div class="bl-sub">${esc(T(band.sub))}</div>` : "");
   el.appendChild(lbl);
 
   const body = document.createElement("div");
@@ -5020,7 +4980,7 @@ function renderBand(band, target){
     rl.dataset.en = band.rlbl.n;
     rl.innerHTML = `<div class="bl-name">${band.rlbl.ic ? svg(band.rlbl.ic,"bl-ic") : ""}` +
         `<span>${esc(T(band.rlbl.n))}</span></div>` +
-      (band.rlbl.s ? `<div class="bl-sub">${esc(T(band.rlbl.s))}</div>` : "");
+      (full && band.rlbl.s ? `<div class="bl-sub">${esc(T(band.rlbl.s))}</div>` : "");
     reg(rl, band.rlbl, null, band.name);
     el.appendChild(rl);
   }
@@ -5036,9 +4996,6 @@ function providerTiles(key){
   const p = ARCH.cloud.providers[ARCH.cloud.provider];
   return (p && Array.isArray(p[key])) ? p[key] : [];
 }
-/* In h90 each pocket is two boxes side by side; five tiles is the per-box cap.
-   Overflow spills into the next box without changing which tiles exist. */
-const H90_TILE_CAP = 5;
 /* The People pocket sets the top half's height, so an industry with too many
    business roles pads the whole upper block taller than its content and opens a
    gap above the lower half. Capping the Business group keeps the pocket short
@@ -5056,36 +5013,18 @@ function railGroupEntries(g){
   return g.tail ? cloud.concat(own) : own.concat(cloud);
 }
 function cappedRailEntries(railId, g){
-  const entries = railGroupEntries(g);
+  let entries = railGroupEntries(g);
   if(railId === "ppl" && /^business$/i.test(g.box || "") && entries.length > PPL_BUSINESS_CAP)
-    return entries.slice(0, PPL_BUSINESS_CAP);
-  return entries;
-}
-function h90RailSlots(rail){
-  if(!document.body.classList.contains("shape-h90")) return null;
-  const groups = rail.groups;
-  const slots = groups.map(g => ({
-    box: g.box, ic: g.ic, tail: g.tail, from: g.from,
-    tiles: g.tiles, entries: [], slotIdx: 0
-  }));
-  groups.forEach((g, gi) => {
-    const entries = cappedRailEntries(rail.id, g);
-    let si = gi;
-    entries.forEach(e => {
-      while(si < slots.length && slots[si].entries.length >= H90_TILE_CAP) si++;
-      if(si >= slots.length) slots[slots.length - 1].entries.push(e);
-      else slots[si].entries.push(e);
-    });
-  });
-  return slots;
+    entries = entries.slice(0, PPL_BUSINESS_CAP);
+  const cap = SIMPLE_RAIL_CAP[railId];
+  return cap ? entries.filter((e, i)=> inView(e.tile, i < cap)) : entries;
 }
 function renderRail(rail, target){
-  const h90 = (rail.id === "ing" || rail.id === "ppl") ? h90RailSlots(rail) : null;
-  const slots = h90 || rail.groups.map(g => ({
+  const slots = rail.groups.map(g => ({
     box: g.box, ic: g.ic, tail: g.tail, from: g.from,
     tiles: g.tiles, entries: cappedRailEntries(rail.id, g)
   }));
-  slots.forEach((slot, gi) => {
+  slots.forEach(slot => {
     if(!slot.entries.length) return;
     const wrap = document.createElement("div");
     wrap.className = "rgroup";
@@ -5115,16 +5054,13 @@ function renderRail(rail, target){
       reg(b, tile, arr, rail.name);
       box.appendChild(b);
     });
-    if(!h90) addBtn(slot.tiles, rail.name, box, true);
-    else if(gi < rail.groups.length &&
-      (rail.groups[gi].tiles.length || rail.groups[gi].from))
-      addBtn(rail.groups[gi].tiles, rail.name, box, true);
+    addBtn(slot.tiles, rail.name, box, true);
     wrap.appendChild(box);
     target.appendChild(wrap);
   });
   /* the two tall rails hold fewer rows than the Z is deep, so the leftover space
      carries the one sentence that zone is making instead of reading as unfinished */
-  if(rail.note){
+  if(rail.note && !simpleView()){
     const n = document.createElement("p");
     n.className = "rail-note";
     n.textContent = T(rail.note);
@@ -5169,7 +5105,7 @@ function renderHBand(target, zone, chip, secs, logo){
   lbl.innerHTML = `<div class="cl-name">` + (zone.ic ? svg(zone.ic,"cl-ic") : "") +
     `<span>${esc(T(zone.name))}</span>` +
     (chip && !prov ? `<span class="provchip">${esc(chip)}</span>` : "") + `</div>` +
-    `<div class="cl-sub">${esc(T(zone.sub))}</div>`;
+    (simpleView() ? "" : `<div class="cl-sub">${esc(T(zone.sub))}</div>`);
   target.appendChild(lbl);
 
   const cols = document.createElement("div");
@@ -5182,21 +5118,23 @@ function renderHBand(target, zone, chip, secs, logo){
       `<span class="rg-label">${esc(T(s.title))}</span></div>`;
     const body = document.createElement("div");
     body.className = "cloud-body";
-    const total = s.sets.reduce((n,a)=> n + a.length, 0);
-    const ncol = hbCols(total, s.cols, target.id === "topband" ? 5 : 4);
+    const all = [];
+    s.sets.forEach(arr=> arr.forEach(tile=> all.push({ tile, arr })));
+    const shown = s.keep ? all.filter((e, i)=> inView(e.tile, s.keep(e.tile, i))) : all;
+    const ncol = hbCols(shown.length, s.cols, target.id === "topband" ? 5 : 4);
     body.style.gridTemplateColumns = `repeat(${ncol}, minmax(0,1fr))`;
-    s.sets.forEach(arr=> arr.forEach(tile=>{
+    shown.forEach(({ tile, arr })=>{
       const b = document.createElement("button");
       b.className = "ctile";
       if(target.id === "topband")
         b.classList.add("ct-h-" + indHue[hueN++ % indHue.length]);
-      const ctSub = tile.s || genieDomain(tile);
+      const ctSub = simpleView() ? "" : (tile.s || genieDomain(tile));
       b.innerHTML = titleIcon(tile,"ic") +
         `<span class="ct"><span class="ct-name">${escSlash(displayName(tile))}</span>` +
         (ctSub ? `<span class="ct-sub">${esc(T(ctSub))}</span>` : "") + `</span>`;
       reg(b, tile, arr, s.title);
       body.appendChild(b);
-    }));
+    });
     addBtn(s.sets[0], s.title, body);
     sec.appendChild(body);
     cols.appendChild(sec);
@@ -5208,16 +5146,20 @@ function renderHBand(target, zone, chip, secs, logo){
 function renderCloud(target){
   const c = ARCH.cloud;
   const p = c.providers[c.provider];
+  const keep = viewCloudKeep(p);
   renderHBand(target, c, p.label, [
     /* Identity sits with the cloud, not with the integrations: Entra ID, IAM
        Identity Center and Cloud Identity are the provider's own service. */
-    { title:"Cloud Services", ic:"cloud", span:6, sets:[p.services, p.identity] },
-    { title:"Integrations", ic:"connect", span:5, sets:[p.govcat, p.aisvc, p.cicd, c.extras] },
+    { title:"Cloud Services", ic:"cloud", span:6, sets:[p.services, p.identity], keep:t=> keep.services.indexOf(t) >= 0 },
+    { title:"Integrations", ic:"connect", span:5, sets:[p.govcat, p.aisvc, p.cicd, c.extras], keep:t=> keep.integrations.indexOf(t) >= 0 },
   ], c.provider);
 }
 function renderTop(target){
   const t = ARCH.top;
-  renderHBand(target, t, null, t.secs.map(s=> ({ title:s.title, ic:s.ic, span:s.span, cols:s.cols, sets:[s.tiles] })));
+  renderHBand(target, t, null, t.secs.map(s=> {
+    const shown = viewTopTiles(s);
+    return { title:s.title, ic:s.ic, span:s.span, cols:s.cols, sets:[s.tiles], keep:x=> shown.indexOf(x) >= 0 };
+  }));
 }
 
 /* ---------- full build ---------- */
@@ -5315,6 +5257,8 @@ function storedStateUsable(s){
     if(frozen){
       const f = migrateStored(JSON.parse(frozen.textContent || "null"));
       if(storedStateUsable(f)){
+        if(f.display === "commercial" || f.display === "category") displayMode = f.display;
+        if(f.view === "simple" || f.view === "detailed") viewMode = f.view;
         ARCH.bands = f.bands; ARCH.rails = f.rails; ARCH.top = f.top; ARCH.cloud = f.cloud;
         /* The saved tree is already the industry's own content, so the id is
            restored for the label and the export name, not re-applied over it. */
@@ -5352,7 +5296,6 @@ function loadBoardSnap(s){
 }
 
 const platTopEl   = document.getElementById("plat-top");
-const platWaistEl = document.getElementById("plat-waist");
 const platformEl  = document.getElementById("platform");
 const railSrcEl  = document.getElementById("rail-src");
 const railIngEl  = document.getElementById("rail-ing");
@@ -5365,7 +5308,7 @@ const topBandEl  = document.getElementById("topband");
    the shape its step, so it is a real container, not a margin. Ingest is always
    the left arm and Serve always the right one, whatever the style: what the
    style changes is which of the two blocks owns each arm, which is the whole
-   difference between a Z, an S, a T, a T180 and an H90. */
+   difference between a Z, an S, a T and a T180. */
 function platHalf(host, sides){
   host.innerHTML = "";
   const mk = s=>{ const a = document.createElement("div"); a.className = "arm " + s;
@@ -5375,44 +5318,6 @@ function platHalf(host, sides){
   host.appendChild(stack);
   const right = sides.indexOf("right") >= 0 ? mk("right") : null;
   return { left, right, stack };
-}
-
-/* Which band moves into the waist of the I-beam. Governance, and only
-   governance: it is the one band that is true of everything above it and
-   everything below it, which is what the piece joining the two bars should say.
-
-   It is one band and not two because the flanges have to carry the weight. With
-   Agentic Data up here as well the upper bar held two bands and the lower bar
-   held one, and since the two bars are kept level the lower one was then a band
-   and a half of bare fill. One band each side of the waist reads as a beam;
-   Apps + Work above and Data + Infrastructure below are close enough in height
-   that neither bar has to be padded out to match the other. */
-/* The band that reads as the platform's spine, so the crossbar of the H says
-   something instead of being a void between the two pockets. Safe now that each
-   pocket sits in its own arm column: while they spanned the whole waist span at
-   half width each, anything routed here rendered UNDERNEATH them, and every card
-   in Governance was invisible on the board. */
-const WAIST_BANDS = ["gov"];
-
-/* One arm band as two, split down the middle of its cards. Each half is a
-   shallow copy: the cards themselves are shared by reference, because every card
-   still appears exactly once on the board and the index built while rendering
-   must point at the one object the detail panel reads.
-
-   Only the first half keeps the caption. Both keep the name, because the pocket
-   sitting between them has a heading of its own, so a reader follows Ingest,
-   then the third-party pocket, then Ingest again; dropping the second name would
-   leave a list of cards with nothing saying what they are. */
-function halveBand(band){
-  const rows = band.rows || [];
-  const cards = rows.find(r=> r.kind === "cards");
-  if(!cards || (cards.items || []).length < 2) return [band, null].filter(Boolean);
-  const items = cards.items, cut = Math.ceil(items.length / 2);
-  const part = (from, to, keepSub)=> Object.assign({}, band, {
-    sub: keepSub ? band.sub : "",
-    rows: rows.map(r=> r === cards ? Object.assign({}, r, { items:items.slice(from, to) }) : r),
-  });
-  return [part(0, cut, true), part(cut, items.length, false)];
 }
 
 /* ==================================================================
@@ -5504,6 +5409,7 @@ function build(){
   const lc = curCloud();
   if(!LOGO_SETS[lc] && !LOGO_LOADS[lc]) loadLogos(lc).then(fresh => { if(fresh && curCloud() === lc){ build(); refreshDrawer(); } });
   endIntro();
+  document.body.classList.toggle("view-simple", simpleView());
   Object.keys(byId).forEach(k=> delete byId[k]);
   Object.keys(nameIndex).forEach(k=> delete nameIndex[k]);
   Object.keys(nameToCat).forEach(k=> delete nameToCat[k]);
@@ -5513,23 +5419,13 @@ function build(){
   railPplEl.innerHTML = ""; railConsEl.innerHTML = "";
   const sh = shapeDef();
   const up = platHalf(platTopEl, sh.up), lo = platHalf(platformEl, sh.lo);
-  platWaistEl.innerHTML = "";
-  const waist = sh.waist ? platHalf(platWaistEl, []) : null;
   /* `arm` bands render into the overhang on their own side, wherever the style
-     has put it; `blk` bands into the stack of their own block. In the I-beam
-     both bars reach over the same arm, so the band is cut in half and each bar
-     gets one: that is what leaves a notch for the pocket to sit INSIDE the
-     platform instead of beside it.
-
-     The waist takes the band that reads as the platform's spine, so the narrow
-     middle of the I says something rather than being a spacer. */
+     has put it; `blk` bands into the stack of their own block. */
   const dest = b=> b.arm ? (up[b.arm] || lo[b.arm])
-    : waist && WAIST_BANDS.indexOf(b.id) >= 0 ? waist.stack
     : b.blk === "top" ? up.stack : lo.stack;
-  ARCH.bands.forEach(b=>{
-    const split = b.arm && up[b.arm] && lo[b.arm];
-    if(!split){ renderBand(b, dest(b)); return; }
-    halveBand(b).forEach((part, i)=> renderBand(part, i ? lo[b.arm] : up[b.arm]));
+  ARCH.bands.forEach(b0=>{
+    const b = viewBand(b0);
+    renderBand(b, dest(b));
   });
   renderTop(topBandEl);
   renderRail(ARCH.rails.src, railSrcEl);
@@ -5564,6 +5460,7 @@ function build(){
   /* The board just changed (industry, tab, or mode), so re-evaluate whether the
      Branded/Categorized switch has anything to switch and enable/disable it. */
   if(typeof paintDisplaySeg === "function") paintDisplaySeg();
+  if(typeof paintViewSeg === "function") paintViewSeg();
   if(typeof syncUrl === "function") syncUrl();
 }
 
@@ -6689,20 +6586,26 @@ function restoreActiveTab(){
 /* Cloud painter, scoped to the cloud segment only. A second `.seg` (the Display
    switch) now shares the toolbar, so this can no longer paint every `.seg` on
    the page or it would fill the Display switch with cloud providers too. */
+function segButtons(seg, modes, cur, pick){
+  seg.innerHTML = "";
+  return modes.map(([k, label])=>{
+    const b = document.createElement("button");
+    b.textContent = label;
+    b.className = cur === k ? "on" : "";
+    b.onclick = ()=> pick(k);
+    seg.appendChild(b);
+    return b;
+  });
+}
 function paintSeg(){
   const seg = document.getElementById("cloud-seg");
   if(!seg) return;
-  seg.innerHTML = "";
-  Object.entries(ARCH.cloud.providers).forEach(([k,v])=>{
-    const b = document.createElement("button");
-    b.textContent = v.label;
-    b.className = (ARCH.cloud.provider === k) ? "on" : "";
-    b.onclick = ()=>{ ARCH.cloud.provider = k; persistCustom(); ideaTrack("cloud"); paintSeg(); build();
-      updatePageTitle();
-      /* build() rewrites the tiles, so a drawer left open would be pointing at
-         a detached element and showing the previous cloud's documentation */
-      refreshDrawer(); };
-    seg.appendChild(b);
+  segButtons(seg, Object.entries(ARCH.cloud.providers).map(([k,v])=> [k, v.label]), ARCH.cloud.provider, k=>{
+    ARCH.cloud.provider = k; persistCustom(); ideaTrack("cloud"); paintSeg(); build();
+    updatePageTitle();
+    /* build() rewrites the tiles, so a drawer left open would be pointing at
+       a detached element and showing the previous cloud's documentation */
+    refreshDrawer();
   });
 }
 paintSeg();
@@ -6731,21 +6634,31 @@ function paintDisplaySeg(){
   seg.title = live
     ? "Show products by commercial brand name, or rooted back to their generic category"
     : "Pick an industry to switch between brand and category names";
-  seg.innerHTML = "";
-  DISPLAY_MODES.forEach(([k,label])=>{
-    const b = document.createElement("button");
-    b.textContent = label;
-    b.className = (displayMode === k) ? "on" : "";
+  segButtons(seg, DISPLAY_MODES, displayMode, k=>{
+    if(!live){ pulseIndustry(); return; }
+    if(displayMode === k) return;
+    displayMode = k; store.set(DISPLAY_LS, k);
+    paintDisplaySeg(); build();
+    refreshDrawer();
+  }).forEach(b=>{
     b.setAttribute("aria-disabled", String(!live));
     if(!live) b.title = "Pick an industry to enable the branded view";
-    b.onclick = ()=>{
-      if(!live){ pulseIndustry(); return; }
-      if(displayMode === k) return;
-      displayMode = k; store.set(DISPLAY_LS, k);
-      paintDisplaySeg(); build();
-      refreshDrawer(); };
-    seg.appendChild(b);
   });
+}
+const VIEW_MODES = [["simple","Simplified"],["detailed","Detailed"]];
+function paintViewSeg(){
+  const seg = document.getElementById("view-seg");
+  if(!seg) return;
+  seg.classList.toggle("seg-off", editMode);
+  seg.title = editMode
+    ? "Edit mode shows every box; leave it to switch views"
+    : "Show the essential boxes in larger type, or every box with its captions";
+  segButtons(seg, VIEW_MODES, viewMode, k=>{
+    if(editMode || viewMode === k) return;
+    viewMode = k; store.set(VIEW_LS, k);
+    build();
+    refreshDrawer();
+  }).forEach(b=> b.setAttribute("aria-disabled", String(editMode)));
 }
 function pulseIndustry(){
   const el = document.getElementById("ind-btn");
@@ -6756,6 +6669,7 @@ function pulseIndustry(){
   setTimeout(()=> el.classList.remove("hint-pulse"), 2600);
 }
 paintDisplaySeg();
+paintViewSeg();
 
 /* Platform-only strips the context zones and re-fits against the narrower design
    width, so the Z fills the window instead of sitting in the middle of it. The
@@ -7020,8 +6934,8 @@ const SHARE_TARGETS = [
     href:(u,t)=> "mailto:?subject=" + encodeURIComponent(t) + "&body=" + encodeURIComponent(t + "\n\n" + u) },
   { k:"copy", label:"Copy link", copy:true, svg:'<svg class="sh-ic sh-stroke" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>' },
 ];
-const shareWrap = document.getElementById("share-wrap");
-const shareBtn  = document.getElementById("share-btn");
+const optWrap = document.getElementById("opt-wrap");
+const optBtn  = document.getElementById("opt-btn");
 const shareMenu = document.getElementById("share-menu");
 function buildShareMenu(){
   shareMenu.innerHTML = '<div class="men-hd">Share</div>' +
@@ -7029,11 +6943,11 @@ function buildShareMenu(){
     SHARE_TARGETS.map(t => '<button data-share="' + t.k + '">' + t.svg + '<span>' + t.label + '</span></button>').join("");
 }
 function flashShareLabel(msg){
-  const lbl = document.getElementById("share-lbl"); if(!lbl) return;
+  const lbl = document.getElementById("opt-lbl"); if(!lbl) return;
   const prev = lbl.dataset.base || lbl.textContent;
   lbl.dataset.base = prev; lbl.textContent = msg;
   clearTimeout(flashShareLabel._t);
-  flashShareLabel._t = setTimeout(()=>{ lbl.textContent = lbl.dataset.base || "Share"; }, 1500);
+  flashShareLabel._t = setTimeout(()=>{ lbl.textContent = lbl.dataset.base || "Options"; }, 1500);
 }
 function shareCopy(){
   const url = shareLandingUrl();
@@ -7050,16 +6964,18 @@ function shareCopyFallback(text, ok){
     document.execCommand("copy"); ta.remove(); ok();
   }catch(e){ window.prompt("Copy this link:", text); }
 }
-if(shareBtn) shareBtn.onclick = e=>{
+if(optBtn) optBtn.onclick = e=>{
   e.stopPropagation();
-  if(!shareWrap.classList.contains("open")) buildShareMenu();
-  toggleMenu(shareWrap);
+  if(!optWrap.classList.contains("open")) buildShareMenu();
+  toggleMenu(optWrap);
 };
+document.getElementById("opt-menu").addEventListener("click", e=>{
+  if(e.target.closest("button")) optWrap.classList.remove("open");
+});
 if(shareMenu) shareMenu.addEventListener("click", e=>{
   const b = e.target.closest("button[data-share]"); if(!b) return;
   const target = SHARE_TARGETS.find(t=> t.k === b.dataset.share); if(!target) return;
   if(typeof ideaTrack === "function") ideaTrack("share", [target.k]);
-  shareWrap.classList.remove("open");
   if(target.action){ Promise.resolve(target.action()).catch(()=>{}); return; }
   if(target.copy){ shareCopy(); return; }
   window.open(target.href(shareLandingUrl(), shareTitle()), "_blank", "noopener,noreferrer");
@@ -7181,11 +7097,7 @@ function platHeadInd(){
 function platInkFor(accent){
   const m = /#?([0-9a-fA-F]{6})/.exec(accent || "");
   if(!m) return "";
-  const n = parseInt(m[1], 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-  const lin = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
-  const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-  const cWhite = 1.05 / (L + 0.05);           /* contrast of #fff on the accent  */
-  const cDark  = (L + 0.05) / (0.0148 + 0.05); /* contrast of #12161b on the accent */
+  const cWhite = contrastHex(m[1], "FFFFFF"), cDark = contrastHex(m[1], "12161B");
   return (cWhite >= 3.0 || cWhite >= cDark) ? "" : "#12161b";
 }
 function fitPlatTitle(){
@@ -7950,18 +7862,13 @@ document.getElementById("hl-btn").onclick = e=>{
    NOT reach over an arm leaves a notch, and the pocket on that side tucks into
    it. `ul` and `ur` name the owner of the left and right arm, and the CSS reads
    nothing but those two. */
-/* ul / ur say which block reaches out over the arm on that side: the upper one,
-   the lower one, or BOTH, which is the I-beam and the only shape that needs a
-   third block between the two bars. "both" also means the arm's own cards are
-   split down the middle, half into each bar, so the pocket can sit in the notch
-   between them rather than outside the platform. */
+/* ul / ur say which block reaches out over the arm on that side: the upper one
+   or the lower one. */
 const SHAPES = [
   { k:"z",   label:"Z",    ul:"top",  ur:"bot",  d:"M2 2 H18 V9 H24 V16 H8 V9 H2 Z" },
   { k:"s",   label:"S",    ul:"bot",  ur:"top",  d:"M8 2 H24 V9 H18 V16 H2 V9 H8 Z" },
   { k:"t",   label:"T",    ul:"top",  ur:"top",  d:"M2 2 H24 V9 H16 V16 H10 V9 H2 Z" },
   { k:"rt",  label:"T180", ul:"bot",  ur:"bot",  d:"M10 2 H16 V9 H24 V16 H2 V9 H10 Z" },
-  { k:"h90", label:"H90",  ul:"both", ur:"both", waist:true,
-    d:"M2 2 H24 V7 H16 V11 H24 V16 H2 V11 H10 V7 H2 Z" },
 ];
 const SHAPE_STORE = "dbx-arch-shape";
 const shapeWrap = document.getElementById("shape-wrap");
@@ -7973,10 +7880,7 @@ const shapeMenu = document.getElementById("shape-menu");
 function shapeDef(){
   const c = [...document.body.classList].find(x=>x.startsWith("shape-"));
   const s = SHAPES.find(x=>x.k === (c ? c.slice(6) : "")) || SHAPES[0];
-  const owns = (side, which)=>{
-    const v = s[side === "left" ? "ul" : "ur"];
-    return v === which || v === "both";
-  };
+  const owns = (side, which)=> s[side === "left" ? "ul" : "ur"] === which;
   return Object.assign({}, s, {
     up: ["left","right"].filter(side=> owns(side, "top")),
     lo: ["left","right"].filter(side=> owns(side, "bot")),
@@ -7990,7 +7894,7 @@ function applyShape(k, remember){
   const s = SHAPES.find(x=>x.k === k) || SHAPES[0];
   const b = document.body;
   SHAPES.forEach(x=> b.classList.remove("shape-" + x.k));
-  ["ul-top","ul-bot","ul-both","ur-top","ur-bot","ur-both"].forEach(c=> b.classList.remove(c));
+  ["ul-top","ul-bot","ur-top","ur-bot"].forEach(c=> b.classList.remove(c));
   b.classList.add("shape-" + s.k, "ul-" + s.ul, "ur-" + s.ur);
   if(remember){ store.set(SHAPE_STORE, s.k); ideaTrack("shape", [s.k]); }
   /* the arms change block, so this is a re-render and not a restyle */
@@ -8118,6 +8022,7 @@ function stateParams(){
   if(document.body.classList.contains("plat-only")) q.set("platform", "1");
   else if(zoomKey) q.set("zoom", zoomKey);
   if(displayMode === "commercial") q.set("display", "branded");
+  if(viewMode === "detailed") q.set("view", "detailed");
   if(typeof I18N !== "undefined" && I18N.lang && I18N.lang !== "en") q.set("lang", I18N.lang);
   const stageOff = STAGES.filter(s=> document.body.classList.contains("st-off-" + s.k)).map(s=> s.k);
   if(stageOff.length) q.set("stage", stageOff.join(","));
@@ -8397,6 +8302,8 @@ const expBg    = ()=> paletteHex("--bg", "#ffffff");
 const expInk   = ()=> paletteHex("--ink", "#1b1f24");
 const expMuted = ()=> paletteHex("--muted", "#5c6672");
 const expBrand = ()=> paletteHex("--brand", "#ff3621");
+const expBrandFill = ()=> paletteHex("--brand-fill", "#c0261a");
+const expBrandText = ()=> readableHex(expBrand(), expBg());
 /* A softer ink for card fills and hairlines: ink mixed toward the background,
    so it reads on both the light and the dark palette. */
 const expLine  = ()=> mixHex(expInk(), expBg(), 0.86);
@@ -8419,12 +8326,14 @@ const expLine  = ()=> mixHex(expInk(), expBg(), 0.86);
 function topSecTiles(names){
   const secs = (ARCH.top && ARCH.top.secs) || [];
   const s = secs.find(x=> x && names.indexOf(x.title) !== -1);
-  return (s && Array.isArray(s.tiles)) ? s.tiles.filter(t=> t && t.n) : [];
+  return s ? viewTopTiles(s).filter(t=> t && t.n) : [];
 }
 function consGroupTiles(names){
   const groups = (ARCH.rails && ARCH.rails.cons && ARCH.rails.cons.groups) || [];
   const g = groups.find(x=> x && names.indexOf(x.box) !== -1);
-  return (g && Array.isArray(g.tiles)) ? g.tiles.filter(t=> t && t.n) : [];
+  if(!g || !Array.isArray(g.tiles)) return [];
+  const shown = cappedRailEntries("cons", g).map(e=> e.tile);
+  return g.tiles.filter(t=> t && t.n && shown.indexOf(t) >= 0);
 }
 /* swap_layout renames "Use Cases" to "Business Use Cases" on inject and the
    reference board authors it that way too, so both are accepted; same for the
@@ -8760,7 +8669,7 @@ function closingLinks(){
    accents so they match the board, and they read on both palettes, so they are
    fixed rather than pulled live; only the card BODY is mixed toward the current
    background (deckTint) so the fill lands on-theme in light and in dark. */
-const DECK_ROLES = ["2E6FE6","16A571","E8900C","E6117C","7C3AED","0AA6C2"];
+const DECK_ROLES = ["2E6FE6","16A571","E8900C","E0107A","7C3AED","0AA6C2"];
 function hex2(v){ return String(v).replace("#",""); }
 function mixHex(a, b, t){
   a = hex2(a); b = hex2(b);
@@ -8771,13 +8680,28 @@ function deckTint(role){
   const dark = document.body.classList.contains("theme-dark");
   return mixHex(role, dark ? expBg() : "FFFFFF", dark ? 0.80 : 0.90);
 }
-/* Ink that stays legible on a role-coloured header bar: white on the darker
-   accents, near-black on the two lighter ones. */
+function deckRoleInk(role, t){ return readableHex(mixHex(role, expInk(), t), deckTint(role)); }
+function relLumHex(h){
+  const n = parseInt(hex2(h).slice(0, 6), 16);
+  const lin = c=>{ c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  return 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+}
+function contrastHex(a, b){
+  const x = relLumHex(a), y = relLumHex(b);
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+}
+/* Ink that stays legible on a role-coloured header bar: whichever of white and
+   near-black reads more strongly on that fill. */
 function onRoleInk(role){
-  role = hex2(role);
-  const lum = (parseInt(role.substr(0,2),16)*0.299 + parseInt(role.substr(2,2),16)*0.587 +
-    parseInt(role.substr(4,2),16)*0.114) / 255;
-  return lum > 0.62 ? "1B1F24" : "FFFFFF";
+  return contrastHex(role, "FFFFFF") >= contrastHex(role, "1B1F24") ? "FFFFFF" : "1B1F24";
+}
+function readableHex(fg, bg, min){
+  const ink = hex2(expInk()), need = min || 4.5;
+  for(let t = 0; t < 1; t += 0.05){
+    const c = mixHex(fg, ink, t);
+    if(contrastHex(c, bg) >= need) return c;
+  }
+  return ink.toUpperCase();
 }
 /* The industry this deck is about, for slide titles and running headers. */
 function deckIndustry(){
@@ -9248,7 +9172,7 @@ function joinRuns(lines){
 
 const EXPORT_SKIP = ".badge-dot, .d-secdot, .d-badge .db-dot, .dl-menu, .ph-max, .zx, .addbtn";
 const EXPORT_ZONES = [["#topband", "top"], [".col.src", "src"], [".col.cons", "cons"], [".pocket.ing", "ing"],
-  [".pocket.ppl", "ppl"], [".plat-head, #plat-top, #plat-waist, #platform", "platform"], ["#cloud", "cloud"]];
+  [".pocket.ppl", "ppl"], [".plat-head, #plat-top, #platform", "platform"], ["#cloud", "cloud"]];
 function collectBoard(){
   endIntro();
   document.body.classList.add("exp-static");
@@ -9471,7 +9395,7 @@ function collectBoardInner(){
     const mr = mid.getBoundingClientRect();
     const off = e=> ({ l:e.offsetLeft, t:e.offsetTop,
                        r:e.offsetLeft + e.offsetWidth, b:e.offsetTop + e.offsetHeight });
-    const blocks = [platTopEl, platWaistEl, platformEl]
+    const blocks = [platTopEl, platformEl]
       .filter(el=> el && el.offsetHeight > 1).map(off);
     const zo = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--zo")) || 6;
     /* offsetLeft/Top are unscaled layout px measured from .mid, so the ring only
@@ -10321,10 +10245,10 @@ function pptxCoverSlide(glyphPng, logoPng){
   parts.push(rectXml(0, 0, Math.round(SW * 0.014), SH, lava));
   /* the kicker rides in a filled brand tab, white on lava, so the cover opens on
      colour rather than a line of grey type */
-  const kickH = Math.round(21 * PT), kickW = Math.round(W * 0.46);
-  parts.push(rectXml(M, y, kickW, kickH, lava));
+  const kickH = Math.round(21 * PT), kickW = Math.round(W * 0.46), kickFill = expBrandFill();
+  parts.push(rectXml(M, y, kickW, kickH, kickFill));
   parts.push(pptxCoverText(id++, M + Math.round(9 * PT), y + Math.round(5 * PT),
-    kickW - Math.round(18 * PT), kickH - Math.round(8 * PT), 11, true, "#ffffff",
+    kickW - Math.round(18 * PT), kickH - Math.round(8 * PT), 11, true, "#" + onRoleInk(kickFill),
     T("Reference Architecture").toUpperCase()));
   y += kickH + Math.round(16 * PT);
   /* the headline the reader asked for: "<platform> for <industry>", wrapping to a
@@ -10379,7 +10303,7 @@ function pptxIndexSlide(){
   parts.push(pptxFillRect(ref.id++, 0, 0, Math.round(SW * 0.014), SH, brand));
   /* chrome */
   parts.push(pptxTextEx(ref.id++, M, Math.round(SH * 0.055), Math.round(W * 0.6), Math.round(16 * PTU),
-    11, true, brand, T("Contents").toUpperCase(), null, "l", "t"));
+    11, true, expBrandText(), T("Contents").toUpperCase(), null, "l", "t"));
   parts.push(pptxTextEx(ref.id++, M, Math.round(SH * 0.055), W, Math.round(16 * PTU),
     11, true, mut, deckRunHeader(), null, "r", "t"));
   const fy = Math.round(SH - M - 13 * PTU);
@@ -10411,7 +10335,7 @@ function pptxIndexSlide(){
       12, false, mut, sec.blurb, null, "l", "t"));
     const count = sec.kind === "board" ? "" : deckCount(sec.kind, sec.tiles.length);
     if(count) parts.push(pptxTextEx(ref.id++, M, ry, W - Math.round(22 * PTU), rowH, 12, true,
-      mixHex(role, ink, 0.30), count, null, "r", "ctr"));
+      deckRoleInk(role, 0.30), count, null, "r", "ctr"));
   });
   slide.body = parts.join("");
   return slide;
@@ -10434,7 +10358,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
      credit + running header, shared by every narrative slide */
   const chrome = (parts, ref, eyebrow)=>{
     parts.push(pptxTextEx(ref.id++, M, Math.round(SH * 0.055), Math.round(W * 0.6),
-      Math.round(16 * PTU), 11, true, brand, eyebrow, null, "l", "t"));
+      Math.round(16 * PTU), 11, true, readableHex(brand, expBg()), eyebrow, null, "l", "t"));
     parts.push(pptxTextEx(ref.id++, M, Math.round(SH * 0.055), W,
       Math.round(16 * PTU), 11, true, mut, runHdr, null, "r", "t"));
     const fy = Math.round(SH - M - 13 * PTU);
@@ -10482,7 +10406,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
      builders draw labelled paragraphs, tinted chips and solid pills the same
      way. All take (ref, parts, ...) so each slide keeps its own id counter. */
   const label = (ref, parts, x, y, w, s, colour)=>{
-    parts.push(pptxTextEx(ref.id++, x, y, w, Math.round(14 * PTU), 10, true, colour || brand,
+    parts.push(pptxTextEx(ref.id++, x, y, w, Math.round(14 * PTU), 10, true, colour || expBrandText(),
       String(T(s)).toUpperCase(), null, "l", "t"));
     return y + Math.round(15 * PTU);
   };
@@ -10499,7 +10423,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
       if(px > x && (px - x + wEmu) > w){ px = x; py += Math.round((hPt + gapPt) * PTU); }
       const role = DECK_ROLES[((startRole || 0) + ci) % DECK_ROLES.length];
       parts.push(pptxFillRect(ref.id++, px, py, wEmu, Math.round(hPt * PTU), deckTint(role), 50000));
-      parts.push(pptxTextEx(ref.id++, px, py, wEmu, Math.round(hPt * PTU), 10, true, mixHex(role, ink, 0.28), c, null, "ctr", "ctr"));
+      parts.push(pptxTextEx(ref.id++, px, py, wEmu, Math.round(hPt * PTU), 10, true, deckRoleInk(role, 0.28), c, null, "ctr", "ctr"));
       px += wEmu + Math.round(gapPt * PTU);
     });
     return py + Math.round((hPt + 12) * PTU);
@@ -10534,7 +10458,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
     parts.push(pptxTextEx(ref.id++, M + Math.round(13 * PTU), y + Math.round(4 * PTU),
       kickW - Math.round(20 * PTU), Math.round(15 * PTU), 11, true, onRoleInk(roleHex), kick, null, "l", "t"));
     y += Math.round(40 * PTU);
-    parts.push(pptxTextEx(ref.id++, M, y, W, Math.round(60 * PTU), 46, true, roleHex, sec.title, null, "l", "t"));
+    parts.push(pptxTextEx(ref.id++, M, y, W, Math.round(60 * PTU), 46, true, readableHex(roleHex, expBg(), 3), sec.title, null, "l", "t"));
     y += Math.round(64 * PTU);
     parts.push(pptxFillRect(ref.id++, M, y, Math.round(W * 0.12), Math.round(5 * PTU), roleHex));
     y += Math.round(20 * PTU);
@@ -10560,7 +10484,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
     if(acc){
       ly = label(ref, parts, M, ly, colW, "Solution Accelerator available");
       const ah = estH(acc.n, 13, colW / PTU);
-      parts.push(pptxTextEx(ref.id++, M, ly, colW, Math.round(ah * PTU), 13, true, expBrand(), acc.n,
+      parts.push(pptxTextEx(ref.id++, M, ly, colW, Math.round(ah * PTU), 13, true, expBrandText(), acc.n,
         pptxSlideRel(slide, "link", stories.length), "l", "t"));
       ly += Math.round((ah + 6) * PTU);
       if(acc.note){ ly = para(ref, parts, M, ly, colW, acc.note, 12, ink); }
@@ -10572,7 +10496,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
       ry = label(ref, parts, rx, ry, rW, "Who benefits");
       const pw = Math.min(rW, (pdfTextW(t.who, 11) + 20) * PTU);
       parts.push(pptxFillRect(ref.id++, rx, ry, pw, Math.round(21 * PTU), deckTint(brand), 50000));
-      parts.push(pptxTextEx(ref.id++, rx, ry, pw, Math.round(21 * PTU), 11, true, mixHex(brand, ink, 0.25), t.who, null, "ctr", "ctr"));
+      parts.push(pptxTextEx(ref.id++, rx, ry, pw, Math.round(21 * PTU), 11, true, readableHex(mixHex(brand, ink, 0.25), deckTint(brand)), t.who, null, "ctr", "ctr"));
       ry += Math.round(31 * PTU);
     }
     if(t.comps && t.comps.length){
@@ -10585,7 +10509,7 @@ async function pptxNarrativeSlides(coverGlyphPng){
         parts.push(pptxFillRect(ref.id++, rx, ry + Math.round(3 * PTU), Math.round(9 * PTU), Math.round(9 * PTU), brand));
         const tx = rx + Math.round(16 * PTU), tw = rW - Math.round(16 * PTU);
         const hpt = estH(s.t, 11, tw / PTU);
-        parts.push(pptxTextEx(ref.id++, tx, ry, tw, Math.round(hpt * PTU), 11, true, expBrand(), s.t,
+        parts.push(pptxTextEx(ref.id++, tx, ry, tw, Math.round(hpt * PTU), 11, true, expBrandText(), s.t,
           pptxSlideRel(slide, "link", si), "l", "t"));
         ry += Math.round((hpt + 8) * PTU);
       });
@@ -10674,10 +10598,10 @@ async function pptxNarrativeSlides(coverGlyphPng){
       parts.push(pptxTextEx(ref.id++, htx, cy, htw, hh, 13, true, onRoleInk(role), t.n, null, "l", "ctr"));
       const ix = cx + Math.round(16 * PTU), iw = cardW - Math.round(32 * PTU);
       let iy = cy + hh + Math.round(12 * PTU);
-      if(t.s){ parts.push(pptxTextEx(ref.id++, ix, iy, iw, Math.round(15 * PTU), 11, true, mixHex(role, ink, 0.30), t.s, null, "l", "t")); iy += Math.round(17 * PTU); }
+      if(t.s){ parts.push(pptxTextEx(ref.id++, ix, iy, iw, Math.round(15 * PTU), 11, true, deckRoleInk(role, 0.30), t.s, null, "l", "t")); iy += Math.round(17 * PTU); }
       if(t.long){ iy = para(ref, parts, ix, iy, iw, t.long, 12, ink); }
-      if(t.kpis && t.kpis.length){ iy = label(ref, parts, ix, iy, iw, "KPIs", mixHex(role, ink, 0.30)); iy = chipRow(ref, parts, ix, iy, iw, t.kpis, roleBase + i); }
-      if(t.teams && t.teams.length){ iy = label(ref, parts, ix, iy, iw, "Teams", mixHex(role, ink, 0.30)); iy = pillRow(ref, parts, ix, iy, iw, t.teams, role); }
+      if(t.kpis && t.kpis.length){ iy = label(ref, parts, ix, iy, iw, "KPIs", deckRoleInk(role, 0.30)); iy = chipRow(ref, parts, ix, iy, iw, t.kpis, roleBase + i); }
+      if(t.teams && t.teams.length){ iy = label(ref, parts, ix, iy, iw, "Teams", deckRoleInk(role, 0.30)); iy = pillRow(ref, parts, ix, iy, iw, t.teams, role); }
     });
     slide.body = parts.join("");
     return slide;
@@ -10707,9 +10631,9 @@ async function pptxNarrativeSlides(coverGlyphPng){
     let y = Math.round(SH * 0.28);
     const kick = String(T("Databricks Data + AI Platform")).toUpperCase();
     const kickW = pdfTextW(kick, 11) * PTU + Math.round(26 * PTU);
-    parts.push(pptxFillRect(ref.id++, M, y, kickW, Math.round(21 * PTU), brand));
+    parts.push(pptxFillRect(ref.id++, M, y, kickW, Math.round(21 * PTU), expBrandFill()));
     parts.push(pptxTextEx(ref.id++, M + Math.round(13 * PTU), y + Math.round(4 * PTU),
-      kickW - Math.round(20 * PTU), Math.round(15 * PTU), 11, true, "FFFFFF",
+      kickW - Math.round(20 * PTU), Math.round(15 * PTU), 11, true, onRoleInk(expBrandFill()),
       kick, null, "l", "t"));
     y += Math.round(38 * PTU);
     const title = dt("closeTitle", { plat:T("Databricks Data + AI Platform"), ind });
@@ -10972,7 +10896,7 @@ function exportHtmlDoc(){
      self-contained (platform bands, use-case band, cloud all kept), so freeze it as
      "generic" to render verbatim. Plain board exports keep their industry id. */
   const _frozenIndustry = _usedNames.size ? "generic" : ARCH.industry;
-  snap.textContent = _scriptJson({ schema:SCHEMA, industry:_frozenIndustry,
+  snap.textContent = _scriptJson({ schema:SCHEMA, industry:_frozenIndustry, display:displayMode, view:viewMode,
     bands:_snapArch.bands, rails:_snapArch.rails, top:_snapArch.top, cloud:_snapArch.cloud });
   const html = document.documentElement.cloneNode(true);
   /* A downloaded artifact should not open in edit mode. */
@@ -11197,8 +11121,9 @@ function DECK_SLIDE_CSS(){ return "" +
   ".ds-story{position:relative;font:700 13px/1.3 inherit;padding-inline-start:16px;}" +
   ".ds-sdot{position:absolute;inset-inline-start:0;top:5px;width:8px;height:8px;}"; }
 /* --- HTML component helpers (mirror the vector pdf primitives) --- */
-function dsCols(){ return { bg:HX(expBg()), ink:HX(expInk()), mut:HX(expMuted()), brand:HX(expBrand()) }; }
-function dsLabelH(s, colHex){ return '<div class="ds-label" style="color:' + (colHex || dsCols().brand) +
+function dsCols(){ return { bg:HX(expBg()), ink:HX(expInk()), mut:HX(expMuted()), brand:HX(expBrand()),
+  brandTx:HX(expBrandText()), fill:HX(expBrandFill()) }; }
+function dsLabelH(s, colHex){ return '<div class="ds-label" style="color:' + (colHex || dsCols().brandTx) +
   '">' + xmlEsc(String(T(s)).toUpperCase()) + '</div>'; }
 function dsParaH(s){ return '<p class="ds-para">' + xmlEsc(s) + '</p>'; }
 function dsBulletsH(items){ return '<ul class="ds-bul">' + (items || []).map(it=>
@@ -11207,7 +11132,7 @@ function dsChipsH(items, start){ start = start || 0;
   return '<div class="ds-chips">' + (items || []).map((cm, ci)=>{
     const role = DECK_ROLES[(start + ci) % DECK_ROLES.length];
     return '<span class="ds-chipi" style="background:' + HX(deckTint(role)) + ';color:' +
-      HX(mixHex(role, expInk(), 0.28)) + '">' + xmlEsc(cm) + '</span>';
+      HX(deckRoleInk(role, 0.28)) + '">' + xmlEsc(cm) + '</span>';
   }).join("") + '</div>'; }
 function dsPillsH(items, roleHex){ return '<div class="ds-pills">' + (items || []).map(cm=>
   '<span class="ds-pill" style="background:' + HX(roleHex) + ';color:' + HX(onRoleInk(roleHex)) +
@@ -11218,7 +11143,7 @@ function dsShellH(eyebrow, bodyHtml, roleHex, glyphHtml){
   return '<div class="ds-bar" style="background:' + accent + '"></div>' +
     (glyphHtml || "") +
     '<div class="ds-pad">' +
-      '<div class="ds-top"><span style="color:' + accent + '">' + eyebrow + '</span>' +
+      '<div class="ds-top"><span style="color:' + HX(readableHex(accent, expBg())) + '">' + eyebrow + '</span>' +
         '<span style="color:' + col.mut + '">' + rh + '</span></div>' +
       bodyHtml +
       '<div class="ds-foot"><span style="color:' + col.mut + '">' + cred + '</span>' +
@@ -11291,7 +11216,7 @@ function dsCover(){ const col = dsCols(), links = coverLinks();
     '<div class="ds-pad ds-cover" style="z-index:1">' +
       '<div class="ds-cover-brand">' + ((typeof IndustryIcons !== "undefined" && IndustryIcons.dbxLogoSvg)
         ? IndustryIcons.dbxLogoSvg({ wordmark: col.ink, height: 30 }) : "") + '</div>' +
-      '<span class="ds-kick" style="background:' + col.brand + ';color:#fff">' + xmlEsc(T("Reference Architecture").toUpperCase()) + '</span>' +
+      '<span class="ds-kick" style="background:' + col.fill + ';color:' + HX(onRoleInk(col.fill)) + '">' + xmlEsc(T("Reference Architecture").toUpperCase()) + '</span>' +
       '<h1 class="ds-cover-title" style="color:' + col.ink + '">' + xmlEsc(coverTitle()) + '</h1>' +
       '<div class="ds-rule" style="background:' + col.brand + '"></div>' +
       '<div class="ds-cover-meta" style="color:' + col.mut + '">' + xmlEsc(coverCloudLine()) + '</div>' +
@@ -11308,7 +11233,7 @@ function dsIndex(){ const col = dsCols(), secs = deckSections();
       '<span class="ds-cnum" style="background:' + HX(role) + ';color:' + HX(onRoleInk(role)) + '">' + (i + 1) + '</span>' +
       '<span class="ds-ctext"><span class="ds-ctitle" style="color:' + col.ink + '">' + xmlEsc(sec.title) + '</span>' +
       '<span class="ds-cblurb" style="color:' + col.mut + '">' + xmlEsc(sec.blurb) + '</span></span>' +
-      (count ? '<span class="ds-ccount" style="color:' + HX(mixHex(role, expInk(), 0.30)) + '">' + xmlEsc(count) + '</span>' : "") +
+      (count ? '<span class="ds-ccount" style="color:' + HX(deckRoleInk(role, 0.30)) + '">' + xmlEsc(count) + '</span>' : "") +
       '</div>';
   }).join("");
   return dsShellH(xmlEsc(String(T("Contents")).toUpperCase()),
@@ -11317,7 +11242,7 @@ function dsSection(sec, role, idx){ const col = dsCols();
   const body = '<div class="ds-secwrap">' +
     '<span class="ds-kick" style="background:' + HX(role) + ';color:' + HX(onRoleInk(role)) + '">' +
       xmlEsc(String(T("SECTION")).toUpperCase() + " " + idx) + '</span>' +
-    '<h1 class="ds-sectitle" style="color:' + HX(role) + '">' + xmlEsc(sec.title) + '</h1>' +
+    '<h1 class="ds-sectitle" style="color:' + HX(readableHex(role, expBg(), 3)) + '">' + xmlEsc(sec.title) + '</h1>' +
     '<div class="ds-rule" style="background:' + HX(role) + '"></div>' +
     '<p class="ds-secblurb" style="color:' + col.mut + '">' + xmlEsc(sec.blurb) + '</p></div>';
   return dsShellH(xmlEsc(String(sec.eyebrow).toUpperCase()), body, role, dsSectionGlyph(deckSectionIcon(sec), role)); }
@@ -11329,7 +11254,7 @@ function dsUC(t, eyebrow){ let L = "", R = "";
   if(t.who){ R += dsLabelH("Who benefits") + dsChipsH([t.who], 0); }
   if(t.comps && t.comps.length){ R += dsLabelH("Architecture it uses") + dsChipsH(t.comps, 0); }
   if(t.stories && t.stories.length){ R += dsLabelH("Customer stories") + '<div class="ds-stories">' +
-    t.stories.slice(0, 4).map(s=> '<div class="ds-story" style="color:' + dsCols().brand +
+    t.stories.slice(0, 4).map(s=> '<div class="ds-story" style="color:' + dsCols().brandTx +
       '"><span class="ds-sdot" style="background:' + dsCols().brand + '"></span>' + xmlEsc(s.t) + '</div>').join("") +
     '</div>'; }
   return dsDetailH(eyebrow, t.n, t.s || t.desc || "", L, R, deckTileGlyph(t)); }
@@ -11347,10 +11272,10 @@ function dsDash(t, eyebrow){ let L = "", R = "";
 function dsGrid(sec, si){
   const cards = sec.tiles.slice(0, 4).map((t, i)=>{ const role = DECK_ROLES[(si + i) % DECK_ROLES.length];
     let inner = "";
-    if(t.s) inner += '<div class="ds-csub" style="color:' + HX(mixHex(role, expInk(), 0.30)) + '">' + xmlEsc(t.s) + '</div>';
+    if(t.s) inner += '<div class="ds-csub" style="color:' + HX(deckRoleInk(role, 0.30)) + '">' + xmlEsc(t.s) + '</div>';
     if(t.long) inner += dsParaH(t.long);
-    if(t.kpis && t.kpis.length) inner += dsLabelH("KPIs", HX(mixHex(role, expInk(), 0.30))) + dsChipsH(t.kpis, si + i);
-    if(t.teams && t.teams.length) inner += dsLabelH("Teams", HX(mixHex(role, expInk(), 0.30))) + dsPillsH(t.teams, role);
+    if(t.kpis && t.kpis.length) inner += dsLabelH("KPIs", HX(deckRoleInk(role, 0.30))) + dsChipsH(t.kpis, si + i);
+    if(t.teams && t.teams.length) inner += dsLabelH("Teams", HX(deckRoleInk(role, 0.30))) + dsPillsH(t.teams, role);
     const gl = deckTileGlyph(t);
     return '<div class="ds-card" style="background:' + HX(deckTint(role)) + '">' +
       '<div class="ds-card-h" style="background:' + HX(role) + ';color:' + HX(onRoleInk(role)) + '">' +
@@ -11361,11 +11286,11 @@ function dsGrid(sec, si){
     dsTitleH(sec.title, sec.blurb) + '<div class="ds-grid">' + cards + '</div>'); }
 function dsClosing(){ const col = dsCols(), links = closingLinks();
   const body = '<div class="ds-secwrap">' +
-    '<span class="ds-kick" style="background:' + col.brand + ';color:#fff">' + xmlEsc(String(T("Databricks Data + AI Platform")).toUpperCase()) + '</span>' +
+    '<span class="ds-kick" style="background:' + col.fill + ';color:' + HX(onRoleInk(col.fill)) + '">' + xmlEsc(String(T("Databricks Data + AI Platform")).toUpperCase()) + '</span>' +
     '<h1 class="ds-sectitle" style="color:' + col.ink + '">' +
       xmlEsc(dt("closeTitle", { plat:T("Databricks Data + AI Platform"), ind:deckIndustry() })) + '</h1>' +
     '<div class="ds-rule" style="background:' + col.brand + '"></div>' +
-    '<div class="ds-links">' + links.map(r=> '<div class="ds-link" style="color:' + col.brand +
+    '<div class="ds-links">' + links.map(r=> '<div class="ds-link" style="color:' + col.brandTx +
       '"><span class="ds-dot" style="background:' + col.brand + '"></span>' + xmlEsc(r.label) + '</div>').join("") +
     '</div></div>';
   return dsShellH(xmlEsc(String(T("In Summary")).toUpperCase()), body, null, dsCoverGlyph()); }
@@ -11408,6 +11333,7 @@ async function boardPdfBlob(){
   const rg = hex=>{ const h = hex.replace("#", "");
     return [0,2,4].map(i=> (parseInt(h.slice(i, i+2), 16) / 255).toFixed(3)).join(" "); };
   const ink = rg(expInk()), mut = rg(expMuted()), brand = rg(expBrand()), bgc = rg(expBg());
+  const brandTx = rg(expBrandText()), brandFill = rg(expBrandFill()), onFill = rg(onRoleInk(expBrandFill()));
   /* /F1 bold, /F2 regular. `y` is a baseline, and PDF y grows upward. */
   const txt = (font, size, colour, x, y, s)=>
     "BT /" + font + " " + size + " Tf " + colour + " rg " +
@@ -11423,7 +11349,7 @@ async function boardPdfBlob(){
     c.push(rectF(bgc, 0, 0, PW, PH));
     if(underlay) c.push(underlay);
     c.push(rectF(brand, 0, 0, 10, PH));
-    c.push(txt("F1", 9, brand, NM, PH - 42, String(eyebrow).toUpperCase()));
+    c.push(txt("F1", 9, brandTx, NM, PH - 42, String(eyebrow).toUpperCase()));
     const rh = deckRunHeader();
     c.push(txt("F1", 9, mut, PW - NM - pdfTextW(rh, 9), PH - 42, rh));
     const cred = creditText();
@@ -11458,7 +11384,7 @@ async function boardPdfBlob(){
      Genie, dashboard and app pages draw the same way. `colour` is a pre-built
      "r g b" string; role helpers convert with rg(). */
   const labelP = (c, x, cy, s, colour)=>{
-    c.push(txt("F1", 8, colour || brand, x, cy - 8, String(T(s)).toUpperCase())); return cy - 12;
+    c.push(txt("F1", 8, colour || brandTx, x, cy - 8, String(T(s)).toUpperCase())); return cy - 12;
   };
   const paraP = (c, x, cy, maxW, s, size, colour)=>{
     pdfWrap(s, size, maxW).forEach(ln=>{ c.push(txt("F2", size, colour || ink, x, cy - size, ln)); cy -= size * 1.34; });
@@ -11471,7 +11397,7 @@ async function boardPdfBlob(){
       if(px > x && (px - x + wpt) > maxW){ px = x; yy -= 21; }
       const role = DECK_ROLES[((startRole || 0) + ci) % DECK_ROLES.length];
       c.push(rectF(rg(deckTint(role)), px, yy - 15, wpt, 16));
-      c.push(txt("F1", 9, rg(mixHex(role, expInk(), 0.28)), px + 7, yy - 11, cm));
+      c.push(txt("F1", 9, rg(deckRoleInk(role, 0.28)), px + 7, yy - 11, cm));
       px += wpt + 6;
     });
     return yy - 26;
@@ -11519,8 +11445,8 @@ async function boardPdfBlob(){
     c.push(rectF(brand, 0, 0, 14, PH));
     let y = PH - 150;
     const kick = T("Reference Architecture").toUpperCase(), kw = pdfTextW(kick, 10) + 26;
-    c.push(rectF(brand, CM, y - 6, kw, 23));
-    c.push(txt("F1", 10, "1 1 1", CM + 13, y, kick));
+    c.push(rectF(brandFill, CM, y - 6, kw, 23));
+    c.push(txt("F1", 10, onFill, CM + 13, y, kick));
     y -= 50;
     pdfWrap(coverTitle(), 28, PW - CM * 2 - 20).forEach((ln, i)=>{ if(i) y -= 33; c.push(txt("F1", 28, ink, CM, y, ln)); });
     y -= 16; c.push(rectF(brand, CM, y, 120, 4)); y -= 26;
@@ -11569,7 +11495,7 @@ async function boardPdfBlob(){
     const c = [], secs = deckSections();
     c.push(rectF(bgc, 0, 0, PW, PH));
     c.push(rectF(brand, 0, 0, 10, PH));
-    c.push(txt("F1", 9, brand, NM, PH - 42, String(T("Contents")).toUpperCase()));
+    c.push(txt("F1", 9, brandTx, NM, PH - 42, String(T("Contents")).toUpperCase()));
     const rh = deckRunHeader();
     c.push(txt("F1", 9, mut, PW - NM - pdfTextW(rh, 9), PH - 42, rh));
     const cred = creditText();
@@ -11603,7 +11529,7 @@ async function boardPdfBlob(){
         bl = pdfWrap(sec.blurb, bsz, blurbMax); }
       let byy = yTop;
       bl.slice(0, maxLines).forEach(ln=>{ c.push(txt("F2", bsz, mut, tx, byy, ln)); byy -= lead; });
-      if(count) c.push(txt("F1", 11, rg(mixHex(role, expInk(), 0.30)),
+      if(count) c.push(txt("F1", 11, rg(deckRoleInk(role, 0.30)),
         PW - NM - 16 - countW, top - rowH / 2 - 4, count));
     });
     return { content:c.join(""), annots:[], usesImage:false };
@@ -11618,7 +11544,7 @@ async function boardPdfBlob(){
     drawGlyph(c, glyphs, { svg:svg(deckSectionIcon(sec)), px:700, bg:expBg(), color:roleHex, faded:true, rtl:rtlW },
       wcx - side / 2, wcy - side / 2, side, side);
     c.push(rectF(rg(roleHex), 0, 0, 10, PH));
-    c.push(txt("F1", 9, rg(roleHex), NM, PH - 42, String(sec.eyebrow).toUpperCase()));
+    c.push(txt("F1", 9, rg(readableHex(roleHex, expBg())), NM, PH - 42, String(sec.eyebrow).toUpperCase()));
     const rh = deckRunHeader();
     c.push(txt("F1", 9, mut, PW - NM - pdfTextW(rh, 9), PH - 42, rh));
     const cred = creditText();
@@ -11629,7 +11555,7 @@ async function boardPdfBlob(){
     c.push(rectF(rg(roleHex), NM, y - 6, kw, 23));
     c.push(txt("F1", 10, rg(onRoleInk(roleHex)), NM + 13, y, kick));
     y -= 46;
-    c.push(txt("F1", 40, rg(roleHex), NM, y, sec.title)); y -= 34;
+    c.push(txt("F1", 40, rg(readableHex(roleHex, expBg(), 3)), NM, y, sec.title)); y -= 34;
     c.push(rectF(rg(roleHex), NM, y, 120, 4)); y -= 26;
     pdfWrap(sec.blurb, 12, PW - NM * 2 - 40).forEach(l=>{ c.push(txt("F2", 12, mut, NM, y - 12, l)); y -= 17; });
     return { content:c.join(""), annots:[], usesImage:glyphs.length > 0, glyphs:glyphs };
@@ -11648,7 +11574,7 @@ async function boardPdfBlob(){
       ly = labelP(c, NM, ly, "Solution Accelerator available");
       const alines = pdfWrap(acc.n, 11, colW - 16); let aly = ly, amaxw = 0;
       c.push(rectF(brand, NM, ly - 8, 8, 8));
-      alines.forEach(ln=>{ c.push(txt("F1", 11, brand, NM + 14, aly - 10, ln)); amaxw = Math.max(amaxw, pdfTextW(ln, 11)); aly -= 14; });
+      alines.forEach(ln=>{ c.push(txt("F1", 11, brandTx, NM + 14, aly - 10, ln)); amaxw = Math.max(amaxw, pdfTextW(ln, 11)); aly -= 14; });
       annots.push(linkAnnot(NM + 14, aly, NM + 14 + Math.min(colW - 16, amaxw), ly, acc.u));
       ly = aly - 6;
       if(acc.note){ ly = paraP(c, NM, ly, colW, acc.note, 12); }
@@ -11660,7 +11586,7 @@ async function boardPdfBlob(){
       ry = labelP(c, rx, ry, "Who benefits");
       const pw = Math.min(rW, pdfTextW(t.who, 10) + 16);
       c.push(rectF(rg(deckTint(expBrand())), rx, ry - 16, pw, 17));
-      c.push(txt("F1", 10, rg(mixHex(expBrand(), expInk(), 0.25)), rx + 8, ry - 12, t.who));
+      c.push(txt("F1", 10, rg(readableHex(mixHex(expBrand(), expInk(), 0.25), deckTint(expBrand()))), rx + 8, ry - 12, t.who));
       ry -= 28;
     }
     if(t.comps && t.comps.length){
@@ -11672,7 +11598,7 @@ async function boardPdfBlob(){
       t.stories.slice(0, 4).forEach(s=>{
         c.push(rectF(brand, rx, ry - 8, 8, 8));
         const lines = pdfWrap(s.t, 10, rW - 16); let ly2 = ry, maxw = 0;
-        lines.forEach(ln=>{ c.push(txt("F1", 10, brand, rx + 14, ly2 - 10, ln)); maxw = Math.max(maxw, pdfTextW(ln, 10)); ly2 -= 13; });
+        lines.forEach(ln=>{ c.push(txt("F1", 10, brandTx, rx + 14, ly2 - 10, ln)); maxw = Math.max(maxw, pdfTextW(ln, 10)); ly2 -= 13; });
         annots.push(linkAnnot(rx + 14, ly2, rx + 14 + Math.min(rW - 16, maxw), ry, s.u));
         ry = ly2 - 8;
       });
@@ -11733,10 +11659,10 @@ async function boardPdfBlob(){
       drawGlyph(c, glyphs, { svg:titleIcon(t), px:96, bg:role, color:"#ffffff" }, cx + 12, top - hh + (hh - gsz) / 2, gsz, gsz);
       c.push(txt("F1", 12, rg(onRoleInk(role)), cx + 12 + gsz + 8, top - 17, t.n));
       const ix = cx + 12, iw = cardW - 24; let iy = top - hh - 12;
-      if(t.s){ c.push(txt("F1", 10, rg(mixHex(role, expInk(), 0.30)), ix, iy - 10, t.s)); iy -= 16; }
+      if(t.s){ c.push(txt("F1", 10, rg(deckRoleInk(role, 0.30)), ix, iy - 10, t.s)); iy -= 16; }
       if(t.long){ iy = paraP(c, ix, iy, iw, t.long, 11); }
-      if(t.kpis && t.kpis.length){ iy = labelP(c, ix, iy, "KPIs", rg(mixHex(role, expInk(), 0.30))); iy = chipsP(c, ix, iy, iw, t.kpis, roleBase + i); }
-      if(t.teams && t.teams.length){ iy = labelP(c, ix, iy, "Teams", rg(mixHex(role, expInk(), 0.30))); iy = pillsP(c, ix, iy, iw, t.teams, role); }
+      if(t.kpis && t.kpis.length){ iy = labelP(c, ix, iy, "KPIs", rg(deckRoleInk(role, 0.30))); iy = chipsP(c, ix, iy, iw, t.kpis, roleBase + i); }
+      if(t.teams && t.teams.length){ iy = labelP(c, ix, iy, "Teams", rg(deckRoleInk(role, 0.30))); iy = pillsP(c, ix, iy, iw, t.teams, role); }
     });
     return { content:c.join(""), annots:[], usesImage:glyphs.length > 0, glyphs:glyphs };
   };
@@ -11754,13 +11680,13 @@ async function boardPdfBlob(){
     chrome(c, T("In Summary"), under);
     let y = PH - 170;
     const kick = String(T("Databricks Data + AI Platform")).toUpperCase(), kw = pdfTextW(kick, 10) + 26;
-    c.push(rectF(brand, NM, y - 6, kw, 23)); c.push(txt("F1", 10, "1 1 1", NM + 13, y, kick)); y -= 44;
+    c.push(rectF(brandFill, NM, y - 6, kw, 23)); c.push(txt("F1", 10, onFill, NM + 13, y, kick)); y -= 44;
     const title = dt("closeTitle", { plat:T("Databricks Data + AI Platform"), ind:deckIndustry() });
     pdfWrap(title, 26, PW - NM * 2 - 20).forEach((ln, i)=>{ if(i) y -= 31; c.push(txt("F1", 26, ink, NM, y, ln)); });
     y -= 16; c.push(rectF(brand, NM, y, 120, 4)); y -= 30;
     links.forEach(row=>{
       c.push(rectF(brand, NM, y - 1, 9, 9));
-      const lx = NM + 20; c.push(txt("F1", 13, brand, lx, y, row.label));
+      const lx = NM + 20; c.push(txt("F1", 13, brandTx, lx, y, row.label));
       const lw = pdfTextW(row.label, 13);
       c.push(brand + " RG 0.9 w " + lx.toFixed(2) + " " + (y - 3).toFixed(2) + " m " +
         (lx + lw).toFixed(2) + " " + (y - 3).toFixed(2) + " l S\n");
@@ -12190,10 +12116,8 @@ function roundPoly(pts, r){
    outside is below and the line drops by d. Z and S disagree on both sides, T
    and T180 agree on both, which is why hard-coding Z's pair drew nothing
    for the other three. */
-/* The silhouette of any number of seam-adjacent blocks stacked top to bottom.
-   Written for two and then needed for three, because H90's waist is a third
-   block between the bars, so the walk is a loop rather than a fixed list of
-   eight corners: down the right-hand edges, then back up the left.
+/* The silhouette of any number of seam-adjacent blocks stacked top to bottom:
+   down the right-hand edges, then back up the left.
 
    At each seam the step across has to be offset to the side of the seam that
    belongs to the WIDER block, or the outline cuts the corner off whichever
@@ -12230,9 +12154,7 @@ function drawZRing(){
   const mid = document.querySelector(".mid");
   const off = el => ({ l:el.offsetLeft, t:el.offsetTop,
                        r:el.offsetLeft + el.offsetWidth, b:el.offsetTop + el.offsetHeight });
-  /* The waist only exists in H90; everywhere else it is empty and collapsed, so
-     it is included only when it has a height to contribute. */
-  const els = [platTopEl, platWaistEl, platformEl]
+  const els = [platTopEl, platformEl]
     .filter(el=> el && el.offsetHeight > 1);
   const blocks = els.map(off);
   /* Stacked and phone layouts drop the overhangs, so there is no outline to
@@ -12382,7 +12304,7 @@ function alignWorkRows(){
   }
 }
 const INTRO_KEY = "dbx-arch-intro";
-const INTRO_ZONES = "#topband, .downflow, .col.src, .col.cons, .pocket.ing, .pocket.ppl, .plat-head, #plat-top, #plat-waist, #platform, #zring, .cloudwrap, .mid > .gutter, .mid > .flow";
+const INTRO_ZONES = "#topband, .downflow, .col.src, .col.cons, .pocket.ing, .pocket.ppl, .plat-head, #plat-top, #platform, #zring, .cloudwrap, .mid > .gutter, .mid > .flow";
 const INTRO_VARS = ["--ixk", "--ixt", "--ixe", "--ixd", "--ixft", "--ixf", "--ixc"];
 const INTRO_INPUT = ["pointerdown", "keydown", "wheel", "resize"];
 let introOn = false, introRefit = false, introTimer = 0, introEls = [], introDoneResolve = null;
@@ -12584,7 +12506,7 @@ async function seedFromUrl(){
   if(s){
     const b = document.body;
     SHAPES.forEach(x=> b.classList.remove("shape-" + x.k));
-    ["ul-top","ul-bot","ul-both","ur-top","ur-bot","ur-both"].forEach(c=> b.classList.remove(c));
+    ["ul-top","ul-bot","ur-top","ur-bot"].forEach(c=> b.classList.remove(c));
     b.classList.add("shape-" + s.k, "ul-" + s.ul, "ur-" + s.ur);
     paintShapeMenu();
   }
@@ -12592,6 +12514,7 @@ async function seedFromUrl(){
   if(cp && ARCH.cloud.providers[cp]){ ARCH.cloud.provider = cp; paintSeg(); }
   if(linkSeeded()){
     displayMode = q.get("display") === "branded" ? "commercial" : "category";
+    viewMode = q.get("view") === "detailed" ? "detailed" : "simple";
     setDocked(q.get("dock") === "1");
   }
   if(q.get("platform") === "1"){
@@ -12762,7 +12685,7 @@ function bootLangMeta(){
      any atom on the board, so the step never lands blank. */
   let panelBefore = null;
   function hlBox(){
-    const boxes = [...document.querySelectorAll("#plat-top .atom, #plat-waist .atom, #platform .atom")]
+    const boxes = [...document.querySelectorAll("#plat-top .atom, #platform .atom")]
       .map(el=> ({ el, dots:el.querySelectorAll(":scope > .badge-dot[data-hl]").length, b:el.getBoundingClientRect() }))
       .filter(x=> x.dots && (x.b.width || x.b.height))
       .sort((a, b)=> b.dots - a.dots || b.b.left - a.b.left);
@@ -12790,25 +12713,25 @@ function bootLangMeta(){
   const STEPS = [
     { sel:"#ind-btn", place:"bottom", title:"Pick your industry",
       body:"Start here. Choose any of 70 industries and everything around the platform changes with it: sources, ingestion, teams, use cases and consumers. Press {k1} or {k2} to search them." },
-    { sel:"#topband", place:"bottom", title:"Use cases and Genie agents",
-      body:"What the platform does in this industry. Click a use case for its story: the problem it solves, who benefits, how it is built, the products it uses and real Databricks customer stories." },
     { sel:".col.src", place:"right", title:"Sources in, answers out",
       body:"Data comes in from the systems on the left, through Lakeflow or the external ingestion below them. Governed answers leave on the right, to BI tools, apps, partners and operational systems." },
-    { sel:".plat-head, #plat-top, #plat-waist, #platform", place:"top", title:"The Databricks Data + AI Platform",
+    { sel:"#topband", place:"bottom", title:"Use cases and Genie agents",
+      body:"What the platform does in this industry. Click a use case for its story: the problem it solves, who benefits, how it is built, the products it uses and real Databricks customer stories." },
+    { sel:".plat-head, #plat-top, #platform", place:"top", title:"The Databricks Data + AI Platform",
       body:"It stays the same in every industry; only the world around it changes. Click any product for detail. The zoom button in the corner of each zone, and on the platform title, shows one part on its own." },
     { sel:()=> [hlBox()].filter(Boolean), place:"left", title:"Highlights on every box", clickNext:true,
       body:"Coloured dots on a box mean it has highlights: a connector, accelerator, demo, product tour, course, certification, video or customer story. Click this box to see its highlights." },
-    { sel:"#drawer, #side-btn", place:"left", title:"Details for every box", settle:340,
+    { sel:"#drawer", place:"left", title:"Details for every box", settle:340,
       enter:openSampleDrawer, exit:closeSampleDrawer,
       body:"This panel shows a box's highlights, its full story and its links. Click any box, product, team or use case to open it. Every chip jumps to another part of the board, and the dock button pins the panel beside the board." },
-    { sel:"#lang-btn, #theme-btn, #tour-btn", place:"bottom", title:"Language, light or dark, and this tour",
-      body:"Read the board in 16 languages, switch between light and dark, and replay this tour any time. Exports capture the language and theme on screen." },
+    { sel:"#opt-btn", place:"bottom", title:"Share it, and tell us what to fix",
+      body:"Options shares the board or copies a link that reopens exactly this board for whoever you send it to. It also replays this tour, docks the details panel and opens a short feedback form, and your notes shape the next revision." },
+    { sel:"#lang-btn, #theme-btn", place:"bottom", title:"Language, light or dark",
+      body:"Read the board in 16 languages and switch between the light and dark theme. Exports capture the language and theme on screen." },
     { sel:"#dl-btn", place:"bottom", title:"Take it with you",
       body:"Export a PDF, a PowerPoint that ends with an editable copy of the board, a PNG, an animated GIF or offline HTML, or editable shapes for draw.io, Lucidchart, Visio, Miro, Figma and Excalidraw. A YAML descriptor exports too, and imports back into its own tab." },
-    { sel:"#display-seg, #cloud-seg, #region-btn, #stage-btn, #hl-btn, #pal-btn, #shape-btn", place:"bottom", title:"Names, cloud, region, stage and style",
-      body:"Show brand names or generic categories, and switch the cloud band between Azure, AWS and GCP. Pick a region to see what runs there, and filter the platform by release stage. Choose which highlights show, recolour the board with a palette, and draw the platform as a Z, an I-beam and other shapes." },
-    { sel:"#feedback-btn, #share-btn", place:"bottom", title:"Share it, and tell us what to fix",
-      body:"Share posts the board or copies a link that reopens exactly this board for whoever you send it to. Feedback opens a short form, and your notes shape the next revision." },
+    { sel:"#view-seg, #display-seg, #cloud-seg, #region-btn, #stage-btn, #hl-btn, #pal-btn, #shape-btn", place:"bottom", title:"Names, cloud, region, stage and style",
+      body:"Simplify the board or show every detail, use brand names or generic categories, and switch the cloud band between Azure, AWS and GCP. Pick a region to see what runs there, and filter the platform by release stage. Choose which highlights show, recolour the board with a palette, and pick the shape of the platform." },
   ];
 
   let idx = 0, dir = 1, open = false, shownIdx = -1;
