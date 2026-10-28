@@ -157,6 +157,7 @@ sources:
             volume: 100s-1000s of events/sec
             interval: Continuous
       - name: CyberArk PAM
+        core: true
         icon: key
         summary: Privileged session recordings, vault checkouts and secret access, the source of truth for privileged-account misuse detection.
         citations:
@@ -208,6 +209,7 @@ sources:
             volume: 1-5 GB/day
             interval: Daily
       - name: Mandiant Threat Intel
+        core: true
         icon: globe
         summary: Adversary profiles, indicators and campaign intelligence used to prioritise detections against the threats actually targeting the sector.
         citations:
@@ -260,6 +262,7 @@ sources:
             volume: 10-100k events/sec at peak
             interval: Continuous
       - name: Zscaler ZIA/ZPA
+        core: true
         icon: cloud
         summary: Secure web gateway and zero-trust access logs for every user-to-app session, the source for egress and exfiltration analysis.
         citations:
@@ -293,6 +296,7 @@ sources:
             volume: 10-100k events/sec at peak
             interval: Continuous
       - name: Wiz CNAPP
+        core: true
         icon: cloud
         summary: Cloud security posture, misconfiguration and runtime findings across cloud accounts, containers and workloads.
         citations:
@@ -337,6 +341,7 @@ sources:
         summary: 'Open Cybersecurity Schema Framework, a vendor-agnostic taxonomy for security telemetry.'
         spec_url: https://schema.ocsf.io/
       - name: 'STIX'
+        core: true
         icon: zbraces
         fmt: 'STIX'
         summary: 'Structured Threat Information eXpression for representing cyber threat intelligence.'
@@ -490,6 +495,7 @@ pipelines:
           - Insider Risk & UEBA
           - Vulnerability Triage
       - name: Detection Engineering
+        core: true
         mark: Model Serving
         summary: Detection engineers who write, test and ship detection content as code, and content developers who tune rules against false positives and keep coverage mapped to the ATT&CK matrix.
         uses:
@@ -569,6 +575,7 @@ consumers:
         citations:
           - crowdstrike
       - name: ITSM Ticketing
+        core: true
         icon: opdb
         summary: Incidents and remediation tasks raised in ServiceNow Security Operations, tracked to closure against the same governed record.
         citations:
@@ -597,6 +604,7 @@ consumers:
         icon: docs
         summary: Immutable query and access logs proving who saw what and when, supporting query-audit evidence for applicable controls without extra instrumentation.
       - name: Regulatory Filings
+        core: true
         icon: gavel
         summary: Breach-notification and regulator reporting produced from contracted Gold products rather than reassembled by hand under deadline.
   - name: Sharing & Products
@@ -606,6 +614,7 @@ consumers:
         icon: product
         summary: Published, contracted security products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Threat Intel Sharing
+        core: true
         icon: share
         summary: Curated indicators and detections shared with ISACs and partners over Delta Sharing rather than emailed spreadsheets.
       - name: Sharing Recipients
@@ -701,10 +710,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

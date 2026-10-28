@@ -146,6 +146,7 @@ sources:
             volume: 1-3 GB/day
             interval: Hourly / event-driven
       - name: ServiceMax
+        core: true
         icon: orch
         summary: 'Field service management: installed base, service contracts, work orders and parts for the deployed machine fleet.'
         citations:
@@ -196,6 +197,7 @@ sources:
             volume: 10-100k tags/sec
             interval: Continuous historian stream
       - name: Connected Machine Telemetry
+        core: true
         icon: iot
         summary: 'Fleet telemetry from deployed machines: hours, loads, alarms and sensor streams from every unit in the field.'
         category: Connected-Asset / IIoT Telemetry
@@ -233,6 +235,7 @@ sources:
         summary: 'Open standard for read-only data from CNC machines and shop-floor equipment.'
         spec_url: https://www.mtconnect.org/
       - name: 'OPC UA'
+        core: true
         icon: zbraces
         fmt: 'OPCUA'
         summary: 'OPC Unified Architecture for secure, model-based industrial data exchange.'
@@ -356,6 +359,7 @@ pipelines:
           - Warranty Cost Optimization
           - Predictive Maintenance & Asset Health
       - name: Aftermarket & Service
+        core: true
         mark: Lakeflow
         summary: Installed-base uptime, service dispatch and parts consumption tracked on fleet availability and service margin so a field failure becomes planned work not a breakdown.
         uses:
@@ -509,6 +513,7 @@ consumers:
         citations:
           - opcenter
       - name: Field Service Orders
+        core: true
         icon: orch
         summary: Predicted failures raised as service work orders the field crew already schedules.
         citations:
@@ -525,6 +530,7 @@ consumers:
         citations:
           - edi-asn
       - name: Dealer Network
+        core: true
         icon: globe
         summary: Dealers and distributors reading parts demand and warranty limits live instead of nightly flat files.
   - name: Regulatory & Reporting
@@ -543,6 +549,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Customers, dealers and auditors reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -635,10 +642,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

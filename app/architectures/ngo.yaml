@@ -69,6 +69,7 @@ sources:
             volume: 1-4 GB/day
             interval: Nightly batch + close cycles
       - name: Fluxx Grantmaker
+        core: true
         icon: sheet
         summary: Sub-grant applications, awards and milestone reporting to institutional donors.
         citations:
@@ -136,6 +137,7 @@ sources:
             volume: 0.1-1 GB/day
             interval: Sync on connectivity (batched)
       - name: DevResults M&E
+        core: true
         icon: chart
         summary: Indicator frameworks, results chains and portfolio dashboards for program teams.
         citations:
@@ -232,6 +234,7 @@ sources:
           - 'AidStream'
           - 'DevResults'
       - name: 'HXL'
+        core: true
         icon: zbraces
         fmt: 'HXL'
         summary: 'Humanitarian Exchange Language, lightweight hashtags added to humanitarian datasets.'
@@ -260,6 +263,7 @@ cloud_integrations:
             volume: MBs-GBs reference
             interval: Periodic + on-demand API
       - name: OFAC Sanctions Lists
+        core: true
         icon: gavel
         summary: Watchlist updates parsed on arrival for donor and vendor screening.
         citations:
@@ -338,6 +342,7 @@ pipelines:
           - Impact Storytelling
           - Volunteer Mobilisation
       - name: Programs & M&E
+        core: true
         mark: AI/BI
         summary: Country directors on indicator progress, beneficiary reach and field data quality, and cost per outcome compared across programs and geographies.
         uses:
@@ -537,6 +542,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Funders, partners and auditors reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -629,10 +635,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

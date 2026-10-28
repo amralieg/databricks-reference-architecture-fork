@@ -211,6 +211,7 @@ sources:
             volume: sub-GB/day
             interval: Hourly / nightly sync
       - name: Agilysys InfoGenesis
+        core: true
         icon: erp
         summary: Outlet POS for restaurants, bars and room charges to folio.
         citations:
@@ -294,6 +295,7 @@ cloud_integrations:
             volume: sub-GB/day
             interval: Weekly + monthly benchmark files
       - name: GDS Booking Messages
+        core: true
         icon: stream
         summary: Amadeus and Sabre hotel booking notifications parsed on arrival.
         citations:
@@ -367,6 +369,7 @@ pipelines:
           - Conversational Booking
           - Disruption Response
       - name: Front Office & Ops
+        core: true
         mark: Lakehouse//RT
         summary: GMs and front office on arrivals, housekeeping turn and service recovery, clearing rooms and VIP flags before the guest reaches the desk.
         uses:
@@ -557,6 +560,7 @@ consumers:
         icon: product
         summary: Portfolio performance products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Owners and brands reading live KPIs via Delta Sharing.
   - name: Databricks Apps
@@ -649,10 +653,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

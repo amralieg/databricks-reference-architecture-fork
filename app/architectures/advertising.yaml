@@ -25,6 +25,7 @@ sources:
             volume: 1-10k impression events/sec
             interval: Continuous
       - name: The Trade Desk
+        core: true
         icon: market
         summary: Programmatic buying, audience segments and bid stream across open web and CTV.
         citations:
@@ -44,6 +45,7 @@ sources:
             volume: 50k-500k bid events/sec
             interval: Continuous
       - name: Meta Ads Manager
+        core: true
         icon: partner
         summary: Paid social campaigns, creative variants and conversion events from Meta properties.
         citations:
@@ -163,6 +165,7 @@ sources:
             volume: 100s-1000s of profile events/sec
             interval: Continuous
       - name: LiveRamp RampID
+        core: true
         icon: partner
         summary: Identity resolution and onboarding for privacy-safe audience matching.
         citations:
@@ -194,6 +197,7 @@ sources:
             volume: 1-5 GB/day panel + ratings
             interval: Daily
       - name: IAS Brand Safety
+        core: true
         icon: gavel
         summary: Viewability, invalid traffic and brand suitability scoring on every impression.
         citations:
@@ -299,6 +303,7 @@ sources:
         summary: 'IAB real-time bidding protocol for programmatic ad auctions between exchanges, SSPs and DSPs.'
         spec_url: https://iabtechlab.com/standards/openrtb/
       - name: 'VAST'
+        core: true
         icon: zbraces
         fmt: 'VAST'
         summary: 'IAB Digital Video Ad Serving Template for delivering and tracking video ad creatives to players.'
@@ -408,6 +413,7 @@ pipelines:
           - Retail Media Activation
           - Cross-Channel Attribution
       - name: Performance Marketing
+        core: true
         mark: Model Serving
         summary: Bid management, audience targeting and creative testing across programmatic and paid social, held to CPA, ROAS and viewability targets.
         uses:
@@ -590,6 +596,7 @@ consumers:
         icon: product
         summary: Audience and performance products published in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Agency and brand partners reading live tables via Delta Sharing.
   - name: Databricks Apps
@@ -682,10 +689,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

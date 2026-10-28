@@ -38,6 +38,7 @@ sources:
             volume: 10-50 GB/day
             interval: Nightly batch
       - name: Kinaxis Maestro
+        core: true
         icon: sheet
         summary: Concurrent S&OP scenarios, constraint-based planning and what-if responses when a supplier or line goes down.
         citations:
@@ -128,6 +129,7 @@ sources:
             volume: 1-5 GB/day
             interval: On change release + nightly
       - name: MasterControl QMS
+        core: true
         icon: gavel
         summary: Non-conformance, CAPA and audit findings tied to lots and suppliers.
         citations:
@@ -341,6 +343,7 @@ pipelines:
         ucs:
           - Design Space Simulation & Exploration
       - name: Quality & Compliance
+        core: true
         mark: Model Serving
         summary: Lot release, SPC violations and supplier corrective actions scored on first-pass yield and non-conformance rate before product leaves the site.
         uses:
@@ -490,6 +493,7 @@ consumers:
         citations:
           - opcenter
       - name: CMMS Work Orders
+        core: true
         icon: erp
         summary: Predicted failures raised as maintenance work orders the technician crew already schedules.
   - name: Customers & Suppliers
@@ -526,6 +530,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Customers, co-mans and auditors reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -618,10 +623,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

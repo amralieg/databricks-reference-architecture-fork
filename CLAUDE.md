@@ -19,9 +19,15 @@ See `README.md`. What every change here depends on:
   only ONE board file to edit; a fix in `app/index.html` reaches the AI app automatically.
 - Every board has two views on the same shape and boxes: Simplified, the default, and
   Detailed. Simplified keeps the first tiles of each group (`SIMPLE_RAIL_CAP`,
-  `SIMPLE_TOP_CAP`), the use cases with customer stories, the platform headline set and one
-  cloud tile per role. So the first tile of every group in an industry YAML is its most
-  essential one, and it never repeats what another group already leads with.
+  `SIMPLE_TOP_CAP`), every tile marked `core: true`, the use cases with customer stories, the
+  platform headline set and the cloud tiles a reader needs (`SIMPLE_CLOUD_ROLES`: storage,
+  identity, catalog, model providers with Anthropic/OpenAI, BI, cloud ETL, streaming and
+  federation, plus one compute tile named Compute). CI/CD, monitoring, operational stores and
+  orchestrators wait for Detailed. So the first tile of every group in an industry YAML is its
+  most essential one and never repeats what another group already leads with, and every other
+  system, consumer or team the industry cannot be read without carries `core: true`: an
+  airline board without its GDS, or a bank without its core banking system, is not credible.
+  Keep at most one extra Business team, since the Teams pocket sets the board's height.
 
 ## 2. Layout
 
@@ -79,8 +85,10 @@ The full tree is in `README.md` under "Repository layout". Two files it does not
    region codes and titles quoted as published stay English, and so do the toolbar and its menus.
    A word that is truly the same in a language goes in `tools/i18n_same.json` for that language
    only. A wrong sense found once (ingestion read as eating, work teams as sports teams, cloud as
-   weather) goes in the gate's sense list so it cannot come back. A machine translation of a short
-   label is never final until it has been read in context.
+   weather, a lakehouse as a house by a lake, a copilot as an aircraft co-pilot) goes in the gate's
+   sense list so it cannot come back, and a name found translated once (Anthropic, Kinesis, Oracle)
+   goes in its list of names that stay as written. A machine translation of a short label is never
+   final until it has been read in context.
 
 ## 4. Links policy
 
@@ -223,9 +231,11 @@ python3 tools/refresh_content.py --check     # Content: demos and videos current
 python3 tools/regiongate.py --live          # region data consistent, every limited column owned by a board product or explained, every region-table row linked to its cloud's docs with a stage and its markers explained, the same rows on every cloud, every region in a Geo and with a flag, alias parity, source docs live
 node   tools/verify_all_sections.js         # 70 industries + the generic board, uc/genie/dash/app = 10/4/4/4, the deck's editable board slide builds, 0 page errors
 node   tools/verify_i18n_coverage.js        # translation coverage over the DATA corpus
-node   tools/verify_ui_i18n.js                # every string a reader sees is translated with the right sense in all fifteen languages: wrong-sense terms, leftover tokens and the tour offline; the board, the panels, the tour, tooltips and the Excel headers on screen
+node   tools/verify_ui_i18n.js                # every string a reader sees is translated with the right sense in all fifteen languages: wrong-sense terms, names that stay as written, leftover tokens and the tour offline; the board, the panels, the tour, tooltips and the Excel headers on screen
 node   tools/verify_highlights.js           # every tile on every board and cloud draws the dots of the highlights that match it: one connector list for dot and callout, aliases, no orphaned resources
-node   tools/verify_label_fit.js            # every panel, card, heading and band label fits its box, and no heading runs under its zoom button, in all sixteen languages and every board shape
+node   tools/verify_label_fit.js            # every panel, card, heading and band label fits its box, and no heading runs under its zoom button, in all sixteen languages and every board shape; no tile name breaks a word without a hyphen on any board or cloud
+node   tools/verify_core.js                 # every board and cloud, both views, Branded and Categorized: Simplified shows every core tile and every group's first tile, the cloud BI tool, model providers with Anthropic/OpenAI, storage, identity, catalog, ETL, streaming and one Compute tile, and no CI/CD, monitoring, operational store or orchestrator; Detailed keeps every tile
+node   tools/verify_alignment.js            # every board, cloud, shape and language in both views: platform-box titles centred and at their leading edge, tiles midway between top and bottom, arm cards evenly spaced, highlight dots clear of borders, Simplified app names under their icons, panel link arrows at the end of their rows
 python3 tools/linkgate.py                    # structural completeness, retired names, seller phrasing, outcome-map use cases still on their boards, every chip alias names a chip on some board and a LINKS entry (add --urls for live link check, --scope highlights to skip third-party citations)
 python3 tools/heightgate.py                  # every board in every shape against the reference height, no clipping, a board that does not load measured once more; a board already over it holds its height in tools/heightgate_baseline.json and may not grow (--tighten after one shrinks)
 node   tools/perfgate.js                     # motion rests at idle, reduced motion honoured, boot fetches once and in parallel; the opening intro plays once the board is built, ends on input and leaves nothing behind

@@ -38,6 +38,7 @@ sources:
             volume: hundreds of events/sec
             interval: Continuous batch events
       - name: SAP S/4HANA PP
+        core: true
         icon: erp
         summary: Production orders, BOM explosions, confirmations and co-product yields.
         citations:
@@ -75,6 +76,7 @@ sources:
             volume: GBs/day docs + records
             interval: Hourly / nightly sync
       - name: SafetyChain Plant Mgmt
+        core: true
         icon: gauge
         summary: HACCP checks, temperature logs and sanitation records from production shifts.
         citations:
@@ -90,6 +92,7 @@ sources:
             volume: 1-5 GB/day
             interval: Per-shift + hourly
       - name: LabWare LIMS
+        core: true
         icon: db
         summary: Microbiology, allergen and nutritional assay results tied to lot and line.
         category: Laboratory Information System (LIMS)
@@ -124,6 +127,7 @@ sources:
             volume: hundreds of events/sec
             interval: Continuous shipment events
       - name: Manhattan WMS
+        core: true
         icon: product
         summary: Warehouse inventory, pick/pack and shipment confirmation against customer orders.
         citations:
@@ -183,6 +187,7 @@ sources:
             volume: 1-5 GB/week
             interval: Weekly feed
       - name: Trade Promotion Mgmt
+        core: true
         icon: partner
         summary: Promotional calendars, scan data and accrual settlements with retail partners.
         category: Trade Promotion Management (TPM)
@@ -334,6 +339,7 @@ pipelines:
           - Feedstock, Formulation, & Recipe Control
           - Quality Event Root Cause Analysis
       - name: Quality & Food Safety
+        core: true
         mark: AI/BI
         summary: Quality managers on hold rate, open deviations, CAPA aging and sanitation compliance across sites when a supplier alert lands.
         uses:
@@ -521,6 +527,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Retailers, co-packers and auditors reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -613,10 +620,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

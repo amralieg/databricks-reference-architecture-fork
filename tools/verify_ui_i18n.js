@@ -43,8 +43,22 @@ const SENSE = [
     bad: { pt: /\bcorridas?\b/i, it: /\bcors[ae]\b/i, es: /\bcarreras?\b/i } },
   { what: 'an endpoint read as a full stop or a final point', src: /\bendpoints?\b/i,
     bad: { es: /puntos? finales?/i, fr: /points? fina(l|ux)\b/i, hi: /समापन बिंदु/ } },
-  { what: 'the name Databricks Vector Search translated', src: /Databricks Vector Search/,
-    bad: Object.fromEntries(LANGS.map(l => [l, /^(?![\s\S]*Vector Search)/])) },
+  { what: 'a compute plane read as an aircraft or as an order to calculate', src: /\bcompute plane\b/i,
+    bad: { ar: /طائر/, he: /מטוס/, hi: /विमान/, it: /aereo/i, pt: /avião/i, es: /avión/i, de: /flugzeug/i, ja: /飛行機/, ko: /비행기|평면/, zh: /飞机/,
+           da: /\bfly\b|^beregn\b/i, fi: /^laske\b/i, fr: /^calculer\b/i, sv: /^beräkna\b/i, nl: /^bereken\b|\bplane\b/i } },
+  { what: 'compute read as an account or a sum', src: /\bcompute\b/i, except: /\baccount\b/i,
+    bad: { ar: /(^|[\s،])(ال)?حساب($|[\s،.])/ } },
+  { what: 'a lakehouse read as a house by a lake', src: /\blakehouses?\b/i,
+    bad: { it: /casa sul lago|casa del lago/i, fi: /järvitalo/i, he: /בית האגם/, ja: /湖畔|湖の家/, es: /casa (del|junto al) lago/i, pt: /casa (do|no) lago|casa à beira/i,
+           fr: /maison (du|au bord du|sur le) lac/i, de: /seehaus/i, nl: /meerhuis|huis aan het meer/i, sv: /sjöhus|sjöstuga/i, da: /søhus/i, ko: /호숫가|호수 집|호수의 집/,
+           zh: /湖边|湖畔|湖屋/, ar: /(بيت|منزل|كوخ) البحيرة|(من|في|إلى|على) البحيرة/ } },
+  { what: 'rail linear assets read as wealth or the maglev line', src: /\blinear (and infrastructure )?assets?\b|\bLinear Asset\b/i,
+    bad: { nl: /vermogen/i, it: /patrimon/i, de: /vermögen/i, ja: /リニア/, fi: /varallisuu|sijoitus/i, sv: /förmögenhet/i, da: /formue/i, hi: /संपत्ति/, fr: /patrimoin/i, es: /patrimonio/i, pt: /patrimônio|patrimonio/i } },
+  { what: 'an AI copilot read as an aircraft co-pilot', src: /\bcopilots?\b/i,
+    bad: { ja: /副操縦/, ko: /부조종사/, he: /טייס/, ar: /طيّ?ار/, fi: /perämie/i, hi: /सह-?पायलट/ } },
+  ...['Databricks Vector Search', 'Anthropic', 'OpenAI', 'Amazon Bedrock', 'AWS Glue', 'Oracle', 'Sparkplug', 'Power BI', 'Pub/Sub', 'Event Hubs', 'Kinesis']
+    .map(name => ({ what: `the name ${name} translated`, src: new RegExp(name.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')),
+      bad: Object.fromEntries(LANGS.map(l => [l, { test: t => !t.includes(name) }])) })),
 ];
 const prose = s => { const w = s.trim().split(/\s+/); return w.length >= 3 && w.some(x => /^[a-z]{2,}/.test(x)); };
 
@@ -56,7 +70,7 @@ function offline(){
     for(const f of fs.readdirSync(path.join(TR, l))) if(f.endsWith('.json')) Object.assign(d, JSON.parse(fs.readFileSync(path.join(TR, l, f), 'utf8')));
     for(const [s, t] of Object.entries(d)){
       n++;
-      if(/Zq\d+qZ/.test(t)) fails.push(`[${l}] a masking token is left in '${s.slice(0, 60)}'`);
+      if(/Zq\s*\d|\d\s*qZ/.test(t)) fails.push(`[${l}] a masking token is left in '${s.slice(0, 60)}'`);
       if(/[\u200B\uFEFF]/.test(t)) fails.push(`[${l}] a zero-width space hides in '${s.slice(0, 60)}'`);
       if(l === 'he' && /[\u0591-\u05C7]/.test(t)) fails.push(`[he] vowel points in '${s.slice(0, 60)}'`);
       for(const r of SENSE){

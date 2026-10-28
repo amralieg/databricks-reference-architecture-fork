@@ -38,6 +38,7 @@ sources:
             volume: 5-20 GB/day
             interval: Nightly batch + intraday plan saves
       - name: Blue Yonder WMS
+        core: true
         icon: stream
         summary: Warehouse execution, pick paths and store replenishment.
         citations:
@@ -93,6 +94,7 @@ sources:
             volume: hundreds of events/sec
             interval: Continuous (API / webhook)
       - name: NCR Voyix POS
+        core: true
         icon: market
         summary: Store transactions, endless aisle and associate workflows.
         citations:
@@ -129,6 +131,7 @@ sources:
             volume: hundreds-thousands of order events/sec
             interval: Continuous orchestration events
       - name: E2open Supply Planning
+        core: true
         icon: globe
         summary: Vendor OTIF, inbound containers and allocation constraints.
         citations:
@@ -238,6 +241,7 @@ sources:
         summary: 'NRF ARTS standard for structured digital receipts.'
         spec_url: https://www.omg.org/spec/DRAPI/
       - name: 'X12 EDI'
+        core: true
         icon: zbraces
         fmt: 'X12'
         summary: 'ANSI X12 EDI transaction sets for merchandise supply-chain messaging.'
@@ -363,6 +367,7 @@ pipelines:
           - Assortment & Allocation
           - In-Stock Optimisation
       - name: Store Operations
+        core: true
         mark: Lakehouse//RT
         summary: Field leaders on labor, conversion and in-stock during peak weeks, watching sales per labor hour and how fast a stockout spreads across doors.
         uses:
@@ -494,6 +499,7 @@ consumers:
         citations:
           - blue-yonder-wms
       - name: Price & Markdown
+        core: true
         icon: market
         summary: Markdown recommendations written to POS and commerce.
         citations:
@@ -535,6 +541,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Suppliers, marketplaces and auditors reading live tables with no copy.
   - name: Databricks Apps
@@ -627,10 +634,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

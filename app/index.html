@@ -606,7 +606,7 @@
      30x28, 9px radius) so the bar reads Industry-first. */
   .hbtn.ico-only { width:30px; padding:0; gap:0; border-radius:9px; font-size:14px; }
   .hbtn.ico-only .btn-lbl { display:none; }
-  .ext-mark { font-size:.62em; line-height:1; margin-left:1px; opacity:.7; vertical-align:super; }
+  .ext-mark { font-size:.62em; line-height:1; margin-inline-start:1px; opacity:.7; vertical-align:super; }
   /* The palette's identity IS its five swatches, so it keeps them as its glyph
      and sizes to fit them rather than the fixed 30px square, which was clipping
      the last swatch. */
@@ -838,12 +838,12 @@
      to the title was whatever won; that read as the glyph touching the "D" at
      some scales. Scope this to non-mark colhead icons so the mark owns its size
      and its separation. */
-  .colhead > svg:not(.ph-mark) { width:16px; height:16px; margin-right:7px; }
-  .pockhead > svg { width:13px; height:13px; margin-right:5px; }
-  .bl-ic { flex:0 0 auto; width:17px; height:17px; margin:1px 7px 0 0; color:var(--brand); }
-  .cl-ic { flex:0 0 auto; width:17px; height:17px; margin:0 7px 0 0; color:var(--brand); }
-  .rg-ic { flex:0 0 auto; width:12px; height:12px; margin-right:5px; opacity:.75; }
-  .pl-ic { flex:0 0 auto; width:15px; height:15px; margin-right:6px; color:var(--brand); }
+  .colhead > svg:not(.ph-mark) { width:16px; height:16px; margin-inline-end:7px; }
+  .pockhead > svg { width:13px; height:13px; margin-inline-end:5px; }
+  .bl-ic { flex:0 0 auto; width:17px; height:17px; margin:1px 0 0; margin-inline-end:7px; color:var(--brand); }
+  .cl-ic { flex:0 0 auto; width:var(--cl-ic); height:var(--cl-ic); margin:0; margin-inline-end:7px; color:var(--brand); }
+  .rg-ic { flex:0 0 auto; width:12px; height:12px; margin-inline-end:5px; opacity:.75; }
+  .pl-ic { flex:0 0 auto; width:15px; height:15px; margin-inline-end:6px; color:var(--brand); }
 
   /* Official product marks. markgen.py has already rewritten every fill and
      stroke in the artwork to currentColor, so the mark takes the palette's brand
@@ -1436,7 +1436,7 @@
      different x, which reads as a zig-zag down the arm instead of a column.
      Centring the card contents then puts the icons of the taller Serve cards on
      the same axis as their text block. */
-  .arm .band-row.cards { flex-direction:column; gap:5px; flex:1 1 auto; align-items:stretch; justify-content:space-around; }
+  .arm .band-row.cards { flex-direction:column; gap:5px; padding-block:5px; flex:1 1 auto; align-items:stretch; justify-content:space-evenly; }
   .arm .band-row.cards > .pcard { flex:0 0 auto; }
   .arm .pcard { padding:5px 7px; align-items:center; }
   .arm .pcard .p-name { font-size:13px; }
@@ -1484,12 +1484,15 @@
   /* right bookend: a clickable band-lbl mirrored to the right edge. Narrower than
      the left label because its two words are short, and right-aligned so it reads
      as the closing peer of the left label. */
-  .band-rlbl { flex:0 0 132px; text-align:right; align-self:center; padding:4px 5px;
+  .band-rlbl { flex:0 0 132px; text-align:left; align-self:center; padding:4px 5px;
     border:1px solid transparent; border-radius:9px; background:transparent;
     font:inherit; cursor:pointer; transition:.12s; }
   .band-rlbl:hover { border-color:var(--brand); background:var(--card); }
-  .band-rlbl .bl-name { justify-content:flex-end; }
-  .band-rlbl .bl-sub { text-align:right; }
+  .band > .band-lbl:not(.band-rlbl) { align-self:center; padding-top:0; margin-block:var(--lbl-dot); }
+  .arm > .band > .band-lbl:not(.band-rlbl) { align-self:stretch; margin-block:var(--lbl-dot) 0; }
+  .band > .band-body { padding-block:3px; }
+  .arm > .band { gap:0; padding-bottom:0; }
+  .arm > .band > .band-body { padding-block:0; }
   /* Section titles registered as atoms (registerTitleAtoms) get the .atom class.
      They become clickable like any tile: pointer cursor, and a brand outline on
      hover/focus. Outline (not border/padding) is used deliberately so adding the
@@ -1532,7 +1535,7 @@
   .p-caps i { color:var(--sep); font-style:normal; }
 
   .provchip { display:inline-block; font-size:9.5px; font-weight:800; letter-spacing:.05em;
-    text-transform:uppercase; border-radius:20px; padding:1px 5px; margin-left:5px;
+    text-transform:uppercase; border-radius:20px; padding:1px 5px; margin-inline-start:5px;
     vertical-align:1.5px; color:var(--g-amber-ink); background:var(--g-amber-bg); }
   .cloud-logo { flex:0 0 auto; display:flex; align-items:center; justify-content:center; }
   .provlogo { display:block; height:34px; width:auto; }
@@ -1598,7 +1601,7 @@
   .panel.stack .ph-sub { margin-top:0; max-width:none; min-width:0; }
   .panel.stack .panel-cols { width:100%; }
   .panel.stack .pc-desc { font-size:10px; line-height:1.22; min-height:2.44em; }
-  .panel.stack .tagpill { white-space:nowrap; letter-spacing:0; padding:2px 5px 2px 2px; gap:1px; font-size:9.5px; }
+  .panel.stack .tagpill { white-space:nowrap; letter-spacing:0; padding-block:2px; padding-inline:2px 5px; gap:1px; font-size:9.5px; }
   .panel.stack .side-col { flex:0 0 auto; width:100%; flex-direction:row; gap:6px; }
   .panel.stack .side-col .schip { flex:1 1 0; min-width:0; justify-content:center;
     padding:3px 4px; font-size:10px; }
@@ -1621,7 +1624,7 @@
      two rectangles between them, and both are vertically centred so the left and
      right bookends read as a matched pair on the same line rather than one at the
      top and one in the middle. The icon rides above the stacked words. */
-  .b-work .band-lbl { flex:0 0 96px; align-self:center; padding-top:0; }
+  .b-work .band-lbl { flex:0 0 96px; align-self:center; }
   .b-work .band-lbl .bl-name { align-items:flex-start; white-space:normal; }
   .b-work .band-lbl .bl-name > span { min-width:0; }
   .b-work .band-rlbl { flex:0 0 96px; align-self:center; }
@@ -1771,7 +1774,10 @@
   .cloud { border:2px solid var(--cloud-bd); border-left:5px solid var(--cloud-accent);
     border-radius:12px; background:var(--cloud-bg, var(--card)); box-shadow:var(--shadow); padding:5px 44px 5px 12px;
     display:flex; align-items:stretch; gap:13px; }
-  .cloud-lbl { flex:0 0 268px; }
+  .cloud-lbl { flex:0 0 268px; --cl-ic:17px; }
+  .cloud > .cloud-lbl { align-self:center; }
+  .cloud > .cloud-lbl:not(:has(.cl-ic)) { margin-block:var(--lbl-dot); }
+  .cloud-lbl .cl-name > .cl-ic + span { flex-basis:100%; }
   .cloud-lbl .cl-name { display:flex; align-items:flex-start; flex-wrap:wrap;
     font-size:14px; font-weight:800; letter-spacing:-.015em; }
   .cloud-lbl .cl-sub { font-size:9.5px; color:var(--cloud-ink, var(--muted));
@@ -1805,6 +1811,7 @@
   .ctile .ic { width:15px; height:15px; flex:0 0 auto; color:var(--cloud-accent); }
   .ctile .ct { min-width:0; }
   .ctile .ct-name { display:block; font-size:11.5px; font-weight:700; line-height:1.2; overflow-wrap:break-word; }
+  .rtile .t-name.hy, .ctile .ct-name.hy { hyphens:auto; }
   /* The group's own ink, not the neutral grey. Grey reads fine on a white card and
      it does not survive the chip being tinted: on the denser palettes it fell to
      3.7 against the fill it now sits on. The ink is the one colour solved against
@@ -1818,7 +1825,7 @@
      shape intact. A steady coloured halo plus an expanding pulse ring keeps it
      visible in both light and dark themes. Colour is driven by --bd so accel and
      conn share one animation. */
-  :root{ --dot-sz:6.4px; --dot-top:-3.2px; --dot-glow:5.6px; --dot-spread:1.6px; --dot-pitch:8.8px; --dot-edge:5.6px; }
+  :root{ --dot-sz:6.4px; --dot-top:-3.2px; --dot-glow:5.6px; --dot-spread:1.6px; --dot-pitch:8.8px; --dot-edge:5.6px; --lbl-dot:calc(var(--dot-sz) + 1.5px); }
   .badge-dot { position:absolute; top:2.5px; right:2.5px; width:var(--dot-sz); height:var(--dot-sz); border-radius:50%;
     background:var(--bd); pointer-events:none; z-index:3; --pulse:2.75;
     box-shadow:0 0 var(--dot-glow) var(--dot-spread) var(--bd); }
@@ -1857,30 +1864,23 @@
   .badge-dot.hl-p7 { top:var(--dot-top); left:calc(var(--dot-edge) + var(--dot-pitch)*6); bottom:auto; right:auto; transform:none; }
   .badge-dot.hl-p8 { top:var(--dot-top); left:calc(var(--dot-edge) + var(--dot-pitch)*7); bottom:auto; right:auto; transform:none; }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p1,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p1,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p1 { left:auto; right:var(--dot-edge); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p1 { left:auto; right:var(--dot-edge); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p2,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p2,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p2 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p2 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p3,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p3,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p3 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*2); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p3 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*2); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p4,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p4,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p4 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*3); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p4 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*3); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p5,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p5,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p5 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*4); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p5 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*4); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p6,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p6,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p6 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*5); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p6 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*5); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p7,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p7,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p7 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*6); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p7 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*6); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p8,
-  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p8,
-  body.view-simple .b-work .band-rlbl > .badge-dot.hl-p8 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*7); }
-  .band-lbl, .cloud-lbl { --dot-top:calc(-1 * var(--dot-sz) - 1.5px); }
+  html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p8 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*7); }
+  .band-lbl, .cloud-lbl { --dot-top:calc(-1 * var(--lbl-dot)); }
+  .cloud-lbl:has(.cl-ic) { --dot-top:calc((var(--cl-ic) - var(--dot-sz)) / 2); --dot-edge:calc(var(--cl-ic) + 9px); }
   /* A highlight switched off in the Highlights menu hides that colour everywhere;
      paintHighlights re-packs the survivors into the corners after each toggle. */
   body.hl-off-accel  .badge-dot.hl-accel,
@@ -2279,24 +2279,24 @@
   .d-demo { align-items:center; }
   .d-demo .dl-main { display:flex; flex-direction:column; gap:2px; flex:1 1 auto; min-width:0; }
   .d-demo .dl-meta { flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end;
-    gap:1px; text-align:right; white-space:nowrap; }
+    gap:1px; text-align:end; white-space:nowrap; }
   .d-demo .dl-meta .dkind { font-weight:800; font-size:11px; }
   .d-demo .dl-meta .dkind.tour { color:#8b5cf6; }
   .d-demo .dl-meta .dkind.tutorial { color:#17b877; }
   .d-demo .dl-host { font-size:11px; color:var(--faint); }
-  .d-demo .dl-go { margin-left:8px; flex:0 0 auto; }
+  .d-demo .dl-go { margin-inline-start:8px; flex:0 0 auto; }
   /* Academy course rows: name + "Free course" stack on the left, the skill-level
      pill (Introductory / Onboarding / Associate / Professional) aligns to the
      RIGHT before the arrow, and the beginner->advanced note sits above a
      persona's learning track. */
   .d-course { align-items:center; }
   .d-course .dl-main { display:flex; flex-direction:column; gap:2px; flex:1 1 auto; min-width:0; }
-  .d-course .dl-lvl { flex:0 0 auto; font-weight:800; font-size:11px; white-space:nowrap; text-align:right; }
+  .d-course .dl-lvl { flex:0 0 auto; font-weight:800; font-size:11px; white-space:nowrap; text-align:end; }
   .d-course .dl-lvl.course { color:#d61b72; }
   body.theme-dark .d-course .dl-lvl.course { color:#e95097; }
   .d-course .dl-lvl.cert { color:#4d7c0f; }
   body.theme-dark .d-course .dl-lvl.cert { color:#a3e635; }
-  .d-course .dl-go { margin-left:8px; flex:0 0 auto; }
+  .d-course .dl-go { margin-inline-start:8px; flex:0 0 auto; }
   .d-note { font-size:11.5px; color:var(--muted); margin:0 0 8px; }
   /* A highlight dot pinned to the SECTION heading of the thing the tile has (its
      customer stories, connector, demos, courses, videos), in that highlight's
@@ -2320,7 +2320,7 @@
   .d-link:hover { border-color:var(--brand); background:var(--well); }
   .dl-t { font-size:13px; font-weight:700; }
   .dl-s { font-size:11px; color:var(--faint); }
-  .dl-go { margin-left:auto; font-size:13px; color:var(--faint); }
+  .dl-go { margin-inline-start:auto; font-size:13px; color:var(--faint); }
   .d-link:hover .dl-go { color:var(--brand); }
   /* Platform doc catalogs: connector list, ingestion selector, LDP grid,
      connect protocols, Apps frameworks, governance. Compact wrapped pills so a
@@ -2391,7 +2391,7 @@
   .d-catrow:hover { border-color:var(--brand); background:var(--well); }
   .d-catrow-n { font-size:12.5px; font-weight:700; flex:0 0 auto; }
   .d-catrow-s { font-size:11px; color:var(--faint); }
-  .d-catrow .dl-go { margin-left:auto; font-size:13px; color:var(--faint); flex:0 0 auto; }
+  .d-catrow .dl-go { margin-inline-start:auto; font-size:13px; color:var(--faint); flex:0 0 auto; }
   .d-catrow:hover .dl-go { color:var(--brand); }
   /* Databricks YouTube channel section: real videos verified on the official
      channel. Thumbnail loads lazily from i.ytimg.com; if it is blocked (offline
@@ -2404,7 +2404,7 @@
   .d-vthumb { width:120px; height:68px; flex:0 0 auto; border-radius:6px; object-fit:cover; background:var(--well); }
   .d-vid.broken .d-vthumb { display:none; }
   .d-vt { font-size:12.5px; font-weight:700; line-height:1.3; }
-  .d-vid .dl-go { margin-left:auto; font-size:13px; color:var(--faint); flex:0 0 auto; }
+  .d-vid .dl-go { margin-inline-start:auto; font-size:13px; color:var(--faint); flex:0 0 auto; }
   .d-vid:hover .dl-go { color:var(--brand); }
   .chip { display:inline-block; font-size:11.5px; padding:4px 9px; border:1px solid var(--line); border-radius:20px;
     margin:0 5px 5px 0; cursor:pointer; background:var(--well); }
@@ -2480,7 +2480,7 @@
   .tip.show { opacity:1; transform:translateY(0); }
   .tip .tip-name { display:flex; align-items:center; gap:7px; font-weight:800; font-size:13px; margin-bottom:5px; }
   .tip .tip-name svg { width:15px; height:15px; color:var(--brand); flex:0 0 auto; }
-  .tip ul { margin:0; padding-left:15px; }
+  .tip ul { margin:0; padding-inline-start:15px; }
   .tip li { font-size:12px; color:var(--muted); line-height:1.4; margin-bottom:2px; }
   .tip .tip-hint { margin-top:6px; font-size:10.5px; color:var(--faint); }
 
@@ -2528,6 +2528,7 @@
     .gutter, .downflow, .flow.tuck, .flow.pplup, .flow.ingdown, .flow.ingtuck { display:none; }
     .cloud { flex-direction:column; }
     .cloud-lbl, .hband .cloud-lbl { flex:0 0 auto; }
+    .cloud > .cloud-lbl { align-self:stretch; }
     .cloud-body { grid-template-columns:repeat(2, minmax(0,1fr)) !important; }
   }
   /* four cards across stop fitting once the platform drops under ~700px */
@@ -2550,12 +2551,13 @@
   }
 
   body.view-simple { --glabelh:18px; --headh:44px; }
-  body.view-simple .rtiles { grid-template-columns:minmax(0,1fr); gap:6px; }
-  body.view-simple .rgroup { gap:5px; }
+  body.view-simple .rtiles { gap:4px; }
+  body.view-simple .rtiles > .rtile:last-child:nth-child(odd) { grid-column:1 / -1; }
+  body.view-simple .rgroup { gap:4px; }
   body.view-simple .rgroup-t { font-size:13px; }
-  body.view-simple .rtile { gap:8px; padding:7px 9px; }
-  body.view-simple .rtile .ic, body.view-simple .rtile svg.mark { width:18px; height:18px; }
-  body.view-simple .rtile .t-name { font-size:17px; line-height:1.18; }
+  body.view-simple .rtile { gap:5px; padding:5px 6px; }
+  body.view-simple .rtile .ic, body.view-simple .rtile svg.mark { width:15px; height:15px; }
+  body.view-simple .rtile .t-name { font-size:13px; line-height:1.15; }
   body.view-simple .colhead { font-size:18px; }
   body.view-simple .pockhead { font-size:15px; }
   body.view-simple .colhead > svg:not(.ph-mark) { width:20px; height:20px; }
@@ -2568,13 +2570,13 @@
   body.view-simple .arm .pcard .p-name { font-size:18px; }
   body.view-simple .b-work .band-lbl, body.view-simple .b-work .band-rlbl { flex-basis:96px; }
   body.view-simple .b-work .band-lbl .bl-name { flex-direction:column; align-items:flex-start; gap:4px; }
-  body.view-simple .b-work .band-rlbl .bl-name { flex-direction:column; align-items:flex-end; gap:4px; }
+  body.view-simple .b-work .band-rlbl .bl-name { flex-direction:column; align-items:flex-start; gap:4px; }
   body.view-simple .b-work .bl-name .bl-ic { margin:0; }
-  body.view-simple .pcard { gap:10px; padding:5px 7px; }
+  body.view-simple .pcard { gap:10px; padding:5px 7px; align-items:center; }
   body.view-simple .pico { width:40px; height:40px; }
   body.view-simple .pico svg { width:24px; height:24px; }
   body.view-simple .p-name { font-size:19px; }
-  body.view-simple .b-apps .pcard { flex-direction:column; align-items:flex-start; gap:6px; }
+  body.view-simple .b-apps .pcard { flex-direction:column; align-items:center; gap:6px; text-align:center; }
   body.view-simple .b-apps .ptxt { width:100%; }
   body.view-simple .panel-head .pico { width:34px; height:34px; }
   body.view-simple .panel-head .pico svg { width:21px; height:21px; }
@@ -2603,10 +2605,6 @@
   body.view-simple .hband.top .ctile { flex-direction:column; align-items:flex-start; gap:5px; padding:7px 6px; }
   body.view-simple .hband.top .ctile .ct { width:100%; }
   body.view-simple .hband.top .ctile .ct-name { font-size:15px; }
-  body.view-simple .rail.ing .rtile, body.view-simple .rail.ppl .rtile { gap:6px; padding:6px 7px; }
-  body.view-simple .rail.ing .rtile .ic, body.view-simple .rail.ing .rtile svg.mark,
-  body.view-simple .rail.ppl .rtile .ic, body.view-simple .rail.ppl .rtile svg.mark { width:16px; height:16px; }
-  body.view-simple .rail.ing .t-name, body.view-simple .rail.ppl .t-name { font-size:14px; }
   /* ── First-visit guided tour ──────────────────────────────────────────────
      A spotlight walk-through of the board, ported from the model-viewer tour.
      The hole is one element whose huge outer box-shadow dims the whole page
@@ -3615,14 +3613,14 @@ const ARCH = {
       groups:[
       { box:"Structured", ic:"sheet", tiles:[
         { n:"Business Applications", ic:"erp", long:"Systems of record for finance, supply chain, HR and customers. Ingested with Lakeflow Connect or federated in place.", what:"Packaged systems of record (ERP, WMS, HRIS, CRM) that hold master data and the day-to-day transactions the business runs on, ingested with Lakeflow Connect or read in place with federation.", users:"Finance, supply chain, HR and sales-operations teams, and the data engineers who model their extracts.", dataOut:{ batch:{ types:["structured"], vol:"GBs/day of transactions + master data", interval:"Nightly extract + intraday deltas" }, stream:{ types:["semi-structured"], vol:"change events on key entities", interval:"Continuous CDC where available" } } },
-        { n:"Operational Databases", ic:"db", long:"OLTP databases captured with CDC through Lakeflow Connect.", what:"The OLTP databases behind live applications, captured row-by-row so the lakehouse mirrors production without loading the source system.", users:"Application and platform-engineering teams, and analysts who need current operational data.", dataOut:{ stream:{ types:["structured"], vol:"100s-1000s of row changes/sec", interval:"Continuous CDC (near real-time)" } } },
-        { n:"Data Warehouses", ic:"db", long:"Existing warehouses migrated with Lakebridge or federated through Lakehouse Federation.", what:"Incumbent enterprise warehouses holding historical marts and conformed dimensions, migrated with Lakebridge or read in place through Lakehouse Federation.", users:"BI, finance and analytics teams during and after migration.", dataOut:{ batch:{ types:["structured"], vol:"TB-scale historical marts", interval:"Bulk migration, then queried on demand" } } },
+        { n:"Operational Databases", core:true, ic:"db", long:"OLTP databases captured with CDC through Lakeflow Connect.", what:"The OLTP databases behind live applications, captured row-by-row so the lakehouse mirrors production without loading the source system.", users:"Application and platform-engineering teams, and analysts who need current operational data.", dataOut:{ stream:{ types:["structured"], vol:"100s-1000s of row changes/sec", interval:"Continuous CDC (near real-time)" } } },
+        { n:"Data Warehouses", core:true, ic:"db", long:"Existing warehouses migrated with Lakebridge or federated through Lakehouse Federation.", what:"Incumbent enterprise warehouses holding historical marts and conformed dimensions, migrated with Lakebridge or read in place through Lakehouse Federation.", users:"BI, finance and analytics teams during and after migration.", dataOut:{ batch:{ types:["structured"], vol:"TB-scale historical marts", interval:"Bulk migration, then queried on demand" } } },
         { n:"Mainframe & Legacy", ic:"mainframe", long:"Mainframe and legacy extracts, batch-landed then normalised in Lakeflow pipelines.", what:"Mainframe and legacy systems (core banking, claims, billing) whose fixed-width and EBCDIC extracts are batch-landed and normalised in Lakeflow pipelines.", users:"Core operations, back-office and modernization teams.", dataOut:{ batch:{ types:["structured", "semi-structured"], vol:"GBs/day fixed-width + VSAM extracts", interval:"Nightly batch windows" } } },
       ]},
       { box:"Semi-structured", ic:"zbraces", tiles:[
         { n:"Files & Object Stores", ic:"file", long:"CSV, JSON, Parquet and archive files landed in cloud object storage and ingested with Auto Loader.", what:"Structured-ish files (CSV, JSON, Parquet, archives) dropped into cloud object storage and picked up incrementally by Auto Loader as they arrive.", users:"Data-engineering teams and partners exchanging file drops.", dataOut:{ batch:{ types:["semi-structured"], vol:"MBs-TBs per landing", interval:"On arrival (event-driven)" } } },
         { n:"Logs & Telemetry", ic:"observ", long:"Application, infrastructure, network and security logs feeding the lakehouse and Lakewatch.", what:"Application, infrastructure, network and security logs streamed into the lakehouse for observability, security analytics and Lakewatch.", users:"Platform, SRE and security-operations teams.", dataOut:{ stream:{ types:["semi-structured"], vol:"1000s of log events/sec", interval:"Continuous" } } },
-        { n:"SaaS Applications", ic:"saas", long:"SaaS platforms ingested through the 100+ managed Lakeflow connectors.", what:"Cloud SaaS platforms (marketing, support, finance, product) pulled through the 100+ managed Lakeflow connectors on a schedule.", users:"Revenue, marketing, support and finance analytics teams.", dataOut:{ batch:{ types:["semi-structured", "structured"], vol:"MBs-GBs/day via API", interval:"Scheduled connector syncs" } } },
+        { n:"SaaS Applications", core:true, ic:"saas", long:"SaaS platforms ingested through the 100+ managed Lakeflow connectors.", what:"Cloud SaaS platforms (marketing, support, finance, product) pulled through the 100+ managed Lakeflow connectors on a schedule.", users:"Revenue, marketing, support and finance analytics teams.", dataOut:{ batch:{ types:["semi-structured", "structured"], vol:"MBs-GBs/day via API", interval:"Scheduled connector syncs" } } },
         { n:"APIs & Webhooks", ic:"api", long:"REST, GraphQL and webhook payloads pulled on schedule or pushed on event.", what:"REST, GraphQL and webhook payloads from internal and partner services, pulled on schedule or pushed on event.", users:"Integration engineers and product teams.", dataOut:{ stream:{ types:["semi-structured"], vol:"variable, event-driven", interval:"On event / scheduled poll" } } },
       ]},
       { box:"Unstructured", ic:"file", tiles:[
@@ -3633,12 +3631,12 @@ const ARCH = {
       ]},
       { box:"Streaming & IoT", ic:"stream", tiles:[
         { n:"Event Streams", ic:"stream", long:"Kafka, Event Hubs, Kinesis and Pub/Sub topics consumed by Lakeflow streaming pipelines.", what:"Kafka, Event Hubs, Kinesis and Pub/Sub topics consumed directly by Lakeflow streaming pipelines for real-time processing.", users:"Streaming-platform and real-time analytics teams.", dataOut:{ stream:{ types:["semi-structured"], vol:"1000s-100k events/sec", interval:"Continuous" } } },
-        { n:"Device & Sensor Data", ic:"iot", long:"Machine, vehicle and sensor telemetry arriving through an IoT gateway or pushed directly with Zerobus.", what:"Machine, vehicle and sensor telemetry arriving through an IoT gateway or pushed straight to the lakehouse with Zerobus.", users:"IoT, manufacturing and connected-product teams.", dataOut:{ stream:{ types:["semi-structured"], vol:"high-frequency sensor readings", interval:"Continuous (sub-second to seconds)" } } },
+        { n:"Device & Sensor Data", core:true, ic:"iot", long:"Machine, vehicle and sensor telemetry arriving through an IoT gateway or pushed directly with Zerobus.", what:"Machine, vehicle and sensor telemetry arriving through an IoT gateway or pushed straight to the lakehouse with Zerobus.", users:"IoT, manufacturing and connected-product teams.", dataOut:{ stream:{ types:["semi-structured"], vol:"high-frequency sensor readings", interval:"Continuous (sub-second to seconds)" } } },
         { n:"Change Data Capture", ic:"cdc", long:"Row-level change streams from operational databases, applied continuously to lakehouse tables.", what:"Row-level insert/update/delete streams from operational databases, applied continuously so lakehouse tables track the source.", users:"Data-engineering teams keeping the lakehouse in sync with production.", dataOut:{ stream:{ types:["structured"], vol:"100s-1000s of changes/sec", interval:"Continuous" } } },
       ]},
       { box:"External & Partner", ic:"partner", tiles:[
         { n:"Market & Reference Data", ic:"market", long:"Pricing, benchmark and reference feeds from external providers.", what:"Pricing, benchmark and reference feeds bought from external data providers to enrich internal analytics.", users:"Trading, risk, finance and analytics teams.", dataOut:{ batch:{ types:["structured"], vol:"MBs-GBs/day", interval:"Scheduled (intraday to daily)" } } },
-        { n:"Partner Feeds", ic:"partner", long:"Partner and supplier data received over Delta Sharing or OpenSharing.", what:"Partner and supplier datasets received over Delta Sharing or OpenSharing, with no copy for Delta recipients.", users:"Supply-chain, partnerships and B2B analytics teams.", dataOut:{ batch:{ types:["structured", "semi-structured"], vol:"varies by partner", interval:"Shared / scheduled" } } },
+        { n:"Partner Feeds", core:true, ic:"partner", long:"Partner and supplier data received over Delta Sharing or OpenSharing.", what:"Partner and supplier datasets received over Delta Sharing or OpenSharing, with no copy for Delta recipients.", users:"Supply-chain, partnerships and B2B analytics teams.", dataOut:{ batch:{ types:["structured", "semi-structured"], vol:"varies by partner", interval:"Shared / scheduled" } } },
         { n:"Public & Open Data", ic:"globe", long:"Open government, geospatial and demographic datasets.", what:"Open government, geospatial and demographic datasets blended with internal data for context.", users:"Data-science, policy and market-analytics teams.", dataOut:{ batch:{ types:["structured", "semi-structured"], vol:"MBs-GBs per dataset", interval:"Periodic refresh" } } },
       ]},
       /* `from` appends the current cloud provider's tiles to this group, so one
@@ -3718,7 +3716,7 @@ const ARCH = {
             { n:"Finance & Planning", cares:"self-service numbers they filter themselves rather than raising a ticket for." }
           ],
           ucs:["Demand Forecasting","Personalization","Churn Prediction"] },
-        { n:"Risk & Compliance", mark:"Unity Catalog",
+        { n:"Risk & Compliance", core:true, mark:"Unity Catalog",
           long:"Risk, audit, data protection and the regulatory reporting function. They are not asking the platform for insight so much as for evidence: who touched what, where a number came from, and whether the control actually held.",
           uses:[
             ["Unity Catalog", "Lineage, audit and access history behind a control, on the same catalogue the business reads."],
@@ -3762,7 +3760,7 @@ const ARCH = {
             { n:"MLOps", cares:"every run tracked so a production model can be explained six months later." }
           ],
           ucs:["Churn Prediction","Predictive Maintenance","Readmission Reduction"] },
-        { n:"Data Analysts", mark:"AI/BI",
+        { n:"Data Analysts", core:true, mark:"AI/BI",
           long:"The team that answers what the business cannot answer for itself, and usually the first to notice that a definition has drifted.",
           uses:[
             ["SQL Warehouses", "Data warehousing over Silver and Gold, under the same permissions the dashboards run on."],
@@ -3833,13 +3831,13 @@ const ARCH = {
          platform on this path is agents and machine interfaces. */
       { box:"MCPs and APIs", ic:"mcp", tiles:[
         { n:"External Agents (MCP)", ic:"mcp", long:"Third-party and vendor agents connecting through the MCP server registry, governed by Unity Gateway." },
-        { n:"Operational APIs", ic:"api", long:"Low-latency APIs and model endpoints serving decisions back into operational systems." },
+        { n:"Operational APIs", core:true, ic:"api", long:"Low-latency APIs and model endpoints serving decisions back into operational systems." },
         { n:"Reverse ETL", ic:"reverse", long:"Curated segments and scores pushed back to SaaS and activation channels, the CustomerLake path." },
       ]},
       { box:"Published Products", ic:"product", tiles:[
         { n:"Data Products", ic:"product", long:"Published, contracted data products discoverable in Unity Catalog Domains and shared over OpenSharing." },
         { n:"Marketplace Listings", ic:"share", long:"Data, models and agents offered to other organisations through Databricks Marketplace." },
-        { n:"Sharing Recipients", ic:"share", long:"Recipients reading live tables, volumes and models over OpenSharing with no copy and no egress duplication." },
+        { n:"Sharing Recipients", core:true, ic:"share", long:"Recipients reading live tables, volumes and models over OpenSharing with no copy and no egress duplication." },
         { n:"Other Sinks", ic:"export", long:"Any other destination a published product has to land in: object storage drops, SFTP and file exchanges, external warehouses, message queues and regulatory submission channels. Written from governed tables, so the export inherits the same permissions and lineage as the product itself." },
       ]},
       { box:"Operational Systems", ic:"opdb", tiles:[
@@ -3875,9 +3873,9 @@ const ARCH = {
         { n:"Omnigent OSS", s:"Databricks, open source", ic:"omni",
           long:"Open-source meta-harness that sits above existing agent frameworks (LangGraph, CrewAI and others), enabling agent composition, collaboration and centralised governance from one interface.",
           caps:["Build","Deploy","Optimize","Govern"], rel:["Agent Bricks","Unity Gateway"] },
-        { n:"Claude Code", s:"3rd-party harness", ic:"code",
+        { n:"Claude Code", core:true, s:"3rd-party harness", ic:"code",
           long:"Anthropic's coding harness working against the platform through MCP. Its spend, routing and policy are governed by Unity Gateway like any other agent." },
-        { n:"OpenAI Codex", s:"3rd-party harness", ic:"code",
+        { n:"OpenAI Codex", core:true, s:"3rd-party harness", ic:"code",
           long:"OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration." },
         { n:"Any MCP Harness", s:"Cursor, IDEs, frameworks", ic:"mcp",
           long:"Cursor and other IDE agents, LangGraph and CrewAI frameworks, and any other harness that speaks MCP. The MCP server registry in Unity Gateway is the single place a new one is admitted, scoped and traced." },
@@ -3941,7 +3939,7 @@ const ARCH = {
     provider:"azure",
     /* vendor-neutral integrations, present whichever cloud is selected */
     extras:[
-      { n:"Anthropic/OpenAI", s:"Model providers", ic:"aisvc", long:"Anthropic Claude and OpenAI GPT models called through Unity Gateway, with the same spend caps, tracing and policy as any other model.",
+      { n:"Anthropic/OpenAI", s:"Model providers", role:"aisvc", ic:"aisvc", long:"Anthropic Claude and OpenAI GPT models called through Unity Gateway, with the same spend caps, tracing and policy as any other model.",
         what:"Frontier commercial LLMs reached as governed model-serving endpoints: Anthropic Claude and OpenAI GPT are registered in Unity Gateway and called from notebooks, agents and Genie exactly like a Databricks-hosted model.",
         users:"Data scientists and ML engineers building agents and GenAI features, and the platform team setting per-employee and per-agent spend caps.",
         dataOut:{ stream:{ types:["unstructured"], vol:"prompt + completion tokens per call", interval:"On demand (synchronous)" } } },
@@ -3980,7 +3978,7 @@ const ARCH = {
         ],
         services:[
           { n:"ADLS Gen2", role:"storage", s:"Object storage", ic:"storage", long:"Azure Data Lake Storage Gen2 holds the open-format lake. Databricks reads and writes in place; you keep the data." },
-          { n:"Serverless Compute", role:"network", s:"Compute Plane Managed by Databricks", ic:"network", long:"Serverless compute runs in the Databricks account and reaches your data over Private Link with no public egress, while your tables stay in your own subscription under Unity Catalog." },
+          { n:"Serverless Compute", sn:"Compute", role:"network", s:"Compute Plane Managed by Databricks", ic:"network", long:"Serverless compute runs in the Databricks account and reaches your data over Private Link with no public egress, while your tables stay in your own subscription under Unity Catalog." },
           { n:"Classic Compute", role:"network", s:"Compute Plane in your Account", ic:"network", long:"Classic compute runs in your own VNet, so clusters sit inside your network while your data stays in your storage under Unity Catalog." },
           { n:"Azure Monitor", role:"observability", s:"Observability", ic:"observ", long:"Platform logs, metrics and diagnostics forwarded to Azure Monitor and Log Analytics." },
           { n:"SQL DB / Cosmos DB", role:"opdb", s:"Operational stores", ic:"opdb", long:"Existing operational databases that Databricks serves scores and features into, alongside Lakebase." },
@@ -4017,7 +4015,7 @@ const ARCH = {
         ],
         services:[
           { n:"Amazon S3", role:"storage", s:"Object storage", ic:"storage", long:"S3 buckets in your account hold the open-format lake." },
-          { n:"Serverless Compute", role:"network", s:"Compute Plane Managed by Databricks", ic:"network", long:"Serverless compute runs in the Databricks account and reaches your data over PrivateLink with no public egress, while your tables stay in your own account under Unity Catalog." },
+          { n:"Serverless Compute", sn:"Compute", role:"network", s:"Compute Plane Managed by Databricks", ic:"network", long:"Serverless compute runs in the Databricks account and reaches your data over PrivateLink with no public egress, while your tables stay in your own account under Unity Catalog." },
           { n:"Classic Compute", role:"network", s:"Compute Plane in your Account", ic:"network", long:"Classic compute runs in your own VPC, so clusters sit inside your network while your data stays in your account under Unity Catalog." },
           { n:"CloudWatch", role:"observability", s:"Observability", ic:"observ", long:"Audit logs, metrics and diagnostics delivery." },
           { n:"RDS / DynamoDB", role:"opdb", s:"Operational stores", ic:"opdb", long:"Existing operational databases that Databricks serves scores and features into, alongside Lakebase." },
@@ -4052,7 +4050,7 @@ const ARCH = {
         ],
         services:[
           { n:"Cloud Storage", role:"storage", s:"Object storage", ic:"storage", long:"GCS buckets hold the open-format lake." },
-          { n:"Serverless Compute", role:"network", s:"Compute Plane Managed by Databricks", ic:"network", long:"Serverless compute runs in the Databricks account and reaches your data over Private Service Connect with no public egress, while your tables stay in your own project under Unity Catalog." },
+          { n:"Serverless Compute", sn:"Compute", role:"network", s:"Compute Plane Managed by Databricks", ic:"network", long:"Serverless compute runs in the Databricks account and reaches your data over Private Service Connect with no public egress, while your tables stay in your own project under Unity Catalog." },
           { n:"Classic Compute", role:"network", s:"Compute Plane in your Account", ic:"network", long:"Classic compute runs in your own VPC, so clusters sit inside your network while your data stays in your project under Unity Catalog." },
           { n:"Cloud Logging", role:"observability", s:"Observability", ic:"observ", long:"Audit logs and metrics into Cloud Logging and Monitoring." },
           { n:"Cloud SQL / Bigtable", role:"opdb", s:"Operational stores", ic:"opdb", long:"Existing operational databases that Databricks serves scores and features into, alongside Lakebase." },
@@ -4599,18 +4597,17 @@ const SIMPLE_TOP_CAP = { "Genie Agents":2, "Genie Spaces":2, "Business Use Cases
 const SIMPLE_PLATFORM = {
   serve:["SQL Warehouses","Lakehouse//RT","Lakebase","Model Serving"], infra:["Apache Spark","Delta Lake","Apache Iceberg"],
 };
-function inView(tile, essential){ return !simpleView() || !!essential || !!(tile && tile.hl === true); }
+const SIMPLE_CLOUD_ROLES = ["storage","identity","govcat","aisvc","bi","etl","streaming","fed-dw"];
+function inView(tile, essential){ return !simpleView() || !!essential || !!(tile && (tile.hl === true || tile.core === true)); }
+function cloudCore(t, list){
+  if(!t) return false;
+  if(SIMPLE_CLOUD_ROLES.indexOf(t.role) >= 0) return true;
+  return t.role === "network" && (list || []).find(x=> x && x.role === "network") === t;
+}
 function viewTopTiles(sec){
   const tiles = (sec && Array.isArray(sec.tiles)) ? sec.tiles : [];
   const cap = SIMPLE_TOP_CAP[sec && sec.title];
   return cap ? tiles.filter((t, i)=> inView(t, i < cap)) : tiles;
-}
-function viewCloudKeep(p){
-  const first = (arr, role)=> (arr || []).find(t=> t && t.role === role);
-  return {
-    services:[first(p.services, "storage"), first(p.services, "network"), (p.identity || [])[0]].filter(Boolean),
-    integrations:[(p.govcat || [])[0], (p.aisvc || [])[0], (p.cicd || [])[0]].filter(Boolean),
-  };
 }
 function viewBand(band){
   const keep = SIMPLE_PLATFORM[band.id];
@@ -4646,7 +4643,12 @@ function dispName(n){ const label = (displayMode === "category" && nameToCat[n])
    dispName (map-based) stays for chips, which resolve a bare NAME string after
    build() has fully populated the map. */
 function shownByCategory(t){ return displayMode === "category" && !!(t && t.cat); }
-function displayName(t){ if(!t) return ""; const label = shownByCategory(t) ? t.cat : t.n; return T(label); }
+function displaySource(t){ if(!t) return ""; return shownByCategory(t) ? t.cat : (simpleView() && t.sn) || t.n; }
+function displayName(t){ return T(displaySource(t)); }
+function nameSpan(cls, t){
+  const shown = displayName(t), hy = shown !== displaySource(t);
+  return `<span class="${cls}${hy ? " hy" : ""}"${hy ? "" : ' lang="en"'}>${escSlash(shown)}</span>`;
+}
 /* Export/render copy of a tile with its commercial product references swapped
    for their category labels when the board is in Categorical mode, so a
    downloaded PPTX/PDF matches the on-screen display exactly. Never mutates the
@@ -5031,7 +5033,9 @@ function cappedRailEntries(railId, g){
   if(railId === "ppl" && /^business$/i.test(g.box || "") && entries.length > PPL_BUSINESS_CAP)
     entries = entries.slice(0, PPL_BUSINESS_CAP);
   const cap = SIMPLE_RAIL_CAP[railId];
-  return cap ? entries.filter((e, i)=> inView(e.tile, i < cap)) : entries;
+  if(!cap) return entries;
+  let own = 0;
+  return entries.filter(e=> inView(e.tile, e.cloudy ? cloudCore(e.tile, e.arr) : own++ < cap));
 }
 function renderRail(rail, target){
   const slots = rail.groups.map(g => ({
@@ -5064,7 +5068,7 @@ function renderRail(rail, target){
       if(seenLabels){ if(seenLabels.has(label)){ if(tile.cat) nameToCat[tile.n] = tile.cat; return; } seenLabels.add(label); }
       const b = document.createElement("button");
       b.className = "rtile" + (cloudy ? " cloudy" : "");
-      b.innerHTML = titleIcon(tile,"ic") + `<span class="t-name">${esc(label)}</span>`;
+      b.innerHTML = titleIcon(tile,"ic") + nameSpan("t-name", tile);
       reg(b, tile, arr, rail.name);
       box.appendChild(b);
     });
@@ -5127,15 +5131,15 @@ function renderHBand(target, zone, chip, secs, logo){
   secs.forEach(s=>{
     const sec = document.createElement("div");
     sec.className = "cloud-sec";
-    sec.style.flex = `${s.span} 1 0`;
     sec.innerHTML = `<div class="rgroup-t">` + (s.ic ? svg(s.ic,"rg-ic") : "") +
       `<span class="rg-label">${esc(T(s.title))}</span></div>`;
     const body = document.createElement("div");
     body.className = "cloud-body";
     const all = [];
     s.sets.forEach(arr=> arr.forEach(tile=> all.push({ tile, arr })));
-    const shown = s.keep ? all.filter((e, i)=> inView(e.tile, s.keep(e.tile, i))) : all;
+    const shown = s.keep ? all.filter(e=> inView(e.tile, s.keep(e.tile, e.arr))) : all;
     const ncol = hbCols(shown.length, s.cols, target.id === "topband" ? 5 : 4);
+    sec.style.flex = `${simpleView() && target.id !== "topband" ? ncol : s.span} 1 0`;
     body.style.gridTemplateColumns = `repeat(${ncol}, minmax(0,1fr))`;
     shown.forEach(({ tile, arr })=>{
       const b = document.createElement("button");
@@ -5144,7 +5148,7 @@ function renderHBand(target, zone, chip, secs, logo){
         b.classList.add("ct-h-" + indHue[hueN++ % indHue.length]);
       const ctSub = simpleView() ? "" : (tile.s || genieDomain(tile));
       b.innerHTML = titleIcon(tile,"ic") +
-        `<span class="ct"><span class="ct-name">${escSlash(displayName(tile))}</span>` +
+        `<span class="ct">${nameSpan("ct-name", tile)}` +
         (ctSub ? `<span class="ct-sub">${esc(T(ctSub))}</span>` : "") + `</span>`;
       reg(b, tile, arr, s.title);
       body.appendChild(b);
@@ -5160,12 +5164,11 @@ function renderHBand(target, zone, chip, secs, logo){
 function renderCloud(target){
   const c = ARCH.cloud;
   const p = c.providers[c.provider];
-  const keep = viewCloudKeep(p);
   renderHBand(target, c, p.label, [
     /* Identity sits with the cloud, not with the integrations: Entra ID, IAM
        Identity Center and Cloud Identity are the provider's own service. */
-    { title:"Cloud Services", ic:"cloud", span:6, sets:[p.services, p.identity], keep:t=> keep.services.indexOf(t) >= 0 },
-    { title:"Integrations", ic:"connect", span:5, sets:[p.govcat, p.aisvc, p.cicd, c.extras], keep:t=> keep.integrations.indexOf(t) >= 0 },
+    { title:"Cloud Services", ic:"cloud", span:6, sets:[p.services, p.identity], keep:cloudCore },
+    { title:"Integrations", ic:"connect", span:5, sets:[p.govcat, p.aisvc, p.cicd, c.extras], keep:cloudCore },
   ], c.provider);
 }
 function renderTop(target){
@@ -5178,7 +5181,7 @@ function renderTop(target){
 
 /* ---------- full build ---------- */
 const CUSTOM_LS = "dbxarch.dais2026.custom";
-const SCHEMA = 48;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
+const SCHEMA = 49;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
 /* Keys inside a provider dataset that hold tile arrays. Every surface that shows
    provider-specific content reads from this list, so adding a surface later means
    adding one key here rather than hunting for loops. */
@@ -7138,6 +7141,41 @@ function fitPlatTitle(){
     line.style.fontSize = size.toFixed(2) + "px";
     need = measure();
   }
+}
+function nameFit(el){
+  const tile = el.closest(".rtile, .ctile");
+  const item = tile && [...tile.children].find(c=> c.contains(el));
+  if(!item || !tile.offsetWidth) return null;
+  const k = tile.getBoundingClientRect().width / tile.offsetWidth;
+  const cs = getComputedStyle(tile), gap = parseFloat(cs.columnGap) || 0;
+  let room = tile.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  for(const c of tile.children){
+    if(c === item) continue;
+    const s = getComputedStyle(c);
+    if(s.display === "none" || s.position === "absolute" || s.position === "fixed") continue;
+    room -= c.getBoundingClientRect().width / k + gap + parseFloat(s.marginLeft) + parseFloat(s.marginRight);
+  }
+  let widest = 0;
+  const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  for(let n; (n = walk.nextNode());){
+    const re = /[^\s\/-]+[\/-]?/g;
+    for(let m; (m = re.exec(n.textContent));){
+      const r = document.createRange();
+      r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
+      widest = Math.max(widest, [...r.getClientRects()].reduce((s, b)=> s + b.width, 0) / k);
+    }
+  }
+  return { room, widest, size: parseFloat(getComputedStyle(el).fontSize) };
+}
+function fitTileNames(){
+  const els = [...document.querySelectorAll(".rtile .t-name:not(.hy), .ctile .ct-name:not(.hy)")];
+  els.forEach(el=> el.style.fontSize = "");
+  els.map(el=> [el, nameFit(el)]).forEach(([el, f])=>{
+    for(let i = 0; i < 4 && f && f.room > 0 && f.widest > f.room && f.size > 9; i++){
+      el.style.fontSize = Math.max(9, Math.floor(f.size * (f.room - 1) / f.widest * 10) / 10) + "px";
+      f = nameFit(el);
+    }
+  });
 }
 function applyPlatInk(){
   const ph = document.querySelector(".plat-head");
@@ -12398,6 +12436,7 @@ function fitBoard(){
   if(introOn){ introRefit = true; return; }
   applyPlatInk();   /* re-solve the plat-head ink for the live accent (theme/palette swap) */
   syncUrl();        /* mirror the live board state into the address bar */
+  fitTileNames();
   alignWorkRows();
   fitLayout();
   /* a soloed region hides the Z, its connectors and the pockets' flows, so the

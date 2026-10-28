@@ -83,6 +83,7 @@ sources:
             volume: 5-50k tags/sec
             interval: Continuous control-room telemetry
       - name: Siemens Opcenter PSM
+        core: true
         icon: zplug
         summary: Electronic batch records and equipment logs.
         citations:
@@ -129,6 +130,7 @@ sources:
             volume: GBs (results + stability)
             interval: Hourly / per-test
       - name: Sphera Product Steward
+        core: true
         icon: gavel
         summary: SDS, REACH and hazard classifications.
         citations:
@@ -144,6 +146,7 @@ sources:
             volume: 100s of MB/day
             interval: Daily + on change
       - name: Enablon EHS
+        core: true
         icon: observ
         summary: Process-safety incidents, near-misses and permit-to-work compliance.
         citations:
@@ -288,6 +291,7 @@ cloud_integrations:
             volume: 10s of MB
             interval: Annual + periodic reference
       - name: ICIS Pricing
+        core: true
         icon: market
         summary: Commodity chemical price assessments by region.
         citations:
@@ -365,6 +369,7 @@ pipelines:
           - Operations Resource Efficiency
           - Feedstock, Formulation, & Recipe Control
       - name: Quality & Regulatory
+        core: true
         mark: Apps
         summary: CoA release, stability and regulatory submissions, tracked on CoA compliance, right-first-time release and REACH filing timeliness.
         uses:
@@ -507,6 +512,7 @@ consumers:
         citations:
           - opcenter-psm
       - name: Maintenance Work Orders
+        core: true
         icon: zplug
         summary: Predicted failures raised in Maximo.
         citations:
@@ -520,6 +526,7 @@ consumers:
         citations:
           - echa
       - name: EPA TRI Filings
+        core: true
         icon: share
         summary: Release quantities reported from governed emissions.
         citations:
@@ -531,6 +538,7 @@ consumers:
         icon: product
         summary: Batch genealogy products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Customers and auditors via Delta Sharing.
   - name: Databricks Apps
@@ -623,10 +631,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

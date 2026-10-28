@@ -155,6 +155,7 @@ sources:
             volume: Assessment responses
             interval: Continuous (API, per application)
       - name: Tri-Merge Credit
+        core: true
         icon: identity
         summary: Merged Experian, Equifax and TransUnion credit reports and scores pulled at application and re-pulled before closing, the basis of the credit decision.
         citations:
@@ -214,6 +215,7 @@ sources:
             volume: Hedge positions + best-ex analytics
             interval: Intraday + end-of-day
       - name: GSE Loan Delivery
+        core: true
         icon: partner
         summary: 'Fannie Mae Loan Delivery and Freddie Mac Loan Selling Advisor: loan delivery, pooling and commitment against agency programs and pricing.'
         citations:
@@ -229,6 +231,7 @@ sources:
             volume: Delivery + pool + commitment files
             interval: Multiple delivery cycles daily
       - name: MERS Registry
+        core: true
         icon: govcat
         summary: Mortgage Electronic Registration Systems tracking servicing rights and note ownership as loans and MSRs transfer between parties.
         citations:
@@ -272,6 +275,7 @@ sources:
             volume: LAR records
             interval: Periodic (regulatory cycle)
       - name: CoreLogic Property
+        core: true
         icon: globe
         summary: CoreLogic (Cotality) property, valuation and AVM data plus flood and hazard, joined to the collateral behind every loan.
         citations:
@@ -286,6 +290,7 @@ sources:
             volume: Property + AVM + hazard data
             interval: Daily/weekly updates
       - name: Title & Closing
+        core: true
         icon: docs
         summary: Qualia and ICE closing systems producing title, settlement and closing-disclosure documents at the end of the origination workflow.
         citations:
@@ -446,6 +451,7 @@ pipelines:
           - Lead & Pull-Through
           - Automated Underwriting
       - name: Underwriting
+        core: true
         mark: AI Functions
         summary: Underwriters clearing conditions and rendering the credit decision; credit-policy owners setting overlays above DU and LPA; the fair-lending and compliance team proving decisions are consistent and defensible under ECOA and HMDA.
         uses:
@@ -544,6 +550,7 @@ pipelines:
 consumers:
   - name: BI & Productivity
     icon: chart
+    from: bi
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -561,6 +568,7 @@ consumers:
         icon: share
         summary: Loan tapes and performance shared to investors, aggregators and warehouse lenders over Delta Sharing rather than file exchange.
       - name: GSE & Aggregators
+        core: true
         icon: partner
         summary: Delivery, pooling and repurchase state exchanged with Fannie Mae, Freddie Mac, Ginnie Mae and correspondent aggregators on live tables.
       - name: Data Marketplace
@@ -573,6 +581,7 @@ consumers:
         icon: db
         summary: Cleared conditions, decisions and pricing written back into Encompass so the answer reaches the origination path.
       - name: Servicing Writeback
+        core: true
         icon: erp
         summary: Loss-mitigation offers and workout decisions pushed back into Black Knight MSP where servicing already works.
       - name: Case & Task Queue
@@ -596,6 +605,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Investors, servicers and partners reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -688,10 +698,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

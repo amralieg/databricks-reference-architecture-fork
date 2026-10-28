@@ -171,6 +171,7 @@ sources:
             volume: tens of updates/sec
             interval: Continuous forecast updates
       - name: Planet Labs Imagery
+        core: true
         icon: iot
         summary: Daily satellite NDVI and change detection by parcel.
         citations:
@@ -259,6 +260,7 @@ sources:
         summary: 'AgGateway Agricultural Data Application Programming Toolkit for cross-vendor field operation data.'
         spec_url: https://adaptframework.org/
       - name: 'ISOXML'
+        core: true
         icon: zbraces
         fmt: 'ISOX'
         summary: 'ISO 11783-10 task data format for exchanging prescriptions and as-applied data with machinery.'
@@ -376,6 +378,7 @@ pipelines:
           - Feedstock, Formulation, & Recipe Control
           - Design Space Simulation & Exploration
       - name: Grain Merchandising
+        core: true
         mark: Model Serving
         summary: Basis trading, hedging and origination against futures and local bids, managed on position, basis exposure and hedge P&L.
         uses:
@@ -558,6 +561,7 @@ consumers:
         icon: product
         summary: Yield and sustainability products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Food companies and lenders reading live tables via Delta Sharing.
   - name: Databricks Apps
@@ -650,10 +654,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

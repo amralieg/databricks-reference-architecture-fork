@@ -168,6 +168,7 @@ sources:
             volume: hundreds of readings/sec
             interval: Continuous equipment telemetry
       - name: Identec RFID Gates
+        core: true
         icon: stream
         summary: Automated gate OCR, RFID and chassis identification at in-gate and out-gate.
         citations:
@@ -303,6 +304,7 @@ cloud_integrations:
             volume: tens-hundreds of messages/sec
             interval: Continuous message flow
       - name: Customs Single Window
+        core: true
         icon: gavel
         summary: Government clearance status and inspection results consumed inbound.
         citations:
@@ -380,6 +382,7 @@ pipelines:
           - Order Processing Automation
           - Demand Forecasting
       - name: Landside Logistics
+        core: true
         mark: Model Serving
         summary: Truck appointment and rail planners on gate queues and intermodal handoff, matching slots to yard density before demurrage accrues.
         uses:
@@ -504,6 +507,7 @@ consumers:
         icon: api
         summary: Berth windows and crane availability shared to shipping lines over Delta Sharing.
       - name: Trucker Appointment Portal
+        core: true
         icon: apps
         summary: Gate slots and container availability pushed to drayage carriers.
       - name: Rail Ramp Partners
@@ -532,6 +536,7 @@ consumers:
         citations:
           - pcs
       - name: Customs Audit Trail
+        core: true
         icon: share
         summary: Declaration and inspection evidence from contracted Gold products.
   - name: Published Products
@@ -541,6 +546,7 @@ consumers:
         icon: product
         summary: Terminal performance products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Carriers and shippers reading live dwell and berth data via Delta Sharing.
   - name: Databricks Apps
@@ -633,10 +639,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

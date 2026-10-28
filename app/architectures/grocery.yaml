@@ -89,6 +89,7 @@ sources:
             volume: 1-5 GB/day
             interval: Daily model runs
       - name: Dunnhumby Customer Data
+        core: true
         icon: custlake
         summary: Loyalty baskets, segments and propensity scores from the science partner.
         citations:
@@ -134,6 +135,7 @@ sources:
             volume: thousands of sensor reads/sec
             interval: Continuous telemetry
       - name: Invafresh Fresh Platform
+        core: true
         icon: product
         summary: Markdown, production planning and waste tracking for bakery, deli and produce.
         citations:
@@ -266,6 +268,7 @@ cloud_integrations:
             volume: GBs/day attribute updates
             interval: Daily / on-change sync
       - name: NielsenIQ Store Read
+        core: true
         icon: market
         summary: Syndicated store-level performance for competitive benchmarking.
         citations:
@@ -338,6 +341,7 @@ pipelines:
           - Assortment Localisation
           - Demand Forecasting
       - name: Store Operations
+        core: true
         mark: Lakehouse//RT
         summary: District managers on labor schedules, on-shelf gaps and fresh-department waste, timing markdowns before the perishable code date closes.
         uses:
@@ -490,6 +494,7 @@ consumers:
         citations:
           - blue-yonder-repl
       - name: Fresh Markdown Prices
+        core: true
         icon: market
         summary: Dynamic markdowns pushed to POS labels for approaching sell-by inventory.
         citations:
@@ -527,6 +532,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: CPG vendors, franchisees and analysts reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -619,10 +625,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

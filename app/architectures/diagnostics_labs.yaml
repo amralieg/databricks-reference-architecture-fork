@@ -287,6 +287,7 @@ sources:
             volume: 100s-1000s of msgs/sec
             interval: Continuous (HL7 / API)
       - name: XiFin RCM
+        core: true
         icon: market
         summary: 'XiFin revenue cycle management: claims, medical-necessity checking, denials and reimbursement for the diagnostic lab.'
         citations:
@@ -301,6 +302,7 @@ sources:
             volume: 2-10 GB/day claims + remits
             interval: Daily claim + remittance cycles
       - name: Bio-Rad Unity QC
+        core: true
         icon: gauge
         summary: 'Bio-Rad Unity quality control and QCNet: control results, Levey-Jennings and peer-group comparison across analytes.'
         citations:
@@ -357,6 +359,7 @@ sources:
         summary: 'CLSI standard for low-level connectivity between lab instruments and information systems.'
         spec_url: https://clsi.org/shop/standards/lis01/
       - name: 'CLSI LIS02'
+        core: true
         icon: zbraces
         fmt: 'LIS02'
         summary: 'CLSI message specification for transferring lab orders and results.'
@@ -458,6 +461,7 @@ pipelines:
           - Molecular Diagnostics
           - Test Utilization
       - name: Lab Operations
+        core: true
         mark: Lakehouse//RT
         summary: Lab operations managers on turnaround and backlog, bench supervisors on autoverification and repeat rates, and pre-analytic and phlebotomy teams on specimen quality and rejections.
         uses:
@@ -589,6 +593,7 @@ consumers:
         citations:
           - sunquest
       - name: RCM Claim Writeback
+        core: true
         icon: market
         summary: Denial-risk flags and coding evidence written back into the RCM system so billing acts before submission.
         citations:
@@ -608,6 +613,7 @@ consumers:
           - clia
           - cap
       - name: Public Health Filing
+        core: true
         icon: share
         summary: Reportable-condition electronic lab reporting filed to public health from certified Gold results.
         citations:
@@ -619,6 +625,7 @@ consumers:
         icon: product
         summary: Published, contracted result and utilization products discoverable in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Hospitals, health plans and registries accessing governed result and utilization products, reducing bespoke exports with recipient copies and transfer behavior dependent on the sharing mode.
   - name: Databricks Apps
@@ -711,10 +718,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

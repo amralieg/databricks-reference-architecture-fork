@@ -120,6 +120,7 @@ sources:
             volume: 5-15 GB/day
             interval: Per pay run + nightly batch
       - name: UKG Pro WFM
+        core: true
         icon: people
         summary: Time and attendance, scheduling and accruals for hourly placements.
         citations:
@@ -170,6 +171,7 @@ sources:
             volume: 0.5-2 GB/day
             interval: Nightly batch
       - name: Checkr Background
+        core: true
         icon: partner
         summary: Criminal, employment and education checks with adverse action workflow.
         citations:
@@ -185,6 +187,7 @@ sources:
             volume: 0.5-2 GB/day
             interval: On-demand + daily batch
       - name: Everify I-9
+        core: true
         icon: gavel
         summary: E-Verify employment eligibility verification status alongside the employer's I-9 records for US placements.
         citations:
@@ -369,6 +372,7 @@ pipelines:
           - Rate Benchmarking
           - Skills Taxonomy
       - name: Workforce Operations
+        core: true
         mark: Lakehouse//RT
         summary: Schedulers on shift coverage, overtime creep and credential gaps that would block a worker from starting the client assignment on time.
         uses:
@@ -558,6 +562,7 @@ consumers:
         icon: product
         summary: Workforce analytics products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Clients reading live fill and spend metrics via Delta Sharing.
   - name: Databricks Apps
@@ -650,10 +655,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

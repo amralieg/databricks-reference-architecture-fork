@@ -308,6 +308,7 @@ sources:
             volume: Screening API responses
             interval: Continuous (API)
       - name: Global Relay Archive
+        core: true
         icon: chat
         summary: Communications capture and archiving for email, chat and voice, the books-and-records source for supervision and surveillance.
         citations:
@@ -393,6 +394,7 @@ cloud_integrations:
             volume: 10-50 GB/day files
             interval: Multiple settlement cycles daily
       - name: Market & Fund Data
+        core: true
         icon: api
         summary: Pricing, quote and fund-reference APIs from Morningstar and market-data vendors consumed inbound through managed ELT connectors.
         category: Market & Fund Data API
@@ -468,6 +470,7 @@ pipelines:
           - Client Attrition Risk
           - Client Service AI
       - name: Investments
+        core: true
         mark: AI/BI
         summary: The chief investment office on model portfolios and asset allocation; portfolio construction on rebalancing and tax-aware trading; investment research on fund selection and manager due diligence.
         uses:
@@ -565,6 +568,7 @@ pipelines:
 consumers:
   - name: BI & Productivity
     icon: chart
+    from: bi
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -594,6 +598,7 @@ consumers:
         icon: crm
         summary: Next best actions, meeting briefs and household scores written back into Salesforce FSC so the answer reaches the advisor's desktop.
       - name: Rebalancer Writeback
+        core: true
         icon: gauge
         summary: Target weights and tax-aware trade proposals pushed back into Tamarac and Orion so the decision reaches the trading path.
       - name: Alert & Case Queue
@@ -606,6 +611,7 @@ consumers:
         icon: gavel
         summary: Form ADV, Reg BI and books-and-records evidence produced from the same governed tables the firm runs on.
       - name: Client Statements
+        core: true
         icon: share
         summary: Performance, holdings and fee statements from contracted Gold products, with 1099 reporting produced from authorized custodian and tax records under the responsible entity's process.
   - name: Published Products
@@ -615,6 +621,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Custodians, sub-advisors and partners reading governed shared tables without separately maintained publisher extracts.
   - name: Databricks Apps
@@ -707,10 +714,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

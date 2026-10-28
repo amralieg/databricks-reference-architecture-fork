@@ -92,6 +92,7 @@ sources:
             volume: several million msgs/sec at peak
             interval: Continuous (sub-millisecond)
       - name: CTA/UTP SIP
+        core: true
         icon: stream
         summary: 'The Securities Information Processors carrying the consolidated tape: best bid and offer and last sale across all US equity venues.'
         citations:
@@ -265,6 +266,7 @@ sources:
             volume: GBs of cleared positions + margin
             interval: Multiple clearing cycles daily
       - name: LCH / CCP
+        core: true
         icon: partner
         summary: 'LCH and central counterparty clearing: novated trades, margin calls and default-fund state across cleared markets.'
         citations:
@@ -279,6 +281,7 @@ sources:
             volume: GBs of novated trades + margin
             interval: Multiple clearing cycles daily
       - name: DTCC Settlement
+        core: true
         icon: partner
         summary: 'DTCC clearing, netting and settlement: matched trades, affirmations and settlement status for the post-trade lifecycle.'
         citations:
@@ -465,6 +468,7 @@ pipelines:
           - Corporate Actions
           - Fee & Rebate Optimization
       - name: Surveil & Integrity
+        core: true
         mark: AI Functions
         summary: Market-surveillance analysts investigating spoofing, layering and manipulation across the venue's order flow; the market-integrity team on cross-venue and cross-asset abuse; the membership team on member conduct and disciplinary referrals.
         uses:
@@ -542,6 +546,7 @@ pipelines:
 consumers:
   - name: BI & Productivity
     icon: chart
+    from: bi
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -571,6 +576,7 @@ consumers:
         icon: db
         summary: Member credit and position-limit decisions written back into the clearing and membership systems, with CCP-owned margin and default decisions conditional on integrated-clearing scope, so the answer reaches the risk-control path.
       - name: Surveillance Cases
+        core: true
         icon: gavel
         summary: Manipulation and abuse alerts pushed to the investigation and disciplinary case queue analysts already work.
       - name: Fee Schedule Writeback
@@ -595,6 +601,7 @@ consumers:
         icon: product
         summary: Published, contracted market-data and index products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Subscribers, vendors and index licensees reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -687,10 +694,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

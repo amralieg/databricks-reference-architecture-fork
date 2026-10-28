@@ -198,6 +198,7 @@ sources:
             volume: 10-50 GB/day
             interval: Nightly batch + hourly deltas
       - name: ServiceMax
+        core: true
         icon: orch
         summary: 'Field service management: installed base, service contracts, work orders and parts for the device fleet.'
         citations:
@@ -212,6 +213,7 @@ sources:
             volume: 1-5 GB/day
             interval: Nightly sync + intraday
       - name: Salesforce
+        core: true
         icon: crm
         summary: Commercial CRM for accounts, orders and device utilisation across sales and customer success.
         citations:
@@ -276,6 +278,7 @@ sources:
             volume: GBs (periodic event files)
             interval: Monthly reference releases
       - name: Device Telemetry
+        core: true
         icon: iot
         summary: 'Connected-device and IoMT telemetry from the installed base: usage, alarms and sensor streams from every unit.'
         category: Connected-Device / IoMT Telemetry
@@ -332,6 +335,7 @@ sources:
         summary: 'IHE Patient Care Device profiles for device-to-enterprise data flow.'
         spec_url: https://www.ihe.net/ihe_domains/patient_care_devices/
       - name: 'DICOM'
+        core: true
         icon: zbraces
         fmt: 'DCM'
         summary: 'Standard for medical imaging data and device interoperability.'
@@ -450,6 +454,7 @@ pipelines:
           - Manufacturing Yield & OEE
           - Supply Risk Visibility
       - name: Manufacturing Ops
+        core: true
         mark: Lakehouse//RT
         summary: Process and plant engineering on first-pass yield, OEE and process capability, line quality on nonconformance and disposition, and supply chain on component availability and supplier quality.
         uses:
@@ -588,6 +593,7 @@ consumers:
         citations:
           - opcenter
       - name: Field Service Orders
+        core: true
         icon: orch
         summary: Predicted service dispatch raised in the field-service system against the installed base.
         citations:
@@ -601,6 +607,7 @@ consumers:
         citations:
           - gudid
       - name: EU MDR / EUDAMED
+        core: true
         icon: share
         summary: Registration and vigilance reporting filed to EUDAMED under EU MDR from certified Gold.
         citations:
@@ -612,6 +619,7 @@ consumers:
         icon: product
         summary: Published, contracted device and quality products discoverable in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Suppliers, CMOs and registries reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -704,10 +712,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

@@ -89,6 +89,7 @@ sources:
             volume: 10-50 GB/day
             interval: Nightly batch + intraday deltas
       - name: Waystar Claims
+        core: true
         icon: api
         summary: Eligibility, prior auth status and remittance advice across payers.
         citations:
@@ -140,6 +141,7 @@ sources:
             volume: hundreds of studies/hour
             interval: Continuous worklist feed
       - name: Capsule Medical Device
+        core: true
         icon: iot
         summary: Bedside monitor vitals, ventilator settings and infusion pump alarms.
         citations:
@@ -185,6 +187,7 @@ sources:
             volume: tens of placement events/sec
             interval: Continuous placement feed
       - name: Kronos Workforce
+        core: true
         icon: people
         summary: Nurse schedules, acuity staffing and overtime by unit.
         citations:
@@ -264,6 +267,7 @@ sources:
           - 'Siemens Healthineers'
           - 'Sectra'
       - name: 'X12N'
+        core: true
         icon: zbraces
         fmt: 'X12N'
         summary: 'HIPAA X12N EDI for claims, eligibility and remittance with payers.'
@@ -371,6 +375,7 @@ pipelines:
           - Patient Services
           - Contact Center Sentiment
       - name: Revenue Cycle
+        core: true
         mark: AI/BI
         summary: Denials, underpayments and CDI queries that decide whether documented care is actually paid, flagged before the claim leaves the building.
         uses:
@@ -535,6 +540,7 @@ consumers:
         icon: share
         summary: Quality and utilisation metrics shared with payers under value-based arrangements.
       - name: HIE Clinical Exchange
+        core: true
         icon: api
         summary: Summaries and referrals exchanged with regional health information exchanges, with FHIR Bulk Data used as analytics-export context rather than the transactional exchange interface.
         citations:
@@ -560,6 +566,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Researchers, payers and affiliates reading governed live tables that reduce routine file exports.
   - name: Databricks Apps
@@ -652,10 +659,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

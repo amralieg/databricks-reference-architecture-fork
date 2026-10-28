@@ -24,6 +24,7 @@ sources:
             volume: thousands of scans/sec at ingress
             interval: Continuous on event day
       - name: Salesforce Marketing Cloud
+        core: true
         icon: custlake
         summary: Fan profiles, membership tiers, service cases and campaign responses.
         citations:
@@ -89,6 +90,7 @@ sources:
             volume: thousands of events/sec at peak
             interval: Continuous on event day
       - name: Catapult Sports
+        core: true
         icon: iot
         summary: 'GPS and IMU player tracking: load, sprint distance and injury risk flags.'
         citations:
@@ -328,6 +330,7 @@ pipelines:
           - Event Attendance & Revenue
           - Fan Churn Prediction
       - name: Fan Engagement
+        core: true
         mark: CustomerLake
         summary: CRM teams on membership growth, churn before renewal and personalised offers scored on spend stitched across ticketing and concessions.
         uses:
@@ -453,6 +456,7 @@ consumers:
         icon: api
         summary: Personalised upsell and parking offers served in the team app.
       - name: Sponsor Reporting API
+        core: true
         icon: share
         summary: Activation proof and impression delivery to sponsors over Delta Sharing.
       - name: Broadcaster Data Feed
@@ -494,6 +498,7 @@ consumers:
         icon: product
         summary: Fan and performance products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: League partners reading live attendance via Delta Sharing.
   - name: Databricks Apps
@@ -586,10 +591,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

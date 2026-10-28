@@ -62,6 +62,7 @@ sources:
             volume: hundreds of order/execution events/sec
             interval: Continuous CDC
       - name: FlexTrade EMS
+        core: true
         icon: stream
         summary: 'Multi-asset execution management: smart order routing, algo wheels and venue connectivity, the source of the child-order and fill stream.'
         citations:
@@ -126,6 +127,7 @@ sources:
             volume: 5-20 GB/day evaluated prices
             interval: End-of-day + intraday snaps
       - name: Security Master
+        core: true
         icon: db
         summary: 'The golden instrument and issuer record: identifiers, terms and corporate actions every position and trade resolves against.'
         category: Security Master / Reference Data
@@ -247,6 +249,7 @@ sources:
             volume: 1-10k order/exec messages/sec at peak
             interval: Continuous (sub-second)
       - name: Custodian Feeds
+        core: true
         icon: db
         summary: Position, cash and settlement records from the custodian, reconciled against the internal book of record.
         category: Custodian Book of Record
@@ -459,6 +462,7 @@ pipelines:
           - NAV & Reconciliation
           - Portfolio Risk
       - name: Risk Management
+        core: true
         mark: AI/BI
         summary: The CRO and market risk on VaR, stress and limit usage across books; credit risk on counterparty and issuer exposure; liquidity risk on funding and margin under stress.
         uses:
@@ -578,6 +582,7 @@ pipelines:
 consumers:
   - name: BI & Productivity
     icon: chart
+    from: bi
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -595,6 +600,7 @@ consumers:
         icon: share
         summary: Fund performance and holdings shared to limited partners and allocators over Delta Sharing rather than file exchange.
       - name: Prime Brokers
+        core: true
         icon: partner
         summary: Positions, margin and financing state exchanged with prime brokers and counterparties on live tables.
       - name: Data Marketplace
@@ -631,6 +637,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Allocators, administrators and partners reading live tables, reducing extract duplication, with access and reuse scoped by agreement.
   - name: Databricks Apps
@@ -723,10 +730,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

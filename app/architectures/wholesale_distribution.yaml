@@ -197,6 +197,7 @@ sources:
             volume: 0.5-3 GB/day
             interval: Multiple daily batches
       - name: SAP Commerce Cloud
+        core: true
         icon: product
         summary: 'B2B commerce and punchout catalogs: contract pricing, availability and reorder for buyer procurement systems.'
         citations:
@@ -247,6 +248,7 @@ sources:
             volume: 0.5-3 GB/day
             interval: Daily + on-demand quote scoring
       - name: Salesforce Sales Cloud
+        core: true
         icon: crm
         summary: Accounts, opportunities and quotes for field, inside and account-management sales teams.
         citations:
@@ -428,6 +430,7 @@ pipelines:
           - Demand Forecasting
           - Working Capital & Cash Flow Optimization
       - name: Supply Chain & Ops
+        core: true
         mark: Lakehouse//RT
         summary: Planning, warehouse and transport teams moving product from supplier to branch to customer at the promised service level and the lowest landed cost.
         uses:
@@ -544,6 +547,7 @@ consumers:
         citations:
           - sap-commerce
       - name: Supplier Portals
+        core: true
         icon: partner
         summary: Forecasts, scorecards and replenishment signals shared to suppliers over Delta Sharing rather than spreadsheets.
       - name: EDI Outbound
@@ -565,6 +569,7 @@ consumers:
         citations:
           - manhattan
       - name: Price & Quote Sync
+        core: true
         icon: market
         summary: Contract prices and quote guidance written back to CRM and commerce at the point of sale.
         citations:
@@ -585,6 +590,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Suppliers, carriers and buying groups reading governed shared tables without separately maintained publisher extracts.
   - name: Databricks Apps
@@ -677,10 +683,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

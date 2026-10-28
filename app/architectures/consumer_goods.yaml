@@ -164,6 +164,7 @@ sources:
             volume: tens of events/sec
             interval: Continuous visit events
       - name: Körber WMS
+        core: true
         icon: stream
         summary: Warehouse picking and DSD route sequencing.
         citations:
@@ -267,6 +268,7 @@ sources:
         summary: 'GS1 event standard for supply-chain visibility and item traceability.'
         spec_url: https://www.gs1.org/standards/epcis
       - name: 'GDSN'
+        core: true
         icon: zbraces
         fmt: 'GDSN'
         summary: 'Global Data Synchronisation Network catalogue messages for trusted product master data.'
@@ -406,6 +408,7 @@ pipelines:
           - Retail Media Networks
           - Shopper Segmentation
       - name: Supply Chain
+        core: true
         mark: Lakehouse//RT
         summary: Service levels, inventory and production scheduling, run on OTIF, case fill rate and days of inventory against demand across DCs and SKUs.
         uses:
@@ -557,6 +560,7 @@ consumers:
         icon: product
         summary: Category insight products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Retail partners via Delta Sharing.
   - name: Databricks Apps
@@ -649,10 +653,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

@@ -47,6 +47,7 @@ sources:
             volume: 5-50k tags/sec
             interval: Continuous control telemetry
       - name: AVEVA PI Historian
+        core: true
         icon: iot
         summary: 'AVEVA PI System process historian: the high-frequency tag store that underpins OEE, sheet-break analysis and predictive maintenance.'
         citations:
@@ -78,6 +79,7 @@ sources:
             volume: 1-10k measurements/sec
             interval: Continuous scan telemetry
       - name: Kiwiplan MES
+        core: true
         icon: compute
         summary: 'Kiwiplan production management and scheduling for corrugated and folding-carton plants: orders, machine schedules and converting genealogy.'
         citations:
@@ -209,6 +211,7 @@ sources:
             volume: 10s-100s of tickets/hour
             interval: Continuous gate events
       - name: Recovered Fiber Feeds
+        core: true
         icon: network
         summary: 'Recovered-paper and OCC intake feeds: grades, contamination and yield for recycled containerboard and packaging furnish.'
         category: Recovered Fiber Intake
@@ -359,6 +362,7 @@ cloud_integrations:
             volume: 10-100k events/sec
             interval: Continuous OT telemetry
       - name: Pulp Price Indices
+        core: true
         icon: market
         summary: Pulp, containerboard and recovered-paper price benchmarks joined to orders and margin for commercial and buying decisions.
         category: Commodity Price Benchmarks
@@ -432,6 +436,7 @@ pipelines:
           - Web-Break & Edge-Crack Detection
           - Steam & Power per Tonne
       - name: Process & QA
+        core: true
         mark: Model Serving
         summary: Process engineers on digester, refiner and dryer set-points, quality on basis weight, moisture and strength against grade spec, and R&D and fiber on furnish, additives and new-grade development.
         uses:
@@ -563,6 +568,7 @@ consumers:
         citations:
           - valmet-dna
       - name: Maximo Work Orders
+        core: true
         icon: orch
         summary: Predicted failures raised as maintenance work orders against the asset, in the system reliability already works in.
         citations:
@@ -581,6 +587,7 @@ consumers:
         citations:
           - eudr
       - name: Emissions Reporting
+        core: true
         icon: share
         summary: Scope 1-3 emissions and CSRD disclosures produced from the same certified Gold tables the mill runs on.
   - name: Published Products
@@ -590,6 +597,7 @@ consumers:
         icon: product
         summary: Published, contracted mill, quality and supply-chain products discoverable in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Converters, brand owners and fiber partners reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
@@ -682,10 +690,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

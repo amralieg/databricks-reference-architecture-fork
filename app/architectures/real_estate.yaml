@@ -80,6 +80,7 @@ sources:
             volume: hundreds of thousands of availability and proposal rows
             interval: Hourly sync
       - name: ARGUS Enterprise
+        core: true
         icon: chart
         summary: Discounted cash flow valuation and hold-sell analysis for commercial assets.
         citations:
@@ -127,6 +128,7 @@ sources:
             volume: millions of documents and transmittals
             interval: Daily
       - name: CoStar Market Data
+        core: true
         icon: chart
         summary: Comparable rents, vacancy and transaction comps for underwriting.
         citations:
@@ -158,6 +160,7 @@ sources:
             volume: tens of thousands of meter and sensor points/min
             interval: Continuous (BMS)
       - name: ServiceChannel FM
+        core: true
         icon: stream
         summary: Work orders, contractor SLAs and tenant service requests.
         citations:
@@ -343,6 +346,7 @@ pipelines:
           - Development ROI
           - Capex Planning
       - name: Leasing & Brokerage
+        core: true
         mark: CustomerLake
         summary: Brokerage teams on pipeline, tour conversion and time-to-lease, tracking leasing velocity and net effective rent by asset and market.
         uses:
@@ -478,6 +482,7 @@ consumers:
         citations:
           - honeywell-forge
       - name: FM Work Orders
+        core: true
         icon: stream
         summary: Anomaly-triggered inspection and maintenance recommendations raised in ServiceChannel.
         citations:
@@ -491,6 +496,7 @@ consumers:
         citations:
           - mri
       - name: Tenant Experience App
+        core: true
         icon: apps
         summary: Service requests and amenity bookings on Apps reading governed operations data.
       - name: Broker Co-broke Feed
@@ -507,6 +513,7 @@ consumers:
         citations:
           - measurabl
       - name: IFRS 16 / ASC 842
+        core: true
         icon: share
         summary: Corporate-lessee lease liability schedules, where applicable, from the SAP real estate accounting variant.
         citations:
@@ -518,6 +525,7 @@ consumers:
         icon: product
         summary: Published, contracted products discoverable in Unity Catalog Domains and shared over OpenSharing.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Investors, lenders and partners reading live tables with no copy.
   - name: Databricks Apps
@@ -610,10 +618,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

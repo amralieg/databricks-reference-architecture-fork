@@ -57,6 +57,7 @@ sources:
             volume: tens of events/sec
             interval: Continuous (billing webhooks)
       - name: Stripe Billing
+        core: true
         icon: market
         summary: Subscriptions, invoices, seat and usage records and payment events, reconciled against enrolment and consumption.
         citations:
@@ -113,6 +114,7 @@ sources:
             volume: 1-8 GB/day
             interval: Hourly / nightly
       - name: Clever Rostering
+        core: true
         icon: people
         summary: 'Single sign-on and roster sync for K-12: students, sections and teachers provisioned from the district into the product.'
         citations:
@@ -186,6 +188,7 @@ sources:
             volume: tens of thousands of events/sec at peak
             interval: Continuous clickstream
       - name: xAPI Record Store
+        core: true
         icon: db
         summary: The Experience API learning record store capturing granular lesson, attempt and mastery statements across content and tools.
         citations:
@@ -347,6 +350,7 @@ sources:
         summary: '1EdTech Learning Tools Interoperability for launching external tools inside an LMS.'
         spec_url: https://www.1edtech.org/standards/lti
       - name: 'OneRoster'
+        core: true
         icon: zbraces
         fmt: '1R'
         summary: '1EdTech standard for exchanging class rosters, enrolments and gradebook data.'
@@ -463,6 +467,7 @@ pipelines:
           - Automated Scoring
           - GenAI Tutor
       - name: Growth & Engage
+        core: true
         mark: Lakehouse//RT
         summary: Growth teams on signup-to-activation and free-to-paid conversion, lifecycle marketing on onboarding and reactivation nudges, and engagement analysts on the clickstream signals that predict who quietly disengages.
         uses:
@@ -747,10 +752,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

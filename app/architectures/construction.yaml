@@ -40,6 +40,7 @@ sources:
             volume: 2-10 GB/day incl. photos
             interval: Hourly sync
       - name: Primavera P6
+        core: true
         icon: sheet
         summary: Master schedules, critical path and earned value.
         citations:
@@ -118,6 +119,7 @@ sources:
             volume: GBs per model revision
             interval: Per model revision
       - name: Navisworks
+        core: true
         icon: apps
         summary: 4D simulations and clash detection runs.
         citations:
@@ -385,6 +387,7 @@ pipelines:
           - Supply & Materials Planning
           - Working Capital & Cash Flow Optimization
       - name: Field Superintendents
+        core: true
         mark: Lakehouse//RT
         summary: Daily production, labor hours and safety observations, tracked on units per labor hour, equipment idle time and near-miss rate.
         uses:
@@ -510,6 +513,7 @@ consumers:
         citations:
           - procore
       - name: Subcontractor PO
+        core: true
         icon: zplug
         summary: Committed costs and pay apps to trade partners.
         citations:
@@ -528,6 +532,7 @@ consumers:
         citations:
           - sage-cre
       - name: Schedule Updates
+        core: true
         icon: gauge
         summary: Percent complete fed back to P6 activities.
         citations:
@@ -557,6 +562,7 @@ consumers:
         icon: product
         summary: Project performance products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Owners and JV partners via Delta Sharing.
   - name: Databricks Apps
@@ -649,10 +655,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.

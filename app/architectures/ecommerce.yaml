@@ -69,6 +69,7 @@ sources:
             volume: hundreds-thousands of order events/sec
             interval: Continuous orchestration events
       - name: Stripe Payments
+        core: true
         icon: market
         summary: Payment intents, disputes and payout reconciliation.
         citations:
@@ -189,6 +190,7 @@ sources:
             volume: hundreds of events/sec
             interval: Continuous campaign events
       - name: Google Analytics 4
+        core: true
         icon: observ
         summary: Session, funnel and attribution events.
         citations:
@@ -373,6 +375,7 @@ pipelines:
           - Customer 360 & LTV
           - Identity Resolution & CDP
       - name: Merchandising
+        core: true
         mark: AI/BI
         summary: Assortment, pricing, bundles and on-site search relevance, tracked on attach rate, gross margin and competitive price gap.
         uses:
@@ -553,6 +556,7 @@ consumers:
         icon: gavel
         summary: Jurisdiction filings from governed transaction data.
       - name: PCI Scope Reports
+        core: true
         icon: share
         summary: Cardholder-data-environment scoping and assessment-evidence support, with attestation remaining the assessor's responsibility.
   - name: Published Products
@@ -562,6 +566,7 @@ consumers:
         icon: product
         summary: Customer and order products in Unity Catalog Domains.
       - name: Sharing Recipients
+        core: true
         icon: share
         summary: Brand partners via Delta Sharing.
   - name: Databricks Apps
@@ -654,10 +659,12 @@ consumers:
           - Agent Bricks
           - Unity Gateway
       - name: Claude Code
+        core: true
         icon: code
         short: 3rd-party harness
         summary: Anthropic's coding harness working against the platform through MCP, with spend, routing and policy governed by Unity Gateway.
       - name: OpenAI Codex
+        core: true
         icon: code
         short: 3rd-party harness
         summary: OpenAI's coding harness connected over MCP, governed at runtime by Unity Gateway rather than trusted by configuration.
