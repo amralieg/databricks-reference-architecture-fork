@@ -359,21 +359,6 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
-      - name: AgGateway ADAPT
-        icon: connect
-        summary: The industry data-interoperability framework and plugins that normalise as-applied, prescription and setup files across mixed equipment brands.
-        citations:
-          - adapt
-        category: Ag Data Interoperability Framework
-        what_it_is: Industry framework and plugins normalising as-applied, prescription and setup files across mixed equipment brands.
-        who_uses_it: Geospatial Eng, Telematics Engineering and Precision Ag Product teams.
-        data_out:
-          batch:
-            types:
-              - structured
-              - semi-structured
-            volume: millions of normalised task files
-            interval: Per field pass
       - name: Leaf Ag API
         icon: api
         summary: A unified API over FieldView, Operations Center, CNH and other providers, pulling machine and field data through one governed connector.
@@ -389,6 +374,21 @@ cloud_integrations:
               - semi-structured
             volume: millions of field and machine records/day
             interval: Scheduled API pulls
+      - name: AgGateway ADAPT
+        icon: connect
+        summary: The industry data-interoperability framework and plugins that normalise as-applied, prescription and setup files across mixed equipment brands.
+        citations:
+          - adapt
+        category: Ag Data Interoperability Framework
+        what_it_is: Industry framework and plugins normalising as-applied, prescription and setup files across mixed equipment brands.
+        who_uses_it: Geospatial Eng, Telematics Engineering and Precision Ag Product teams.
+        data_out:
+          batch:
+            types:
+              - structured
+              - semi-structured
+            volume: millions of normalised task files
+            interval: Per field pass
       - name: Machine Event Streams
         icon: eventbus
         summary: Existing Kafka and MQTT topics carrying live machine, sensor and gateway events, landed generically as structured streaming tables.

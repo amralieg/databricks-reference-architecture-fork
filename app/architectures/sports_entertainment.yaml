@@ -110,6 +110,20 @@ sources:
   - name: Broadcast & OTT
     icon: partner
     tiles:
+      - name: Deltatre OTT Platform
+        icon: api
+        summary: Streaming concurrency, start-over and device telemetry for direct-to-consumer.
+        citations:
+          - deltatre
+        category: OTT Streaming Platform
+        what_it_is: Delivers direct-to-consumer streaming and emits concurrency, start-over and device telemetry for engagement.
+        who_uses_it: Direct-to-consumer, Digital product and Audience teams.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: tens of thousands of events/sec at peak
+            interval: Continuous during streams
       - name: Grabyo Clipping
         icon: stream
         summary: Live clipping, highlights and social publishing from broadcast feeds.
@@ -125,20 +139,6 @@ sources:
               - unstructured
             volume: high-bitrate clips + metadata
             interval: Continuous during broadcast
-      - name: Deltatre OTT Platform
-        icon: api
-        summary: Streaming concurrency, start-over and device telemetry for direct-to-consumer.
-        citations:
-          - deltatre
-        category: OTT Streaming Platform
-        what_it_is: Delivers direct-to-consumer streaming and emits concurrency, start-over and device telemetry for engagement.
-        who_uses_it: Direct-to-consumer, Digital product and Audience teams.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: tens of thousands of events/sec at peak
-            interval: Continuous during streams
       - name: Nielsen Sports
         icon: chart
         summary: TV and digital audience measurement for rights valuation.

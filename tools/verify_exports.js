@@ -3,33 +3,38 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 const zlib = require("zlib");
-const { serve, boardReady } = require("./lib_serve");
+const { serve, boardReady, withView } = require("./lib_serve");
 
 const OUT = "/tmp/arch_exports";
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
-// industry id, cloud
+// industry id, cloud, view
 const CASES = [
-  ["public_sector", "aws"],
-  ["public_sector", "azure"],
-  ["public_sector", "gcp"],
-  ["airlines", "aws"],
-  ["banking", "azure"],
-  ["retail", "gcp"],
-  ["generic", "aws"],
+  ["public_sector", "aws", "detailed"],
+  ["public_sector", "azure", "detailed"],
+  ["public_sector", "gcp", "detailed"],
+  ["airlines", "aws", "detailed"],
+  ["banking", "azure", "detailed"],
+  ["retail", "gcp", "detailed"],
+  ["generic", "aws", "detailed"],
+  ["airlines", "aws", "simple"],
+  ["banking", "azure", "simple"],
+  ["generic", "aws", "simple"],
 ];
+const caseTag = (ind, cloud, view) => `${ind}_${cloud}` + (view === "simple" ? "-simple" : "");
 
 function u8FromB64(b64) { return Buffer.from(b64, "base64"); }
 
 const LIVE = process.argv.includes("--live");
-const DRAW_CASES = CASES.map(([ind, cloud]) => [`industry=${ind}&cloud=${cloud}`, `${ind}_${cloud}`])
-  .concat(["z", "s", "t", "rt"].map(s => [`industry=banking&cloud=azure&shape=${s}`, `banking_${s}`]))
+const DRAW_CASES = CASES.map(([ind, cloud, view]) => [withView(`industry=${ind}&cloud=${cloud}`, view), caseTag(ind, cloud, view)])
+  .concat(["z", "s", "t", "rt"].flatMap(s => [[withView(`industry=banking&cloud=azure&shape=${s}`, "detailed"), `banking_${s}`],
+    [`industry=banking&cloud=azure&shape=${s}`, `banking_${s}-simple`]]))
   .concat([
-    ["industry=banking&cloud=azure&lang=ar", "banking_ar"],
-    ["industry=banking&cloud=azure&lang=ja", "banking_ja"],
-    ["cloud=aws&theme=dark", "generic_dark"],
-    ["industry=airlines&cloud=aws&platform=1", "airlines_platform"],
+    [withView("industry=banking&cloud=azure&lang=ar", "detailed"), "banking_ar"],
+    [withView("industry=banking&cloud=azure&lang=ja", "detailed"), "banking_ja"],
+    [withView("cloud=aws&theme=dark", "detailed"), "generic_dark"],
+    [withView("industry=airlines&cloud=aws&platform=1", "detailed"), "airlines_platform"],
     ["industry=banking&cloud=azure", "banking_edit", true],
   ]);
 const kb = n => (n / 1024).toFixed(0) + "KB";
@@ -291,15 +296,24 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
   page.on("console", m => { if (m.type() === "error") errors.push("console: " + m.text()); });
 
   const results = [];
-  for (const [ind, cloud] of CASES) {
-    const url = `${BASE}?industry=${ind}&cloud=${cloud}`;
+  for (const [ind, cloud, view] of CASES) {
+    const url = withView(`${BASE}?industry=${ind}&cloud=${cloud}`, view);
     await page.goto(url, { waitUntil: "networkidle" });
     await boardReady(page);
     await page.waitForTimeout(700);
 
     const summary = await page.evaluate(() => {
       const secs = deckSections().map(s => ({ key: s.key, kind: s.kind, title: s.title, n: (s.tiles || []).length }));
+      const topOn = names => { const s = ARCH.top.secs.find(x => names.includes(x.title));
+        const el = s && [...document.querySelectorAll("#topband .cloud-sec")].find(e => e.querySelector(".rg-label").textContent.trim() === T(s.title));
+        return el ? el.querySelectorAll(".ctile").length : 0; };
+      const consOn = names => { const g = ARCH.rails.cons.groups.find(x => names.includes(x.box));
+        const el = g && [...document.querySelectorAll("#rail-cons .rgroup")].find(e => e.querySelector(".rg-label").textContent.trim() === T(g.box));
+        return el ? el.querySelectorAll(".rtile").length : 0; };
       return {
+        view: viewMode,
+        screen: { uc: topOn(["Business Use Cases", "Use Cases"]), genie: topOn(["Genie Agents", "Genie Spaces"]),
+          dash: consOn(["AI/BI Dashboards", "AI/BI Dashboard", "Dashboards"]), apps: consOn(["Databricks Apps", "Apps"]) },
         industry: (typeof ARCH !== "undefined" && ARCH.industry) || null,
         cloud: (typeof ARCH !== "undefined" && ARCH.cloud && ARCH.cloud.provider) || null,
         label: (typeof deckIndustry === "function") ? deckIndustry() : null,
@@ -329,7 +343,7 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       return btoa(bin);
     });
 
-    const tag = `${ind}_${cloud}`;
+    const tag = caseTag(ind, cloud, view);
     const pptxPath = path.join(OUT, tag + ".pptx");
     const pdfPath = path.join(OUT, tag + ".pdf");
     fs.writeFileSync(pptxPath, u8FromB64(pptxB64));
@@ -359,7 +373,7 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       wellFormed: [slideOf(3), "ppt/slides/_rels/slide3.xml.rels"].every(f => shOk(`unzip -p "${pptxPath}" "${f}" | xmllint --noout -`)),
       zipOk: shOk(`unzip -tq "${pptxPath}"`) };
 
-    results.push({ tag, ...summary, slides: n, boardSlide, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
+    results.push({ tag, want: view, ...summary, slides: n, boardSlide, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
   }
 
   const b64Of = async (q, fn) => {
@@ -492,6 +506,10 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
     // Guard against a silent fall-back to generic: the loaded industry must be
     // the one requested (proves the lazy per-industry fetch actually resolved).
     checks.push(["industry==" + r.tag.split("_")[0], r.industry === r.tag.slice(0, r.tag.lastIndexOf("_"))]);
+    checks.push(["opened in " + r.want, r.view === r.want]);
+    checks.push(["deck carries the tiles on screen", ["uc", "genie", "dash", "apps"].every(k => r[k] === r.screen[k])]);
+    const twin = r.want === "simple" && results.find(x => x.tag === r.tag.replace("-simple", ""));
+    if (twin) checks.push(["Simplified deck is shorter than Detailed's " + twin.slides + " slides", r.slides < twin.slides && r.uc < twin.uc]);
     checks.push(["uc>0", hasUc]);
     checks.push(["ucInDeck", r.ucInDeck]);
     checks.push(["genie>0", hasGenieS]);
@@ -513,7 +531,7 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
     if (bad.length) fail++;
     console.log(`● ${r.tag}  [${r.label}]  ${bad.length ? "❌" : "✅"}`);
     console.log(`   secs: ${secLine}`);
-    console.log(`   uc=${r.uc} genie=${r.genie} dash=${r.dash} apps=${r.apps}  slides=${r.slides}(exp ${expSlides})  pdfPages=${r.pdfPages}  pptx=${(r.pptxBytes/1024).toFixed(0)}KB pdf=${(r.pdfBytes/1024).toFixed(0)}KB  board slide groups=${a.grpSp}/${a.groups} pics=${a.pics}/${a.imgs}`);
+    console.log(`   ${r.view}  uc=${r.uc} genie=${r.genie} dash=${r.dash} apps=${r.apps} (screen ${r.screen.uc}/${r.screen.genie}/${r.screen.dash}/${r.screen.apps})  slides=${r.slides}(exp ${expSlides})  pdfPages=${r.pdfPages}  pptx=${(r.pptxBytes/1024).toFixed(0)}KB pdf=${(r.pdfBytes/1024).toFixed(0)}KB  board slide groups=${a.grpSp}/${a.groups} pics=${a.pics}/${a.imgs}`);
     console.log(`   firstUc=${JSON.stringify(r.firstUc)} inDeck=${r.ucInDeck}`);
     console.log(`   pdf board smask=${r.pdfAlpha.smask} clear=${r.pdfAlpha.smask ? (r.pdfAlpha.clear * 100).toFixed(1) + "%" : "n/a"}`);
     if (bad.length) console.log("   FAILS: " + bad.map(b => b[0]).join(", "));

@@ -354,20 +354,6 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
-      - name: OCSF Event Streams
-        icon: stream
-        summary: Security telemetry that arrives already normalised to the Open Cybersecurity Schema Framework, landed as governed tables, so detections are written once against a vendor-neutral schema.
-        citations:
-          - ocsf
-        category: Normalized Security Schema (OCSF)
-        what_it_is: Security telemetry normalised to the Open Cybersecurity Schema Framework on arrival and landed as governed tables.
-        who_uses_it: Security data engineers and detection engineers.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: 100k-1M events/sec at peak
-            interval: Continuous
       - name: Kafka Security Topics
         icon: eventbus
         summary: High-volume endpoint, network and identity events carried on existing Kafka topics, consumed continuously into the lakehouse for near-real-time detection.
@@ -381,6 +367,20 @@ cloud_integrations:
             types:
               - semi-structured
             volume: 50k-1M events/sec at peak
+            interval: Continuous
+      - name: OCSF Event Streams
+        icon: stream
+        summary: Security telemetry that arrives already normalised to the Open Cybersecurity Schema Framework, landed as governed tables, so detections are written once against a vendor-neutral schema.
+        citations:
+          - ocsf
+        category: Normalized Security Schema (OCSF)
+        what_it_is: Security telemetry normalised to the Open Cybersecurity Schema Framework on arrival and landed as governed tables.
+        who_uses_it: Security data engineers and detection engineers.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: 100k-1M events/sec at peak
             interval: Continuous
       - name: Cortex XSOAR
         icon: orch

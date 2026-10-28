@@ -377,6 +377,18 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
+      - name: Market Data Bus
+        icon: stream
+        summary: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates land here and are drawn generically on the reference board.
+        category: Streaming Market Data Bus
+        what_it_is: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates consumed into the lakehouse.
+        who_uses_it: Market-data engineering and quant research.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: 50k-500k ticks/sec at peak
+            interval: Continuous streaming
       - name: FIX Protocol Feeds
         icon: stream
         summary: Streaming FIX order, execution and market-data sessions parsed on arrival and landed as structured events.
@@ -391,18 +403,6 @@ cloud_integrations:
               - semi-structured
             volume: 1-10k messages/sec at peak
             interval: Continuous (sub-second)
-      - name: Market Data Bus
-        icon: stream
-        summary: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates land here and are drawn generically on the reference board.
-        category: Streaming Market Data Bus
-        what_it_is: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates consumed into the lakehouse.
-        who_uses_it: Market-data engineering and quant research.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: 50k-500k ticks/sec at peak
-            interval: Continuous streaming
       - name: Vendor Data APIs
         icon: api
         summary: Bloomberg, LSEG and FactSet request/response and file APIs consumed inbound through managed ELT connectors.

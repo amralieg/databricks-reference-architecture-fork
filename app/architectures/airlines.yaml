@@ -514,7 +514,7 @@ pipelines:
         summary: Demand, willingness-to-pay, disruption recovery and remaining-useful-life models, and whether they still hold six months after deployment.
         uses:
           - - Feature Store
-            - Features defined once and read identically in training and serving.
+            - Features defined once from tables, streams or request-time data, and read identically in training and serving.
           - - MLflow
             - Every run tracked for audit and reproduction.
           - - Model Serving

@@ -51,20 +51,6 @@ sources:
   - name: Procurement & ERP
     icon: erp
     tiles:
-      - name: Ivalua
-        icon: erp
-        summary: Source-to-contract and procure-to-pay across raw, partial and assembled parts.
-        citations:
-          - ivalua
-        category: Source-to-Pay / Procurement
-        what_it_is: Runs source-to-contract and procure-to-pay across raw, partial and assembled parts, holding supplier contracts, purchase orders and lead-time commitments across the supply base.
-        who_uses_it: Procurement, Supplier management and Materials planning.
-        data_out:
-          batch:
-            types:
-              - structured
-            volume: 2-8 GB/day
-            interval: Nightly + hourly deltas
       - name: SAP S/4HANA
         icon: erp
         summary: ERP of record for procurement, inventory, production orders and finance.
@@ -79,6 +65,20 @@ sources:
               - structured
             volume: 20-80 GB/day
             interval: Nightly batch + hourly deltas
+      - name: Ivalua
+        icon: erp
+        summary: Source-to-contract and procure-to-pay across raw, partial and assembled parts.
+        citations:
+          - ivalua
+        category: Source-to-Pay / Procurement
+        what_it_is: Runs source-to-contract and procure-to-pay across raw, partial and assembled parts, holding supplier contracts, purchase orders and lead-time commitments across the supply base.
+        who_uses_it: Procurement, Supplier management and Materials planning.
+        data_out:
+          batch:
+            types:
+              - structured
+            volume: 2-8 GB/day
+            interval: Nightly + hourly deltas
   - name: Manufacturing MES
     icon: iot
     tiles:

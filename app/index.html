@@ -875,7 +875,7 @@
      OUTER box of a zone rather than disappearing under it. --gut and --pgap are
      sized so the arrow that remains after that inset still reads as an arrow. */
   :root { --designw:2036px; --railw:290px; --gut:60px; --armw:230px; --pgap:48px;
-    --headh:38px; --headgap:6px; --zo:6px; --as:4px;
+    --headh:38px; --headgap:6px; --zo:6px; --as:4px; --zxs:26px; --zxi:8px;
     --c-src:var(--railw); --c-cons:var(--railw); --c-gutl:var(--gut); --c-gutr:var(--gut); }
   .col.src    { grid-column:1; grid-row:r-head / r-end; }
   /* the head caps the upper block only: the right pocket is external to the
@@ -2002,7 +2002,7 @@
   body.zoom.zoom-src, body.zoom.zoom-ing, body.zoom.zoom-ppl, body.zoom.zoom-cons { --designw:600px; }
   body.zoom.zoom-band { --designw:1120px; }
 
-  .zx { flex:0 0 auto; width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center;
+  .zx { flex:0 0 auto; width:var(--zxs); height:var(--zxs); display:inline-flex; align-items:center; justify-content:center;
     padding:0; border:1px solid rgba(255,255,255,.42); border-radius:7px; background:rgba(255,255,255,.14);
     color:var(--on-accent); cursor:pointer; transition:background .15s ease, border-color .15s ease; }
   .zx svg { width:13px; height:13px; display:block; }
@@ -2010,7 +2010,9 @@
   .zx:hover { background:rgba(255,255,255,.3); border-color:rgba(255,255,255,.72); }
   .zx:focus-visible { outline:2px solid var(--on-accent); outline-offset:2px; }
   .colhead, .pockhead, .hband { position:relative; }
-  .colhead .zx, .pockhead .zx { position:absolute; right:8px; top:50%; transform:translateY(-50%); }
+  .colhead .zx, .pockhead .zx { position:absolute; right:var(--zxi); top:50%; transform:translateY(-50%); }
+  body:not(.exp-static) .colhead:has(> .zx), body:not(.exp-static) .pockhead:has(> .zx) { padding-right:calc(var(--zxi) + var(--zxs) + 4px); }
+  body:not(.exp-static) .pockhead:has(> .zx) { padding-left:20px; }
   /* band control sits in the reserved right gutter (.cloud padding-right), so it
      clears every tile: centred on the strip in the row layout, top-right once
      the band reflows to a column on zoom */
@@ -2598,13 +2600,13 @@
   body.view-simple .ctile .ic { width:20px; height:20px; }
   body.view-simple .ctile .ct-name { font-size:17px; line-height:1.18; }
   body.view-simple .hband.top .cloud-lbl { flex-basis:150px; }
-  body.view-simple .hband.top .ctile { flex-direction:column; align-items:flex-start; gap:5px; padding:7px 8px; }
+  body.view-simple .hband.top .ctile { flex-direction:column; align-items:flex-start; gap:5px; padding:7px 6px; }
   body.view-simple .hband.top .ctile .ct { width:100%; }
-  body.view-simple .hband.top .ctile .ct-name { font-size:16px; }
+  body.view-simple .hband.top .ctile .ct-name { font-size:15px; }
   body.view-simple .rail.ing .rtile, body.view-simple .rail.ppl .rtile { gap:6px; padding:6px 7px; }
   body.view-simple .rail.ing .rtile .ic, body.view-simple .rail.ing .rtile svg.mark,
   body.view-simple .rail.ppl .rtile .ic, body.view-simple .rail.ppl .rtile svg.mark { width:16px; height:16px; }
-  body.view-simple .rail.ing .t-name, body.view-simple .rail.ppl .t-name { font-size:15px; }
+  body.view-simple .rail.ing .t-name, body.view-simple .rail.ppl .t-name { font-size:14px; }
   /* ── First-visit guided tour ──────────────────────────────────────────────
      A spotlight walk-through of the board, ported from the model-viewer tour.
      The hole is one element whose huge outer box-shadow dims the whole page
@@ -3431,7 +3433,7 @@ const ARCH = {
           long:"Managed endpoints for custom, fine-tuned and external models, scaled to zero when idle, traced through MLflow and governed by Unity Gateway.",
           rel:["Foundation Model APIs","Unity Gateway","MLflow"] },
         { n:"AI Search", s:"Retrieval", ic:"ucat", st:"GA",
-          long:"Formerly Databricks Vector Search. Managed vector indexes kept in sync with governed tables, so retrieval for agents and search inherits the same permissions as the source data.",
+          long:"Formerly Databricks Vector Search. Managed vector indexes kept in sync with governed tables, so retrieval for agents and search inherits the same permissions as the source data. For batch similarity search over large tables, a NEAREST BY join runs the search in SQL on the tables themselves, with no endpoint to run.",
           rel:["Agent Bricks","Unity Catalog"] },
       ]} ]},
 
@@ -3442,8 +3444,8 @@ const ARCH = {
           long:"Governed dashboards and natural-language analytics built directly on lakehouse tables, with Genie behind the ask-a-question experience.",
           caps2:["AI/BI Dashboards","AI/BI Genie"], rel:["Genie One","Lakehouse"] },
         { n:"Apps", s:"Custom Apps", ic:"apps", st:"GA",
-          long:"Build and host interactive data and AI applications next to governed data. DAIS 2026 introduced App Spaces for enterprise app governance and Serverless Micro Apps for lightweight, scale-to-zero deployment.",
-          caps2:["App Spaces","Serverless Micro Apps"], rel:["Lakebase","Genie App Builder"] },
+          long:"Build and host interactive data and AI applications next to governed data. DAIS 2026 introduced App Spaces for enterprise app governance and Serverless Micro Apps for lightweight, scale-to-zero deployment. Horizontal scaling runs one app across several instances behind a single URL, so a restart never takes it offline and deployments roll out with no downtime.",
+          caps2:["App Spaces","Serverless Micro Apps","Horizontal scaling"], rel:["Lakebase","Genie App Builder"] },
         { n:"Lakewatch", s:"Agentic Security", ic:"watch", st:"Private Preview",
           long:"Agentic SIEM on the security lakehouse: ingests high-volume security telemetry, triages alerts autonomously and drives SOC investigation, keeping the telemetry in your own object storage rather than a vendor-held index.",
           caps2:["Agentic SIEM","Detection-as-code","AI SOC"], rel:["Lakeflow","Unity Catalog"] },
@@ -3528,7 +3530,7 @@ const ARCH = {
     { id:"gov", name:"Unified Governance", ic:"zshield", sub:"Data + AI control and cost management", tone:"green", inline:true, blk:"bot",
       rows:[ { kind:"cards", items:[
         { n:"Unity Catalog", ic:"ucat", st:"GA", caps:["Access","Semantics","Lineage","Observability"],
-          long:"One governance model for data and AI: permissions and ABAC, column-level lineage, quality, discovery and classification. DAIS 2026 added three business-semantics capabilities for defining and governing shared business knowledge.",
+          long:"One governance model for data and AI: permissions and ABAC, column-level lineage, quality, discovery and classification. Anyone blocked from a table can request access where they work, and the request goes to its owner or your own approval tool. Catalog commits make Unity Catalog the record of every Delta and Iceberg table's state, so external engines read and write managed tables under the same policies. DAIS 2026 added three business-semantics capabilities for defining and governing shared business knowledge.",
           caps2:["Business Glossary","Domains","Metrics"],
           rel:["Genie Ontology","Unity Gateway","OpenSharing"] },
         { n:"Unity Gateway", ic:"gateway", st:"GA", caps:["Models","Security","Cost Optimization"],
@@ -3750,7 +3752,7 @@ const ARCH = {
           long:"The team building the forecasting, propensity, risk and pricing models, and the one accountable for whether a model still holds six months after it shipped.",
           uses:[
             ["Notebooks & IDEs", "Python, R and Scala against governed tables, in the workspace or in VS Code."],
-            ["Feature Store", "Features defined once and read identically in training and in serving, which is where most drift starts."],
+            ["Feature Store", "Features defined once, from Delta tables, Kafka streams or request-time data, and read identically in training and in serving, which is where most drift starts."],
             ["MLflow", "Every run, parameter and metric tracked, so a production model can still be explained later."],
             ["Model Serving", "Models published as endpoints the apps and agents call, with no separate serving stack to own."],
           ],
@@ -4625,6 +4627,18 @@ function viewBand(band){
   });
   return kept ? Object.assign({}, band, { rows }) : band;
 }
+function viewBandHidden(band){
+  const shown = viewBand(band);
+  if(shown === band) return [];
+  const out = [];
+  (band.rows || []).forEach((r, i)=>{
+    const key = r.kind === "cards" ? "items" : (r.kind === "infra" && Array.isArray(r.formats)) ? "formats" : "";
+    if(!key) return;
+    const kept = shown.rows[i][key] || [];
+    (r[key] || []).forEach(tile=>{ if(kept.indexOf(tile) < 0) out.push({ tile, arr:r[key], section:band.name }); });
+  });
+  return out;
+}
 function dispName(n){ const label = (displayMode === "category" && nameToCat[n]) ? nameToCat[n] : n; return T(label); }
 /* A tile's own label reads its `cat` straight off the object, not through the
    nameToCat map: renderRail computes the label before reg() has filled the map
@@ -5164,7 +5178,7 @@ function renderTop(target){
 
 /* ---------- full build ---------- */
 const CUSTOM_LS = "dbxarch.dais2026.custom";
-const SCHEMA = 47;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
+const SCHEMA = 48;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
 /* Keys inside a provider dataset that hold tile arrays. Every surface that shows
    provider-specific content reads from this list, so adding a surface later means
    adding one key here rather than hunting for loops. */
@@ -7463,7 +7477,7 @@ function regionRows(){
   const rows = [], meta = cr.meta || {}, legend = cr.legend || {}, feats = cr.features || {}, marks = cr.marks || {};
   const feature = ((REGIONS.sources || {})[curCloud()] || {}).feature || "";
   const boxes = {}, plain = {};
-  Object.values(byId).forEach(rec=>{
+  Object.values(byId).concat(...(ARCH.bands || []).map(viewBandHidden)).forEach(rec=>{
     const t = rec && rec.tile;
     if(!t || !t.n || !isPlatformProduct(t, rec)) return;
     const lab = regionFeatureLabel(t);
@@ -12578,7 +12592,7 @@ function paintBrandLogo(){
    query so no CDN edge can answer it): when its build differs from this build,
    reload once onto a cache-busting URL so the browser must pull the new HTML.
    BUILD here and app/version.json MUST be bumped together on every deploy. */
-const BUILD = "0.6.4";
+const BUILD = "0.6.5";
 async function staleReload(){
   try {
     const r = await fetch(APP_BASE + "version.json?_=" + Date.now(), { cache:"no-store" });

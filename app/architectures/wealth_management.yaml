@@ -253,6 +253,20 @@ sources:
   - name: Onboarding & Compliance
     icon: gavel
     tiles:
+      - name: Fenergo Onboarding
+        icon: identity
+        summary: Client lifecycle management for KYC, entity data and account opening, the source of verified client and beneficial-owner records.
+        citations:
+          - fenergo
+        category: Client Lifecycle Management (KYC)
+        what_it_is: Client lifecycle management for KYC, entity data and account opening, the source of verified client and beneficial-owner records.
+        who_uses_it: Onboarding, financial crime and compliance.
+        data_out:
+          batch:
+            types:
+              - structured
+            volume: 1-10 GB/day KYC + entity records
+            interval: Nightly batch
       - name: DocuSign eSignature
         icon: docs
         summary: Electronic signature and agreement workflow for account opening, disclosures and advisory agreements across the household.
@@ -273,20 +287,6 @@ sources:
               - semi-structured
             volume: Envelope completion events
             interval: Continuous (webhooks)
-      - name: Fenergo Onboarding
-        icon: identity
-        summary: Client lifecycle management for KYC, entity data and account opening, the source of verified client and beneficial-owner records.
-        citations:
-          - fenergo
-        category: Client Lifecycle Management (KYC)
-        what_it_is: Client lifecycle management for KYC, entity data and account opening, the source of verified client and beneficial-owner records.
-        who_uses_it: Onboarding, financial crime and compliance.
-        data_out:
-          batch:
-            types:
-              - structured
-            volume: 1-10 GB/day KYC + entity records
-            interval: Nightly batch
       - name: LexisNexis KYC
         icon: gavel
         summary: Identity verification, sanctions and PEP screening data used to onboard and periodically re-screen clients and their entities.

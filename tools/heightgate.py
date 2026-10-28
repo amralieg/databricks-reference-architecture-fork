@@ -63,7 +63,7 @@ DRIVER = r"""
              clip: clip, squeezed: squeezed, clipped: clipped };
   }
   /* Every shape, not just the one the board opens on. */
-  var SHAPES = ["z", "s", "t", "rt"];
+  var SHAPES = ["z", "s", "t", "rt"], VIEWS = ["detailed", "simple"];
   var ids = (window.HG_ONLY && window.HG_ONLY.length) ? window.HG_ONLY : ["generic"].concat(INDUSTRY_CATALOG.map(function(row){ return row[0]; })
     .filter(function(id){ return !INDUSTRY_BUILT || INDUSTRY_BUILT.has(id); }));
   var res = {}, failed = [];
@@ -80,16 +80,18 @@ DRIVER = r"""
       let loaded = false;
       for(let attempt = 0; attempt < 3 && !loaded; attempt++){ loaded = await loadIndustry(id); if(!loaded) await wait(500); }
       if(!loaded){ failed.push(id + " (" + (await whyNot(id)) + ")"); continue; }
-      for(var j = 0; j < SHAPES.length; j++){
+      for(var v = 0; v < VIEWS.length; v++) for(var j = 0; j < SHAPES.length; j++){
+        viewMode = VIEWS[v];
         await applyIndustry(id, false);
         try { applyShape(SHAPES[j], false); } catch(e){}
         await wait(300);
-        res[id + "@" + SHAPES[j]] = measure();
+        if(document.body.classList.contains("view-simple") !== (VIEWS[v] === "simple")) continue;
+        res[id + "@" + SHAPES[j] + (VIEWS[v] === "simple" ? ".simple" : "")] = measure();
       }
     }
     var pre = document.createElement("pre");
     pre.id = "GATE";
-    pre.textContent = JSON.stringify({ res: res, failed: failed, expected: ids.length * SHAPES.length });
+    pre.textContent = JSON.stringify({ res: res, failed: failed, expected: ids.length * SHAPES.length * VIEWS.length });
     document.body.appendChild(pre);
   }
   (typeof INTRO_DONE !== "undefined" ? INTRO_DONE : Promise.resolve()).then(run);

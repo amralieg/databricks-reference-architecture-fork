@@ -17,6 +17,11 @@ See `README.md`. What every change here depends on:
 - The AI variant is NOT a second board. `app/ai/app.py` serves the SAME `app/index.html`
   and injects the AI layer (`app/ai/ai.css` + `app/ai/ai.js`) at request time. There is
   only ONE board file to edit; a fix in `app/index.html` reaches the AI app automatically.
+- Every board has two views on the same shape and boxes: Simplified, the default, and
+  Detailed. Simplified keeps the first tiles of each group (`SIMPLE_RAIL_CAP`,
+  `SIMPLE_TOP_CAP`), the use cases with customer stories, the platform headline set and one
+  cloud tile per role. So the first tile of every group in an industry YAML is its most
+  essential one, and it never repeats what another group already leads with.
 
 ## 2. Layout
 
@@ -239,10 +244,13 @@ node   tools/smoke_stages.js                 # every box carries its docs stage 
 python3 tools/markgen.py --check             # product marks, cloud logos and per-cloud icon bundles current, inside the size budget, and every one matched to a tile
 node   tools/verify_logos.js                 # each cloud: provider logo on the band, official icons on its tiles, none on a tile showing its category, Databricks marks shown, white plates in dark mode, cloud switch, offline export
 python3 tools/test_markgen.py                # markgen, offline: style inlining, unsafe logos refused, id namespacing, plate fit, container crop and cut-outs, shared icons, cache and key
+node   tools/verify_contrast.js              # every text on the board, the toolbar and its menus, the details and region panels, tooltips, the tour and the deck clears WCAG AA on its own background in every palette, light and dark, in both views
 ```
 
 Every browser gate waits for the opening intro to finish before it measures the board: call
-`boardReady(page)` from `tools/lib_serve.js` after each board load.
+`boardReady(page)` from `tools/lib_serve.js` after each board load. The board opens in the
+Simplified view, so a gate names the view it measures with `withView()` from the same file, and
+a gate that checks what a board shows runs in both views.
 
 Local preview: `cd app && python3 -m http.server 8777` then open
 `http://localhost:8777/index.html`.

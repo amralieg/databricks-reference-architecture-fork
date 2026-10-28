@@ -241,6 +241,18 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
+      - name: Mortality Table Updates
+        icon: chart
+        summary: Industry mortality and lapse assumptions published by regulators and reinsurers.
+        category: Actuarial Assumption Reference
+        what_it_is: Industry mortality and lapse assumption tables published by regulators and reinsurers, consumed as reference for pricing and reserving.
+        who_uses_it: Actuarial & Reserving, experience-studies and pricing teams.
+        data_out:
+          batch:
+            types:
+              - structured
+            volume: MBs (tables)
+            interval: Periodic release
       - name: ACORD Life Standards
         icon: api
         summary: Application, policy and claims XML messages normalised on ingest for straight-through processing.
@@ -270,18 +282,6 @@ cloud_integrations:
               - semi-structured
             volume: MBs (specifications)
             interval: Annual / on release
-      - name: Mortality Table Updates
-        icon: chart
-        summary: Industry mortality and lapse assumptions published by regulators and reinsurers.
-        category: Actuarial Assumption Reference
-        what_it_is: Industry mortality and lapse assumption tables published by regulators and reinsurers, consumed as reference for pricing and reserving.
-        who_uses_it: Actuarial & Reserving, experience-studies and pricing teams.
-        data_out:
-          batch:
-            types:
-              - structured
-            volume: MBs (tables)
-            interval: Periodic release
 pipelines:
   - name: Business
     icon: zbrief

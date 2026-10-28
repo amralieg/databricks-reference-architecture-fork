@@ -274,20 +274,6 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
-      - name: UN/EDIFACT COPRAR / CODECO
-        icon: stream
-        summary: COPRAR and CODECO vessel and gate moves and IFTMIN and IFTSTA transport messages from shipping lines, parsed on arrival.
-        citations:
-          - edifact
-        category: EDI Transaction Messages
-        what_it_is: Carries COPRAR/CODECO vessel and gate moves and IFTMIN/IFTSTA transport messages from shipping lines, parsed on arrival and matched to units.
-        who_uses_it: Terminal Operations, Customs Compliance and Integration Engineers.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: tens-hundreds of messages/sec
-            interval: Continuous message flow
       - name: Port Authority AIS Feed
         icon: api
         summary: AIS-derived berth occupancy estimates from the port authority, distinct from PCS pilot-order and port-call events.
@@ -302,6 +288,20 @@ cloud_integrations:
               - semi-structured
             volume: tens of events/sec
             interval: Continuous (near real-time)
+      - name: UN/EDIFACT COPRAR / CODECO
+        icon: stream
+        summary: COPRAR and CODECO vessel and gate moves and IFTMIN and IFTSTA transport messages from shipping lines, parsed on arrival.
+        citations:
+          - edifact
+        category: EDI Transaction Messages
+        what_it_is: Carries COPRAR/CODECO vessel and gate moves and IFTMIN/IFTSTA transport messages from shipping lines, parsed on arrival and matched to units.
+        who_uses_it: Terminal Operations, Customs Compliance and Integration Engineers.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: tens-hundreds of messages/sec
+            interval: Continuous message flow
       - name: Customs Single Window
         icon: gavel
         summary: Government clearance status and inspection results consumed inbound.

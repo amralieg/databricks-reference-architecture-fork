@@ -45,4 +45,11 @@ function boardReady(page) {
   return page.waitForFunction(() => document.body && document.body.dataset.intro === 'done', null, { timeout: 20000 });
 }
 
-module.exports = { serve, boardReady, APP_ROOT, MIME };
+const VIEWS = ['simple', 'detailed'];
+function withView(q, view) {
+  if (view !== 'detailed') return q;
+  const bare = !q.includes('?') && !q.includes('/');
+  return q + (bare ? (q ? '&' : '') : (q.includes('?') ? '&' : '?')) + 'view=detailed';
+}
+
+module.exports = { serve, boardReady, withView, VIEWS, APP_ROOT, MIME };

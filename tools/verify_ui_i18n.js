@@ -3,7 +3,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
-const { serve, boardReady } = require('./lib_serve');
+const { serve, boardReady, withView } = require('./lib_serve');
 
 const ROOT = path.join(__dirname, '..');
 const TR = path.join(ROOT, 'app', 'translations');
@@ -35,6 +35,16 @@ const SENSE = [
   { what: 'a GovCloud region read as a governor or a government', src: /^US Gov\b/,
     bad: { de: /gouverneur|regierung/i, es: /gobern/i, pt: /governa|governo/i, it: /governat|governo/i, fr: /gouvern/i, nl: /regering/i,
            sv: /regering/i, fi: /hallitus/i, da: /regering|guvern/i, ja: /知事|政府/, ko: /주지사|정부/, zh: /政府/, ar: /حكوم|حاكم/, he: /ממשל|מושל/ } },
+  { what: 'model serving read as a tennis serve, a cash withdrawal or serving food', src: /\bserv(ing|ed)\b/i,
+    bad: { de: /aufschlag/i, pt: /\bsaques?\b/i, fi: /tarjoil/i } },
+  { what: 'model training read as sports practice or an internship', src: /\btraining\b/i, except: /athlete|training load/i,
+    bad: { it: /allenament/i, fi: /harjoittel/i } },
+  { what: 'a job run read as a race', src: /\bruns?\b/i, except: /home run|\brace\b/i,
+    bad: { pt: /\bcorridas?\b/i, it: /\bcors[ae]\b/i, es: /\bcarreras?\b/i } },
+  { what: 'an endpoint read as a full stop or a final point', src: /\bendpoints?\b/i,
+    bad: { es: /puntos? finales?/i, fr: /points? fina(l|ux)\b/i, hi: /समापन बिंदु/ } },
+  { what: 'the name Databricks Vector Search translated', src: /Databricks Vector Search/,
+    bad: Object.fromEntries(LANGS.map(l => [l, /^(?![\s\S]*Vector Search)/])) },
 ];
 const prose = s => { const w = s.trim().split(/\s+/); return w.length >= 3 && w.some(x => /^[a-z]{2,}/.test(x)); };
 
@@ -72,7 +82,7 @@ async function rendered(){
     await ctx.addInitScript(() => { try { localStorage.setItem('dbx-arch-tour-v1', '1'); } catch (e) {} });
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(e.message));
-    await page.goto(base + q, { waitUntil: 'networkidle' });
+    await page.goto(withView(base + q, 'detailed'), { waitUntil: 'networkidle' });
     await boardReady(page);
     await page.waitForTimeout(300);
     const r = await page.evaluate(async (view) => {

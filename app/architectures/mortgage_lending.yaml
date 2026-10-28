@@ -355,6 +355,18 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
+      - name: Bureau & Vendor APIs
+        icon: api
+        summary: Credit, verification, pricing and property request/response APIs consumed inbound through managed ELT connectors and existing event topics.
+        category: Bureau & Vendor Streaming API
+        what_it_is: Credit, verification, pricing and property request/response APIs consumed inbound through managed ELT connectors and existing event topics.
+        who_uses_it: Loan data engineering, underwriting and secondary marketing.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: Vendor API responses
+            interval: Continuous (API/events)
       - name: MISMO Data Feeds
         icon: api
         summary: MISMO-standard XML loan data exchanged with investors, insurers and vendors, parsed on arrival and landed as structured events.
@@ -387,18 +399,6 @@ cloud_integrations:
               - semi-structured
             volume: Document images + extracts
             interval: Continuous (as received)
-      - name: Bureau & Vendor APIs
-        icon: api
-        summary: Credit, verification, pricing and property request/response APIs consumed inbound through managed ELT connectors and existing event topics.
-        category: Bureau & Vendor Streaming API
-        what_it_is: Credit, verification, pricing and property request/response APIs consumed inbound through managed ELT connectors and existing event topics.
-        who_uses_it: Loan data engineering, underwriting and secondary marketing.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: Vendor API responses
-            interval: Continuous (API/events)
 pipelines:
   - name: Business
     icon: zbrief

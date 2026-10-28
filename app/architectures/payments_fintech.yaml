@@ -274,6 +274,20 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
+      - name: Visa / Mastercard BIN
+        icon: partner
+        summary: Issuer and product metadata consumed inbound for routing and fraud.
+        citations:
+          - visa-developer
+        category: Card Network Reference Data
+        what_it_is: Issuer identification and product metadata consumed inbound for routing decisions and fraud enrichment.
+        who_uses_it: Payments product, routing engineering and fraud.
+        data_out:
+          batch:
+            types:
+              - structured
+            volume: BIN + product reference
+            interval: Daily/weekly updates
       - name: SWIFT ISO 20022
         icon: api
         summary: Cross-border payment messages parsed into structured settlement events.
@@ -293,20 +307,6 @@ cloud_integrations:
               - semi-structured
             volume: Payment messages
             interval: Continuous (message queue)
-      - name: Visa / Mastercard BIN
-        icon: partner
-        summary: Issuer and product metadata consumed inbound for routing and fraud.
-        citations:
-          - visa-developer
-        category: Card Network Reference Data
-        what_it_is: Issuer identification and product metadata consumed inbound for routing decisions and fraud enrichment.
-        who_uses_it: Payments product, routing engineering and fraud.
-        data_out:
-          batch:
-            types:
-              - structured
-            volume: BIN + product reference
-            interval: Daily/weekly updates
       - name: Open Banking Feeds
         icon: stream
         summary: Account aggregation and consent-based transaction imports for lending.

@@ -321,20 +321,6 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
-      - name: IAB Tech Lab OpenRTB
-        icon: api
-        summary: Bid request and response logs from programmatic exchanges, parsed into structured auction events.
-        citations:
-          - iab-openrtb
-        category: Programmatic Auction Logs (OpenRTB)
-        what_it_is: Bid request and response logs from programmatic exchanges, parsed into structured auction events.
-        who_uses_it: Programmatic trading and Data science teams.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: 100k-1M bid events/sec
-            interval: Continuous
       - name: LiveRamp Data Clean Room
         icon: partner
         summary: Privacy-safe overlap and attribution queries against retailer and publisher partners.
@@ -349,6 +335,20 @@ cloud_integrations:
               - structured
             volume: 1-10 GB/day overlap results
             interval: Daily
+      - name: IAB Tech Lab OpenRTB
+        icon: api
+        summary: Bid request and response logs from programmatic exchanges, parsed into structured auction events.
+        citations:
+          - iab-openrtb
+        category: Programmatic Auction Logs (OpenRTB)
+        what_it_is: Bid request and response logs from programmatic exchanges, parsed into structured auction events.
+        who_uses_it: Programmatic trading and Data science teams.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: 100k-1M bid events/sec
+            interval: Continuous
       - name: Comscore Campaign Ratings
         icon: chart
         summary: Digital campaign delivery and demographic composition for guaranteed buys.

@@ -1,5 +1,5 @@
 const { chromium } = require("playwright");
-const { serve, boardReady } = require("./lib_serve");
+const { serve, boardReady, withView } = require("./lib_serve");
 
 const CLOUDS = ["aws", "azure", "gcp"];
 const CONNECTOR_EXEMPT = {
@@ -39,20 +39,21 @@ function vendorPatterns(catalog) {
   await page.addInitScript(() => { try { localStorage.setItem("dbx-arch-tour-v1", "1"); } catch (e) {} });
   const errs = [];
   page.on("pageerror", e => errs.push(e.message));
-  const tiles = [], unseen = [], parity = [];
-  for (const cloud of CLOUDS) {
-    await page.goto(`${base}?cloud=${cloud}`, { waitUntil: "networkidle" });
+  const tiles = [], simpleTiles = [], unseen = [], parity = [];
+  const passes = CLOUDS.map(cloud => ["detailed", cloud]).concat([["simple", CLOUDS[0]]]);
+  for (const [view, cloud] of passes) {
+    await page.goto(withView(`${base}?cloud=${cloud}`, view), { waitUntil: "networkidle" });
     await boardReady(page);
     await page.waitForTimeout(800);
     const ids = await page.evaluate(() => ["generic"].concat(INDUSTRY_CATALOG.map(x => x[0])));
     for (const id of ids) {
       await page.evaluate(async i => { i === "generic" ? build() : await applyIndustry(i, false); }, id);
-      tiles.push(...await page.evaluate(({ board, cloud }) => Object.values(byId).filter(r => r.tile && typeof r.tile.n === "string").map(r => {
+      (view === "detailed" ? tiles : simpleTiles).push(...await page.evaluate(({ board, cloud }) => Object.values(byId).filter(r => r.tile && typeof r.tile.n === "string").map(r => {
         const t = r.tile, cf = t.cat ? connectorFor(t) : null, df = t.cat ? dataConnectorFor(t) : null;
         return { board, cloud, n: t.n, canon: canonName(t.n), head: r.arr == null, title: r.el.classList.contains("plat-head"),
           src: !!t.cat, kinds: hlKinds(t), dots: [...r.el.querySelectorAll(":scope > .badge-dot[data-hl]")].map(d => d.dataset.hl),
           cf: cf ? cf.n : null, df: df ? df.n : null, dfTier: df ? df.tier : null, dfKind: df ? df.kind : null };
-      }), { board: id, cloud }));
+      }), { board: view === "simple" ? id + "@simple" : id, cloud }));
       unseen.push(...await page.evaluate(board => {
         const out = [], probe = document.createElement("style");
         closeDrawer();
@@ -72,8 +73,8 @@ function vendorPatterns(catalog) {
         }
         probe.remove();
         return out;
-      }, `${id}/${cloud}`));
-      if (cloud === CLOUDS[0]) parity.push(...await page.evaluate(board => {
+      }, `${view === "simple" ? id + "@simple" : id}/${cloud}`));
+      if (view === "detailed" && cloud === CLOUDS[0]) parity.push(...await page.evaluate(board => {
         const seen = window.__hlSeen || (window.__hlSeen = new Set()), out = [];
         const kindOf = d => (String(d.className).match(/\bhl-(story|conn|tour|demo|course|cert|video|accel)\b/) || [])[1];
         for (const [id, r] of Object.entries(byId)) {
@@ -117,7 +118,7 @@ function vendorPatterns(catalog) {
 
   unseen.forEach((m, i) => fail("unseen:" + m.replace(/^[^:]+\/[a-z]+: /, ""), m));
   parity.forEach(m => fail("parity:" + m, m));
-  for (const r of tiles) {
+  for (const r of tiles.concat(simpleTiles)) {
     const want = r.title ? [] : r.kinds;
     if (want.length !== r.dots.length || want.some(k => !r.dots.includes(k)))
       fail("dots:" + r.board + ":" + r.n, `'${r.n}' (${r.board}) draws dots [${r.dots}] but carries [${want}]`);
@@ -160,8 +161,12 @@ function vendorPatterns(catalog) {
   for (const k of Object.keys(NAME_EXEMPT)) if (!leafNames.has(k)) fail("stale-name:" + k, `name exemption for '${k}' matches no tile`);
   for (const k of Object.keys(CONNECTOR_EXEMPT)) if (!leafNames.has(k)) fail("stale-conn:" + k, `connector exemption for '${k}' matches no tile`);
 
+  const detailedFirst = tiles.filter(r => r.cloud === CLOUDS[0]).length;
+  if (!simpleTiles.length || simpleTiles.length >= detailedFirst)
+    fail("simple-pass", `the Simplified pass placed ${simpleTiles.length} tiles, not fewer than Detailed's ${detailedFirst} on ${CLOUDS[0]}`);
   const srcCount = new Set(leaf.filter(r => r.src).map(r => r.n)).size;
   console.log(`boards: ${tiles.length ? new Set(tiles.map(r => r.board)).size : 0} x ${CLOUDS.length} clouds, tile placements: ${tiles.length}, distinct leaf tiles: ${leafNames.size}`);
+  console.log(`Simplified on ${CLOUDS[0]}: ${simpleTiles.length} tile placements against ${detailedFirst} in Detailed, every one checked for its dots`);
   console.log(`source tiles: ${srcCount}, catalog connectors: ${res.catalog.length}, aliases: ${Object.keys(res.aliases).length}`);
   console.log(`resourced entries: ${Object.entries(resourced).map(([k, v]) => k + "=" + v.length).join(" ")}`);
   console.log(`exempt with a reason: orphans ${Object.keys(ORPHAN_EXEMPT).length}, names ${Object.keys(NAME_EXEMPT).length}, connectors ${Object.keys(CONNECTOR_EXEMPT).length}`);

@@ -4,25 +4,6 @@ sources:
   - name: Order & Execution
     icon: market
     tiles:
-      - name: Charles River IMS
-        icon: market
-        summary: 'State Street''s investment management system: orders, allocations, compliance rules and positions, the buy-side system of record for the order lifecycle.'
-        citations:
-          - charles-river
-        category: Investment Management System (OMS)
-        what_it_is: 'State Street''s buy-side investment and order management system: the system of record for the order lifecycle, allocations, compliance rules and positions.'
-        who_uses_it: Portfolio managers, buy-side traders and investment operations.
-        data_out:
-          batch:
-            types:
-              - structured
-            volume: 10-40 GB/day positions + orders
-            interval: End-of-day batch
-          stream:
-            types:
-              - semi-structured
-            volume: hundreds of order events/sec
-            interval: Continuous CDC (near real-time)
       - name: BlackRock Aladdin
         icon: erp
         summary: Portfolio, order and risk platform holding positions, exposures and the book of record across the investment process.
@@ -42,6 +23,25 @@ sources:
               - semi-structured
             volume: hundreds of position events/sec
             interval: Continuous CDC
+      - name: Charles River IMS
+        icon: market
+        summary: 'State Street''s investment management system: orders, allocations, compliance rules and positions, the buy-side system of record for the order lifecycle.'
+        citations:
+          - charles-river
+        category: Investment Management System (OMS)
+        what_it_is: 'State Street''s buy-side investment and order management system: the system of record for the order lifecycle, allocations, compliance rules and positions.'
+        who_uses_it: Portfolio managers, buy-side traders and investment operations.
+        data_out:
+          batch:
+            types:
+              - structured
+            volume: 10-40 GB/day positions + orders
+            interval: End-of-day batch
+          stream:
+            types:
+              - semi-structured
+            volume: hundreds of order events/sec
+            interval: Continuous CDC (near real-time)
       - name: Bloomberg AIM
         icon: market
         summary: Buy-side order and investment management, trade capture and compliance feeding executions and positions into the estate.
@@ -373,6 +373,18 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
+      - name: Market Data Bus
+        icon: stream
+        summary: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates land here and are drawn generically on the reference board.
+        category: Streaming Market Data Bus
+        what_it_is: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates consumed into the lakehouse.
+        who_uses_it: Market-data engineering and quant research.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: 50k-500k ticks/sec at peak
+            interval: Continuous streaming
       - name: FIX Protocol Feeds
         icon: stream
         summary: Streaming FIX order, execution and market-data sessions parsed on arrival and landed as structured events.
@@ -387,18 +399,6 @@ cloud_integrations:
               - semi-structured
             volume: 1-10k messages/sec at peak
             interval: Continuous (sub-second)
-      - name: Market Data Bus
-        icon: stream
-        summary: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates land here and are drawn generically on the reference board.
-        category: Streaming Market Data Bus
-        what_it_is: Existing Kafka and multicast market-data topics carrying ticks, quotes and reference updates consumed into the lakehouse.
-        who_uses_it: Market-data engineering and quant research.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: 50k-500k ticks/sec at peak
-            interval: Continuous streaming
       - name: Vendor Data APIs
         icon: api
         summary: Bloomberg, LSEG and FactSet request/response and file APIs consumed inbound through managed ELT connectors.

@@ -1,7 +1,7 @@
 const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
-const { serve, boardReady } = require("./lib_serve");
+const { serve, boardReady, withView, VIEWS } = require("./lib_serve");
 
 const LANGS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "app", "translations", "manifest.json"), "utf8")).languages.map(l => l.code);
 
@@ -18,8 +18,8 @@ const LANGS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "app", "tran
   await page.goto(base, { waitUntil: "networkidle" });
   await boardReady(page);
   const SHAPES = await page.evaluate(() => SHAPES.map(s => s.k));
-  for (const shape of SHAPES) for (const lang of LANGS) {
-    await page.goto(`${base}?lang=${lang}&shape=${shape}`, { waitUntil: "networkidle" });
+  for (const view of VIEWS) for (const shape of SHAPES) for (const lang of LANGS) {
+    await page.goto(withView(`${base}?lang=${lang}&shape=${shape}`, view), { waitUntil: "networkidle" });
     await boardReady(page);
     await page.waitForTimeout(300);
     const r = await page.evaluate(() => {
@@ -45,15 +45,16 @@ const LANGS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "app", "tran
         const over = Math.max(b.left - e.left, e.right - b.right);
         if (over > 0.5) out.push(`'${(el.textContent || "").trim().slice(0, 48)}' runs ${over.toFixed(1)}px outside its ${kind}`);
       }
-      return { n: pairs.length, out };
+      return { n: pairs.length, out, view: viewMode };
     });
     checked += r.n;
-    r.out.forEach(m => fails.push(`[${lang} ${shape}] ${m}`));
+    if (r.view !== view) fails.push(`[${lang} ${shape}] opened in ${r.view}, not ${view}`);
+    r.out.forEach(m => fails.push(`[${view} ${lang} ${shape}] ${m}`));
   }
   await browser.close();
   server.close();
-  console.log(`languages: ${LANGS.length}, shapes: ${SHAPES.length}, labels checked: ${checked}`);
+  console.log(`views: ${VIEWS.length}, languages: ${LANGS.length}, shapes: ${SHAPES.length}, labels checked: ${checked}`);
   if (errs.length) fails.push(...errs.slice(0, 5).map(e => "page error: " + e));
   if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.forEach(f => console.log("  - " + f)); process.exit(1); }
-  console.log("PASS: every panel, card, heading and band label fits its box in every language and shape");
+  console.log("PASS: every panel, card, heading and band label fits its box in both views, every language and shape");
 })().catch(e => { console.error(e); process.exit(2); });

@@ -246,6 +246,20 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
+      - name: IPEDS / State Reporting
+        icon: gavel
+        summary: Federal and state compliance file layouts consumed inbound for validation before submission season.
+        citations:
+          - ipeds
+        category: Regulatory Reporting Data
+        what_it_is: Supplies federal and state compliance file layouts consumed for validation before submission season.
+        who_uses_it: Institutional research, Compliance and Finance teams.
+        data_out:
+          batch:
+            types:
+              - structured
+            volume: sub-GB per submission
+            interval: Per reporting cycle
       - name: Ed-Fi Data Standard
         icon: api
         summary: Interoperable student and assessment APIs normalised on ingest for state reporting and district exchange.
@@ -275,20 +289,6 @@ cloud_integrations:
               - semi-structured
             volume: tens-hundreds of events/sec at peak
             interval: Continuous (launch / passback)
-      - name: IPEDS / State Reporting
-        icon: gavel
-        summary: Federal and state compliance file layouts consumed inbound for validation before submission season.
-        citations:
-          - ipeds
-        category: Regulatory Reporting Data
-        what_it_is: Supplies federal and state compliance file layouts consumed for validation before submission season.
-        who_uses_it: Institutional research, Compliance and Finance teams.
-        data_out:
-          batch:
-            types:
-              - structured
-            volume: sub-GB per submission
-            interval: Per reporting cycle
 pipelines:
   - name: Business
     icon: zbrief

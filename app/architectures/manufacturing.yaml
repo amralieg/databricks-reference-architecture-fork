@@ -219,16 +219,16 @@ sources:
   - name: Data Formats
     icon: zbraces
     tiles:
-      - name: 'OPC UA'
-        icon: zbraces
-        fmt: 'OPCUA'
-        summary: 'OPC Unified Architecture, the backbone protocol for Industry 4.0 data exchange.'
-        spec_url: https://opcfoundation.org/about/opc-technologies/opc-ua/
       - name: 'MTConnect'
         icon: zbraces
         fmt: 'MTC'
         summary: 'Open standard for streaming machine-tool and shop-floor equipment data.'
         spec_url: https://www.mtconnect.org/
+      - name: 'OPC UA'
+        icon: zbraces
+        fmt: 'OPCUA'
+        summary: 'OPC Unified Architecture, the backbone protocol for Industry 4.0 data exchange.'
+        spec_url: https://opcfoundation.org/about/opc-technologies/opc-ua/
       - name: 'B2MML'
         icon: zbraces
         fmt: 'B2MML'

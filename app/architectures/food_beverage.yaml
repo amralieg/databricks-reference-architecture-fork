@@ -249,20 +249,6 @@ cloud_integrations:
   - name: 3rd Party
     icon: zplug
     tiles:
-      - name: GS1 EPCIS Events
-        icon: api
-        summary: Serial shipping container and lot traceability events normalised on ingest for recall readiness.
-        citations:
-          - gs1-epcis
-        category: Traceability Event Standard
-        what_it_is: Normalises serial shipping container and lot traceability events on ingest so recall lists can be built forward and backward.
-        who_uses_it: Quality & Food Safety, Regulatory and Logistics teams.
-        data_out:
-          stream:
-            types:
-              - semi-structured
-            volume: hundreds of events/sec
-            interval: Continuous trace events
       - name: FDA FSMA 204 Trace
         icon: gavel
         summary: FSMA Rule 204 key data element requirements used to validate traceability against operational trace records.
@@ -278,6 +264,20 @@ cloud_integrations:
               - semi-structured
             volume: GBs/day KDEs
             interval: Daily + event-driven
+      - name: GS1 EPCIS Events
+        icon: api
+        summary: Serial shipping container and lot traceability events normalised on ingest for recall readiness.
+        citations:
+          - gs1-epcis
+        category: Traceability Event Standard
+        what_it_is: Normalises serial shipping container and lot traceability events on ingest so recall lists can be built forward and backward.
+        who_uses_it: Quality & Food Safety, Regulatory and Logistics teams.
+        data_out:
+          stream:
+            types:
+              - semi-structured
+            volume: hundreds of events/sec
+            interval: Continuous trace events
       - name: Weather & Commodity
         icon: globe
         summary: Crop condition and commodity price feeds for agricultural input planning.
