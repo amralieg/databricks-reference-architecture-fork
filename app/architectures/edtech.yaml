@@ -647,7 +647,6 @@ consumers:
         summary: Next-best content decisions pushed into the learning platform so the path adapts in the flow.
   - name: Partners & Sharing
     icon: share
-    simplified: 2
     tiles:
       - name: Institution Products
         icon: product

@@ -179,7 +179,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
-    simplified: 4
+    simplified: 2
     tiles:
       - name: 'X12N'
         icon: zbraces

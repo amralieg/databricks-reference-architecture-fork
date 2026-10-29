@@ -335,17 +335,29 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       };
     });
 
+    const screenSig = () => {
+      const b = document.querySelector(".board");
+      return { h: b.offsetHeight, step: parseFloat(getComputedStyle(document.getElementById("platform")).getPropertyValue("--pk")) || 1,
+        deck: document.body.classList.contains("deck-type"), moving: document.getAnimations().filter(a => a instanceof CSSTransition).length,
+        fit: [...b.querySelectorAll("[data-wfit]")].map(e => `${(e.textContent || "").trim().slice(0, 30)}@${e.style.fontSize}`).sort().join(", "),
+        names: [...new Set([...document.querySelectorAll("#plat-top .p-name, #platform .p-name")].map(e => getComputedStyle(e).fontSize))].sort().join(" ") };
+    };
+    const screenBefore = await page.evaluate(screenSig);
     const pptxB64 = await page.evaluate(async () => {
       const blob = await exportPptx();
       const buf = new Uint8Array(await blob.arrayBuffer());
       let bin = ""; for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
       return btoa(bin);
     });
+    const screenAfter = await page.evaluate(screenSig);
     const board = await page.evaluate(() => {
-      const m = collectBoard();
-      return { groups: m.groups.length, imgs: m.shapes.filter(s => s.t === "img").length, title: docTitle(),
-        platNames: [...document.querySelectorAll("#plat-top .p-name, #platform .p-name")]
-          .filter(e => e.offsetParent && !e.closest("[data-wfit]") && !e.querySelector("[data-wfit]")).map(e => e.textContent.trim()) };
+      const deck = typeof deckType === "function" && deckType(true);
+      try {
+        const m = collectBoard();
+        return { groups: m.groups.length, imgs: m.shapes.filter(s => s.t === "img").length, title: docTitle(), deck: document.body.classList.contains("deck-type"),
+          platNames: [...document.querySelectorAll("#plat-top .p-name, #platform .p-name")]
+            .filter(e => e.offsetParent && !e.closest("[data-wfit]") && !e.querySelector("[data-wfit]")).map(e => e.textContent.trim()) };
+      } finally { if (deck) deckType(false); }
     });
     const pdfB64 = await page.evaluate(async () => {
       const blob = await boardPdfBlob();
@@ -401,7 +413,7 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       gap: (boardTop - titleBox[1] - titleBox[3]) / PT, titleEdge: titleBox[1] / PT, bottomEdge: (SH - boardBottom) / PT,
       pdf: pdfB64 ? pdfBoardBox(u8FromB64(pdfB64)) : null };
 
-    results.push({ tag, want: view, ...summary, slides: n, boardSlide, layout, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
+    results.push({ tag, want: view, ...summary, slides: n, boardSlide, layout, screenBefore, screenAfter, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
   }
 
   const b64Of = async (q, fn) => {
@@ -567,13 +579,16 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
     checks.push(["the pdf board keeps its bottom margin", !!pb && pb.bottom >= 6 - 0.01]);
     checks.push(["the board slide names its platform products as the screen does", z.platNames >= 10 && z.platFound === z.platNames]);
     if (r.view === "simple") checks.push(["Simplified platform names reach the slide at 7.4pt or more", z.platMin >= 7.4]);
+    checks.push(["the screen shows the platform at its own type size", r.screenBefore.step === 1 && !r.screenBefore.deck]);
+    checks.push(["the PowerPoint export gives the screen back unchanged", JSON.stringify(r.screenBefore) === JSON.stringify(r.screenAfter)]);
+    checks.push([r.view === "simple" ? "the Simplified slide is read from the PowerPoint layout" : "the Detailed slide is read from the screen layout", a.deck === (r.view === "simple")]);
 
     const bad = checks.filter(c => !c[1]);
     if (bad.length) fail++;
     console.log(`● ${r.tag}  [${r.label}]  ${bad.length ? "❌" : "✅"}`);
     console.log(`   secs: ${secLine}`);
     console.log(`   ${r.view}  uc=${r.uc} genie=${r.genie} dash=${r.dash} apps=${r.apps} (screen ${r.screen.uc}/${r.screen.genie}/${r.screen.dash}/${r.screen.apps})  slides=${r.slides}(exp ${expSlides})  pdfPages=${r.pdfPages}  pptx=${(r.pptxBytes/1024).toFixed(0)}KB pdf=${(r.pdfBytes/1024).toFixed(0)}KB  board slide groups=${a.grpSp}/${a.groups} pics=${a.pics}/${a.imgs}`);
-    console.log(`   board slide fill=${z.fill.toFixed(3)} title gap=${z.gap.toFixed(1)}pt edges=${z.titleEdge.toFixed(1)}/${z.bottomEdge.toFixed(1)}pt outside=${z.outside} platform names ${z.platFound}/${z.platNames} min=${z.platMin}pt` +
+    console.log(`   board slide fill=${z.fill.toFixed(3)} title gap=${z.gap.toFixed(1)}pt edges=${z.titleEdge.toFixed(1)}/${z.bottomEdge.toFixed(1)}pt outside=${z.outside} platform names ${z.platFound}/${z.platNames} min=${z.platMin}pt screen step=${r.screenBefore.step} height ${r.screenBefore.h}->${r.screenAfter.h}` +
       (pb ? `  pdf board ${pb.w.toFixed(0)}x${pb.h.toFixed(0)}pt top=${pb.top.toFixed(1)} baseline=${pb.baseline} bottom=${pb.bottom.toFixed(1)}` : "  pdf board not found"));
     console.log(`   firstUc=${JSON.stringify(r.firstUc)} inDeck=${r.ucInDeck}`);
     console.log(`   pdf board smask=${r.pdfAlpha.smask} clear=${r.pdfAlpha.smask ? (r.pdfAlpha.clear * 100).toFixed(1) + "%" : "n/a"}`);

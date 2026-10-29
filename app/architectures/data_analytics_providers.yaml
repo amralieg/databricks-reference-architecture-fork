@@ -247,7 +247,6 @@ sources:
             interval: End-of-day + rebalance cycles
   - name: Delivery & Client Systems
     icon: partner
-    simplified: 2
     tiles:
       - name: API Gateway Logs
         icon: api
@@ -680,7 +679,6 @@ consumers:
           - Governance
   - name: Agent Harnesses
     icon: agents
-    simplified: 4
     tiles:
       - name: Omnigent OSS
         icon: omni

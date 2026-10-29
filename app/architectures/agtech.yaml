@@ -635,7 +635,6 @@ consumers:
         summary: Growers, food and CPG partners and regulators reading live tables, reducing duplicate extracts under scoped agreements.
   - name: Databricks Apps
     icon: apps
-    simplified: 2
     tiles:
       - name: Field Insights Hub
         icon: gauge

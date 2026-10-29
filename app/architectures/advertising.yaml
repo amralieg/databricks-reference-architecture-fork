@@ -539,7 +539,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
-    simplified: 3
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart

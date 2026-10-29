@@ -583,7 +583,6 @@ consumers:
         summary: Engineer and analyst notebooks, VS Code and JetBrains against governed facility data and Genie Code.
   - name: NOC & Alerting
     icon: gauge
-    simplified: 2
     tiles:
       - name: PagerDuty / Opsgenie
         icon: gauge
@@ -655,7 +654,6 @@ consumers:
         summary: Metered power, billing, SLA and interconnection self-service for every tenant, served from governed data and shared live over Delta Sharing.
   - name: AI/BI Dashboards
     icon: aibi
-    simplified: 2
     tiles:
       - name: PUE & Efficiency
         icon: aibi

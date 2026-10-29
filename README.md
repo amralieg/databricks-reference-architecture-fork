@@ -34,9 +34,9 @@ is, who uses it and where it runs, then export the board as a deck or an editabl
 - **Detailed** adds everything else: the remaining sources, teams, consumers, use cases and cloud
   services, including CI/CD, monitoring, operational stores and orchestrators, with their captions,
   capability tags and descriptions.
-- The Databricks Platform in the middle shows the same products in both views, with larger names
-  in Simplified. Your choice is remembered,
-  a shared link opens in the same view, and every export follows what is on screen.
+- The Databricks Platform in the middle shows the same products in both views. Your choice is
+  remembered, a shared link opens in the same view, and every export follows what is on screen.
+  A Simplified PowerPoint sets the platform's names one step larger, so they read at slide size.
 
 ![Switching the banking board from Simplified to Detailed and back](docs/views.gif)
 

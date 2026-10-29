@@ -648,7 +648,6 @@ consumers:
           - CEO, CNO & CMO
   - name: Agent Harnesses
     icon: agents
-    simplified: 4
     tiles:
       - name: Omnigent OSS
         icon: omni

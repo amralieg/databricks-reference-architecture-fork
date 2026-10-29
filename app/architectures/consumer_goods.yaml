@@ -550,7 +550,6 @@ consumers:
           - sf-cg
   - name: Regulatory & Reporting
     icon: gavel
-    simplified: 2
     tiles:
       - name: Nutrition Labeling
         icon: gavel

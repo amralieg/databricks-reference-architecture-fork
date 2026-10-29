@@ -1053,6 +1053,7 @@
      style, which is the state the export is meant to capture. */
   body.exp-static *, body.exp-static *::before, body.exp-static *::after {
     animation:none !important; transition:none !important; }
+  body.deck-switch *, body.deck-switch *::before, body.deck-switch *::after { transition:none !important; }
   body.motion-rest *, body.motion-rest *::before, body.motion-rest *::after { animation-play-state:paused !important; }
   body.motion-rest #nav-progress.on::before { animation-play-state:running !important; }
   /* Zoom (.zx) and platform-maximise (.ph-max) are on-screen interface, not
@@ -2568,8 +2569,8 @@
   }
 
   body.view-simple { --glabelh:18px; }
-  body.view-simple #plat-top, body.view-simple #platform { --pk:1.3; }
-  body.view-simple .plat-stack .band-row.cards:not(.gridrow) > .pcard.grow { flex-basis:auto; }
+  body.view-simple.deck-type #plat-top, body.view-simple.deck-type #platform { --pk:1.3; }
+  body.view-simple.deck-type .plat-stack .band-row.cards:not(.gridrow) > .pcard.grow { flex-basis:auto; }
   body.view-simple .rtiles { gap:4px; }
   body.view-simple .rtiles:not(.paired) > .rtile:last-child:nth-child(odd), .rtiles > .rtile.wide { grid-column:1 / -1; }
   body.view-simple .rgroup { gap:4px; }
@@ -5145,7 +5146,7 @@ function renderTop(target){
 
 /* ---------- full build ---------- */
 const CUSTOM_LS = "dbxarch.dais2026.custom";
-const SCHEMA = 53;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
+const SCHEMA = 54;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
 /* Keys inside a provider dataset that hold tile arrays. Every surface that shows
    provider-specific content reads from this list, so adding a surface later means
    adding one key here rather than hunting for loops. */
@@ -9289,6 +9290,22 @@ function collectBoard(){
   try{ return collectBoardInner(); }
   finally{ document.body.classList.remove("exp-static"); settleFiniteAnimations(); syncFlows(); }
 }
+function deckType(on){
+  if(on && !simpleView()) return false;
+  endIntro();
+  const b = document.body;
+  b.classList.add("deck-switch");
+  b.classList.toggle("deck-type", !!on);
+  fitBoard();
+  void b.offsetHeight;
+  b.classList.remove("deck-switch");
+  return b.classList.contains("deck-type");
+}
+function deckBoard(){
+  if(!deckType(true)) return collectBoard();
+  try{ return collectBoard(); }
+  finally{ deckType(false); }
+}
 function settleFiniteAnimations(){
   if(!document.getAnimations || typeof CSSAnimation === "undefined") return;
   document.getAnimations().forEach(a=>{
@@ -10967,7 +10984,7 @@ async function exportPptx(){
   const title = docTitle();
   const coverGlyphPng = await (async()=>{ const cv = await coverGlyphCanvas(1400, ooxmlRtl()); return cv ? canvasPngU8(cv) : null; })();
   const coverLogoPng = await dbxLogoPngU8(140, expInk());
-  const board = await pptxEditableSlide(collectBoard());
+  const board = await pptxEditableSlide(deckBoard());
   return zipStore(pptxParts([pptxCoverSlide(coverGlyphPng, coverLogoPng), pptxIndexSlide(), board].concat(await pptxNarrativeSlides(coverGlyphPng)), title));
 }
 /* A copy of this page with the live state frozen in, so the download opens with

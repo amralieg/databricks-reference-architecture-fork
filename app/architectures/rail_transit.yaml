@@ -599,7 +599,6 @@ consumers:
         summary: Lessors, maintenance partners and infrastructure owners reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
     icon: apps
-    simplified: 2
     tiles:
       - name: Dispatch Cockpit
         icon: gauge

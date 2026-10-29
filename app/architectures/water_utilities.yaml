@@ -208,7 +208,6 @@ sources:
             interval: Continuous work orders + daily batch
   - name: Lab & Quality
     icon: gavel
-    simplified: 2
     tiles:
       - name: Hach WIMS
         icon: gavel
@@ -596,7 +595,6 @@ consumers:
         summary: Main break history and risk scores prioritising replacement capital.
   - name: AI/BI Dashboards
     icon: aibi
-    simplified: 2
     tiles:
       - name: Network & NRW
         icon: aibi

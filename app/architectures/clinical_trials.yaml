@@ -512,7 +512,6 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
-    simplified: 2
     tiles:
       - name: Tableau / Spotfire
         icon: chart
@@ -525,6 +524,7 @@ consumers:
         summary: Biostat notebooks on governed SDTM and ADaM.
   - name: Sites & CROs
     icon: partner
+    simplified: 2
     tiles:
       - name: Site Payment Portal
         icon: api

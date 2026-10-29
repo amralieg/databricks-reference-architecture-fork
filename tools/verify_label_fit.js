@@ -61,6 +61,32 @@ function wordAudit(){
   return out;
 }
 
+function labelAudit(){
+  const out = [], pairs = [];
+  document.querySelectorAll(".panel").forEach(pn => pn.querySelectorAll(".panel-head, .ph-name, .ph-sub, .tagpill, .pc-desc").forEach(el => {
+    const card = el.closest(".pcol");
+    pairs.push([el, card || pn, card ? "card" : "panel"]);
+  }));
+  document.querySelectorAll(".band").forEach(bd => bd.querySelectorAll(":scope > .band-lbl, :scope > .band-rlbl").forEach(el => pairs.push([el, bd, "band"])));
+  document.querySelectorAll(".colhead, .pockhead").forEach(h => {
+    const node = [...h.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+    if (!node) return;
+    const r = document.createRange(); r.selectNodeContents(node);
+    const t = r.getBoundingClientRect(), b = h.getBoundingClientRect(), zx = h.querySelector(".zx");
+    pairs.push([node, h, "heading"]);
+    if (Math.max(b.left - t.left, t.right - b.right) > 0.5) out.push(`'${node.textContent.trim().slice(0, 48)}' runs outside its heading`);
+    if (zx) { const z = zx.getBoundingClientRect(); if (t.right > z.left + 0.5 && t.left < z.right - 0.5) out.push(`'${node.textContent.trim().slice(0, 48)}' runs under its zoom button`); }
+  });
+  for (const [el, box, kind] of pairs) {
+    if (kind === "heading") continue;
+    const e = el.getBoundingClientRect(), b = box.getBoundingClientRect();
+    if (!e.width || !b.width) continue;
+    const over = Math.max(b.left - e.left, e.right - b.right);
+    if (over > 0.5) out.push(`'${(el.textContent || "").trim().slice(0, 48)}' runs ${over.toFixed(1)}px outside its ${kind}`);
+  }
+  return { n: pairs.length, out, view: viewMode };
+}
+
 (async () => {
   const server = await serve();
   const base = "http://127.0.0.1:" + server.address().port + "/index.html";
@@ -71,6 +97,13 @@ function wordAudit(){
   page.on("pageerror", e => errs.push(e.message));
   const fails = [], words = [];
   let checked = 0, boards = 0;
+  const inDeck = async measure => {
+    if (!(await page.evaluate(() => typeof deckType === "function" && (deckType(true), document.body.classList.contains("deck-type"))))) {
+      words.push(["the board has no PowerPoint layout to measure", "deck"]);
+      return null;
+    }
+    try { return await measure(); } finally { await page.evaluate(() => deckType(false)); }
+  };
   await page.goto(base, { waitUntil: "networkidle" });
   await boardReady(page);
   const SHAPES = await page.evaluate(() => SHAPES.map(s => s.k));
@@ -80,35 +113,17 @@ function wordAudit(){
     await page.goto(withView(`${base}?lang=${lang}&shape=${shape}`, view), { waitUntil: "networkidle" });
     await boardReady(page);
     await page.waitForTimeout(300);
-    const r = await page.evaluate(() => {
-      const out = [], pairs = [];
-      document.querySelectorAll(".panel").forEach(pn => pn.querySelectorAll(".panel-head, .ph-name, .ph-sub, .tagpill, .pc-desc").forEach(el => {
-        const card = el.closest(".pcol");
-        pairs.push([el, card || pn, card ? "card" : "panel"]);
-      }));
-      document.querySelectorAll(".band").forEach(bd => bd.querySelectorAll(":scope > .band-lbl, :scope > .band-rlbl").forEach(el => pairs.push([el, bd, "band"])));
-      document.querySelectorAll(".colhead, .pockhead").forEach(h => {
-        const node = [...h.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
-        if (!node) return;
-        const r = document.createRange(); r.selectNodeContents(node);
-        const t = r.getBoundingClientRect(), b = h.getBoundingClientRect(), zx = h.querySelector(".zx");
-        pairs.push([node, h, "heading"]);
-        if (Math.max(b.left - t.left, t.right - b.right) > 0.5) out.push(`'${node.textContent.trim().slice(0, 48)}' runs outside its heading`);
-        if (zx) { const z = zx.getBoundingClientRect(); if (t.right > z.left + 0.5 && t.left < z.right - 0.5) out.push(`'${node.textContent.trim().slice(0, 48)}' runs under its zoom button`); }
-      });
-      for (const [el, box, kind] of pairs) {
-        if (kind === "heading") continue;
-        const e = el.getBoundingClientRect(), b = box.getBoundingClientRect();
-        if (!e.width || !b.width) continue;
-        const over = Math.max(b.left - e.left, e.right - b.right);
-        if (over > 0.5) out.push(`'${(el.textContent || "").trim().slice(0, 48)}' runs ${over.toFixed(1)}px outside its ${kind}`);
-      }
-      return { n: pairs.length, out, view: viewMode };
-    });
+    const r = await page.evaluate(labelAudit);
     checked += r.n;
     if (r.view !== view) fails.push(`[${lang} ${shape}] opened in ${r.view}, not ${view}`);
     r.out.forEach(m => fails.push(`[${view} ${lang} ${shape}] ${m}`));
     (await page.evaluate(wordAudit)).forEach(m => words.push([m, `${view} ${lang} ${shape}`]));
+    if (view !== "simple") continue;
+    const d = await inDeck(async () => [await page.evaluate(labelAudit), await page.evaluate(wordAudit)]);
+    if (!d) continue;
+    checked += d[0].n;
+    d[0].out.forEach(m => fails.push(`[deck ${lang} ${shape}] ${m}`));
+    d[1].forEach(m => words.push([m, `deck ${lang} ${shape}`]));
   }
   const CLOUDS = ["azure", "aws", "gcp"];
   for (const view of VIEWS) for (const [li, lang] of LANGS.entries()) {
@@ -123,6 +138,9 @@ function wordAudit(){
       }, [ind, cloud]);
       boards++;
       (await page.evaluate(wordAudit)).forEach(m => words.push([m, `${view} ${lang} ${ind} ${cloud}`]));
+      if (view !== "simple") continue;
+      const d = await inDeck(() => page.evaluate(wordAudit));
+      if (d) d.forEach(m => words.push([m, `deck ${lang} ${ind} ${cloud}`]));
     }
   }
   await browser.close();
@@ -133,5 +151,5 @@ function wordAudit(){
   console.log(`views: ${VIEWS.length}, languages: ${LANGS.length}, shapes: ${SHAPES.length}, labels checked: ${checked}, boards checked word by word: ${boards}`);
   if (errs.length) fails.push(...errs.slice(0, 5).map(e => "page error: " + e));
   if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.slice(0, 160).forEach(f => console.log("  - " + f)); process.exit(1); }
-  console.log("PASS: every panel, card, heading and band label fits its box, and no word anywhere on the board breaks across lines, sticks out of its box or is cut off, in both views, every language, shape, board and cloud");
+  console.log("PASS: every panel, card, heading and band label fits its box, and no word anywhere on the board breaks across lines, sticks out of its box or is cut off, in both views and the PowerPoint layout of Simplified, every language, shape, board and cloud");
 })().catch(e => { console.error(e); process.exit(2); });

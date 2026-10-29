@@ -511,7 +511,6 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
-    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -576,6 +575,7 @@ consumers:
         summary: Customers, EMS partners and auditors reading live tables through governed sharing that reduces bespoke export copies, with recipient materialization depending on the sharing and execution mode.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Product Analytics
         icon: gauge
@@ -650,6 +650,7 @@ consumers:
           - Firmware Engineering
   - name: Agent Harnesses
     icon: agents
+    simplified: 4
     tiles:
       - name: Omnigent OSS
         icon: omni

@@ -581,7 +581,6 @@ consumers:
         summary: A governed assistant grounded on prior deliverables, methods and engagement knowledge, answering within the client and engagement walls it is allowed to cross.
   - name: AI/BI Dashboards
     icon: aibi
-    simplified: 2
     tiles:
       - name: Utilization & Bench
         icon: aibi
