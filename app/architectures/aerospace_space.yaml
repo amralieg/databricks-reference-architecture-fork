@@ -623,6 +623,7 @@ consumers:
         summary: Quality, airworthiness and first-article records assembled for AS9100 and airworthiness audit from certified Gold.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Mission Control
         icon: gauge

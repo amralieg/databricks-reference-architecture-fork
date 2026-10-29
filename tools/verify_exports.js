@@ -233,11 +233,14 @@ function pdfImage(buf, num) {
     data: buf.subarray(st, st + num1(/\/Length (\d+)/)) };
 }
 
-function pdfZoomScales(buf, W) {
+function pdfBoardBox(buf) {
   const s = buf.toString("latin1");
-  return [...s.matchAll(/<<\/Length (\d+)>>\nstream\n/g)]
-    .map(m => [...s.substr(m.index + m[0].length, +m[1]).matchAll(/ re W n ([\d.]+) 0 0 [\d.]+ [-\d.]+ [-\d.]+ cm \/Im[01] Do Q/g)].map(c => +c[1] / W))
-    .filter(c => c.length).map(c => Math.min(...c));
+  const m = s.match(/\nq ([\d.]+) 0 0 ([\d.]+) ([\d.]+) ([\d.]+) cm \/Im0 Do Q\nBT \/F1 14 Tf [\d. ]+rg [\d.]+ ([\d.]+) Td/) ||
+    s.match(/q 842 0 0 595 0 0 cm \/Im0 Do Q\nq ([\d.]+) 0 0 ([\d.]+) ([\d.]+) ([\d.]+) cm \/Im1 Do Q/);
+  if (!m) return null;
+  const [w, h, x, y] = m.slice(1, 5).map(Number);
+  return { w, h, x, top: 595 - y - h, bottom: y, baseline: m[5] ? 595 - +m[5] : null,
+    full: Math.abs(w - 830) < 0.02 || Math.abs(h - 565) < 0.02 };
 }
 
 function pdfBoardAlpha(buf) {
@@ -340,18 +343,9 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
     });
     const board = await page.evaluate(() => {
       const m = collectBoard();
-      return { groups: m.groups.length, imgs: m.shapes.filter(s => s.t === "img").length, title: docTitle() };
-    });
-    const zoom = await page.evaluate(() => {
-      const m = collectBoard(), tiles = m.groups.filter(g => g.kind === "tile");
-      if (typeof deckZoomPlan !== "function") return { n: 0, W: m.W, tiles: tiles.map(g => g.name), missing: tiles.map(g => g.name), twice: 0, minPx: [] };
-      const plan = deckZoomPlan(m), seen = new Set();
-      let placed = 0;
-      const walk = n => { if (n.shape) return; if (n.group.kind === "tile") { seen.add(n.group.id); placed++; } n.kids.forEach(walk); };
-      const minPx = n => n.shape ? (n.shape.t === "text" ? n.shape.size : Infinity) : Math.min(Infinity, ...n.kids.map(minPx));
-      plan.slides.forEach(sl => sl.items.forEach(it => walk(it.node)));
-      return { n: plan.slides.length, W: m.W, tiles: tiles.map(g => g.name), missing: tiles.filter(g => !seen.has(g.id)).map(g => g.name),
-        twice: placed - seen.size, minPx: plan.slides.map(sl => Math.min(...sl.items.map(it => minPx(it.node)))) };
+      return { groups: m.groups.length, imgs: m.shapes.filter(s => s.t === "img").length, title: docTitle(),
+        platNames: [...document.querySelectorAll("#plat-top .p-name, #platform .p-name")]
+          .filter(e => e.offsetParent && !e.closest("[data-wfit]") && !e.querySelector("[data-wfit]")).map(e => e.textContent.trim()) };
     });
     const pdfB64 = await page.evaluate(async () => {
       const blob = await boardPdfBlob();
@@ -391,29 +385,23 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       wellFormed: [slideOf(3), "ppt/slides/_rels/slide3.xml.rels"].every(f => shOk(`unzip -p "${pptxPath}" "${f}" | xmllint --noout -`)),
       zipOk: shOk(`unzip -tq "${pptxPath}"`) };
 
-    const SW = 12192000, SH = 6858000, PAD = 0.03, BAND = Math.round(SH * 0.052);
+    const SW = 12192000, SH = 6858000, PAD = 0.03, BAND = Math.round(SH * 0.052), PT = 12700;
     const boxesOf = x => [...x.matchAll(/<a:off x="(-?\d+)" y="(-?\d+)"\/><a:ext cx="(\d+)" cy="(\d+)"\/>/g)].map(m => m.slice(1).map(Number))
       .filter(b => b[2] || b[3]);
-    const zoomXml = Array.from({ length: zoom.n }, (_, i) => 3 + i < n ? unz(slideOf(4 + i)) : "");
-    const overview = boxesOf(boardXml.replace(/<p:sp><p:nvSpPr><p:cNvPr id="\d+" name="Title"\/>[\s\S]*?<\/p:sp>/, ""));
+    const titleRe = /<p:sp><p:nvSpPr><p:cNvPr id="\d+" name="Title"\/>[\s\S]*?<\/p:sp>/;
+    const overview = boxesOf(boardXml.replace(titleRe, "")), titleBox = boxesOf((boardXml.match(titleRe) || [""])[0])[0] || [0, 0, 0, 0];
     const span = (i, j) => Math.max(...overview.map(b => b[i] + b[j])) - Math.min(...overview.map(b => b[i]));
-    const grpNames = {};
-    zoomXml.forEach(x => [...x.matchAll(/<p:grpSp><p:nvGrpSpPr><p:cNvPr id="\d+" name="([^"]*)"/g)].forEach(m => grpNames[m[1]] = (grpNames[m[1]] || 0) + 1));
-    const tileNames = {};
-    zoom.tiles.forEach(t => tileNames[esc(t)] = (tileNames[esc(t)] || 0) + 1);
-    const ZOOM_PT = { simple: 9, detailed: 8 }[view];
-    const pdfScales = pdfB64 ? pdfZoomScales(u8FromB64(pdfB64), zoom.W) : [];
-    const zoomSlides = {
-      n: zoom.n, minPt: ZOOM_PT,
-      szMin: Math.min(Infinity, ...zoomXml.flatMap(x => [...x.matchAll(/ sz="(\d+)"/g)].map(m => +m[1] / 100))),
-      pdfPt: pdfScales.map((s, i) => +(s * zoom.minPx[i]).toFixed(2)),
-      missing: zoom.missing.concat(Object.keys(tileNames).filter(t => (grpNames[t] || 0) < tileNames[t])), twice: zoom.twice,
-      outside: zoomXml.concat(boardXml).flatMap(boxesOf).filter(([x, y, cx, cy]) => x < 0 || y < 0 || x + cx > SW || y + cy > SH).length,
+    const boardTop = Math.min(...overview.map(b => b[1])), boardBottom = Math.max(...overview.map(b => b[1] + b[3]));
+    const platPt = board.platNames.map(t => boardXml.match(new RegExp(`<a:rPr [^>]*sz="(\\d+)"[^>]*>(?:(?!</a:rPr>).)*</a:rPr><a:t>${esc(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</a:t>`)))
+      .filter(Boolean).map(m => +m[1] / 100);
+    const layout = {
+      platNames: board.platNames.length, platFound: platPt.length, platMin: Math.min(Infinity, ...platPt),
+      outside: boxesOf(boardXml).filter(([x, y, cx, cy]) => x < 0 || y < 0 || x + cx > SW || y + cy > SH).length,
       fill: Math.max(span(0, 2) / (SW * (1 - PAD * 2)), span(1, 3) / (SH * (1 - PAD * 2) - BAND)),
-      wellFormed: zoomXml.every((x, i) => x && [slideOf(4 + i), `ppt/slides/_rels/slide${4 + i}.xml.rels`]
-        .every(f => shOk(`unzip -p "${pptxPath}" "${f}" | xmllint --noout -`))) };
+      gap: (boardTop - titleBox[1] - titleBox[3]) / PT, titleEdge: titleBox[1] / PT, bottomEdge: (SH - boardBottom) / PT,
+      pdf: pdfB64 ? pdfBoardBox(u8FromB64(pdfB64)) : null };
 
-    results.push({ tag, want: view, ...summary, slides: n, boardSlide, zoomSlides, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
+    results.push({ tag, want: view, ...summary, slides: n, boardSlide, layout, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
   }
 
   const b64Of = async (q, fn) => {
@@ -441,6 +429,7 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
   const gifFrames = await alphaStats(page, gifB64, "image/gif", [0, 6]);
   const pdfAr = pdfArB64 ? u8FromB64(pdfArB64) : null;
   const pdfArAlpha = pdfAr ? pdfBoardAlpha(pdfAr) : { smask: false };
+  const pdfArBoard = pdfAr ? pdfBoardBox(pdfAr) : null;
   const lineCases = await page.evaluate(() => [["fr", "Développement agentique", 60, "auto"],
       ["fr", "Pipelines de données auto-réparateurs", 70, "manual"], ["de", "Agent für Betrug und Finanzkriminalität", 80, "manual"],
       ["en", "Agent Developer Platform", 60, "auto"]].map(([lang, text, w, hy]) => {
@@ -466,6 +455,8 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       `delta=${(Math.abs(gifFrames[0].clear - gifFrames[1].clear) * 100).toFixed(2)}%`],
     ["Arabic PDF draws the transparent board over its raster page", pdfArAlpha.smask && pdfArAlpha.sizeOk && transparentOk(pdfArAlpha) &&
       /\/Im1 6 0 R/.test(pdfAr.toString("latin1")), pdfArAlpha.smask ? `clear=${(pdfArAlpha.clear * 100).toFixed(1)}%` : "no soft mask"],
+    ["Arabic PDF board keeps its full size 14pt below its title band", !!pdfArBoard && pdfArBoard.full && pdfArBoard.top >= 24 + 14 - 0.01 && pdfArBoard.bottom >= 6 - 0.01,
+      pdfArBoard ? `${pdfArBoard.w.toFixed(0)}x${pdfArBoard.h.toFixed(0)}pt top=${pdfArBoard.top.toFixed(1)} bottom=${pdfArBoard.bottom.toFixed(1)}` : "board not found"],
   ];
 
   const drawing = [];
@@ -540,8 +531,8 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       breaks += 1;
       if (s.kind === "uc" || s.kind === "genie" || s.kind === "dash") narr += s.n; else narr += 1; // apps grid = 1
     });
-    const z = r.zoomSlides;
-    const expSlides = 1 /*cover*/ + 1 /*index*/ + 1 /*board*/ + z.n + breaks + narr + 1 /*closing*/;
+    const z = r.layout, pb = z.pdf;
+    const expSlides = 1 /*cover*/ + 1 /*index*/ + 1 /*board*/ + breaks + narr + 1 /*closing*/;
 
     const checks = [];
     // Guard against a silent fall-back to generic: the loaded industry must be
@@ -568,21 +559,22 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
     checks.push(["deck zip + board slide xml valid", a.zipOk && a.wellFormed]);
     checks.push(["pdf board image has a transparent soft mask", r.pdfAlpha.smask && r.pdfAlpha.sizeOk && transparentOk(r.pdfAlpha)]);
     checks.push(["board overview fills the slide", z.fill >= 0.98]);
-    checks.push(["zoom slides follow the board", z.n >= 1]);
-    checks.push(["every board tile is on a zoom slide", z.missing.length === 0]);
-    checks.push(["no board tile is on two zoom slides", z.twice === 0]);
-    checks.push([`zoom slide text is at least ${z.minPt}pt`, Number.isFinite(z.szMin) && z.szMin >= z.minPt]);
-    checks.push([`pdf zoom page text is at least ${z.minPt}pt`, z.n > 0 && z.pdfPt.length === z.n && z.pdfPt.every(p => p >= z.minPt)]);
     checks.push(["every shape lies on its slide", z.outside === 0]);
-    checks.push(["zoom slide xml valid", z.wellFormed]);
+    checks.push(["the board sits at least 12pt below the slide title", z.gap >= 12]);
+    checks.push(["the slide title and the board keep 9pt to the slide edges", z.titleEdge >= 9 && z.bottomEdge >= 9]);
+    checks.push(["the pdf board keeps its full width or height", !!pb && pb.full]);
+    checks.push(["the pdf board sits at least 16pt below the title baseline", !!pb && pb.baseline != null && pb.top - pb.baseline >= 16 - 0.01]);
+    checks.push(["the pdf board keeps its bottom margin", !!pb && pb.bottom >= 6 - 0.01]);
+    checks.push(["the board slide names its platform products as the screen does", z.platNames >= 10 && z.platFound === z.platNames]);
+    if (r.view === "simple") checks.push(["Simplified platform names reach the slide at 7.4pt or more", z.platMin >= 7.4]);
 
     const bad = checks.filter(c => !c[1]);
     if (bad.length) fail++;
     console.log(`● ${r.tag}  [${r.label}]  ${bad.length ? "❌" : "✅"}`);
     console.log(`   secs: ${secLine}`);
     console.log(`   ${r.view}  uc=${r.uc} genie=${r.genie} dash=${r.dash} apps=${r.apps} (screen ${r.screen.uc}/${r.screen.genie}/${r.screen.dash}/${r.screen.apps})  slides=${r.slides}(exp ${expSlides})  pdfPages=${r.pdfPages}  pptx=${(r.pptxBytes/1024).toFixed(0)}KB pdf=${(r.pdfBytes/1024).toFixed(0)}KB  board slide groups=${a.grpSp}/${a.groups} pics=${a.pics}/${a.imgs}`);
-    console.log(`   zoom slides=${z.n} pptx min=${z.szMin}pt pdf=${z.pdfPt.join("/")}pt overview fill=${z.fill.toFixed(3)} outside=${z.outside}` +
-      (z.missing.length ? ` missing=${z.missing.slice(0, 5).join(" | ")}` : ""));
+    console.log(`   board slide fill=${z.fill.toFixed(3)} title gap=${z.gap.toFixed(1)}pt edges=${z.titleEdge.toFixed(1)}/${z.bottomEdge.toFixed(1)}pt outside=${z.outside} platform names ${z.platFound}/${z.platNames} min=${z.platMin}pt` +
+      (pb ? `  pdf board ${pb.w.toFixed(0)}x${pb.h.toFixed(0)}pt top=${pb.top.toFixed(1)} baseline=${pb.baseline} bottom=${pb.bottom.toFixed(1)}` : "  pdf board not found"));
     console.log(`   firstUc=${JSON.stringify(r.firstUc)} inDeck=${r.ucInDeck}`);
     console.log(`   pdf board smask=${r.pdfAlpha.smask} clear=${r.pdfAlpha.smask ? (r.pdfAlpha.clear * 100).toFixed(1) + "%" : "n/a"}`);
     if (bad.length) console.log("   FAILS: " + bad.map(b => b[0]).join(", "));

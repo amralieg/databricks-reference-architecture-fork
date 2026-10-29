@@ -584,7 +584,6 @@ consumers:
         summary: Suppliers and finance partners via Delta Sharing.
   - name: Databricks Apps
     icon: apps
-    simplified: 2
     tiles:
       - name: Plant Cockpit
         icon: gauge

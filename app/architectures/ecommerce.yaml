@@ -596,6 +596,7 @@ consumers:
         summary: CSAT, returns and repeat rate by cohort and segment.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Growth & Conversion
         icon: aibi

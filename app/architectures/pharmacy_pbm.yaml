@@ -560,6 +560,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -640,7 +641,6 @@ consumers:
         summary: Claims, prescriber and pharmacy behaviour scored for fraud, waste and abuse so special investigations work the highest-value cases first.
   - name: AI/BI Dashboards
     icon: aibi
-    simplified: 2
     tiles:
       - name: Rebate & Net Cost
         icon: aibi

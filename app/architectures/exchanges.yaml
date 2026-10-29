@@ -564,6 +564,7 @@ consumers:
         summary: Notebooks, VS Code and JetBrains against governed tick, reference and index data with Genie Code.
   - name: Data Distribution
     icon: partner
+    simplified: 2
     tiles:
       - name: Delta Sharing Feeds
         icon: share

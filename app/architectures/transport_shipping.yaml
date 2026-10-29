@@ -568,6 +568,7 @@ consumers:
         summary: Shippers reading live ETA via Delta Sharing.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Control Tower
         icon: globe

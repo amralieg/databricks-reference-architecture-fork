@@ -569,6 +569,7 @@ consumers:
         summary: Segments and offers ranked on governed loyalty and web behaviour.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Comp Sales & Margin
         icon: aibi

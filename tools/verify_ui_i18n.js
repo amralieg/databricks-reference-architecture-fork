@@ -135,7 +135,7 @@ const SENSE = [
     bad: { de: /weltraum|weltall/i, nl: /ruimtevaart|heelal/i, es: /espacio exterior/i, fi: /avaruu/i, sv: /rymden/i, da: /verdensrum/i, it: /spazio cosmico/i, ja: /宇宙/, zh: /太空|宇宙/, ko: /우주/ } },
   { what: 'a digital thread read as yarn', src: /\bdigital thread\b/i,
     bad: { de: /garn/i, nl: /garen/i, sv: /\bgarn/i, da: /\bgarn/i, fi: /lanka/i, fr: /\bfil à|\bfils? de laine/i, es: /hilo de coser|\bhilaza/i, it: /filato/i, pt: /\bfio de lã/i, ja: /糸/, zh: /纱|毛线/, ko: /실타래|털실/ } },
-  { what: 'a legal or contract review read as a critique', src: /\b(legal|contract|document|privilege|compliance) reviews?\b/i,
+  { what: 'a legal or contract review read as a critique', src: /\b(legal|contract|document|privilege|compliance|contestable) reviews?\b/i,
     bad: { de: /kritik|rezension/i, fr: /\bcritique/i, es: /reseña|crítica/i, it: /recensione|\bcritica/i, pt: /resenha|crítica/i, nl: /recensie|kritiek/i, sv: /recension|kritik/i,
            da: /anmeldelse|kritik/i, fi: /arvostelu|kritiikk/i, ja: /批評/, zh: /书评|评论/, ko: /비평|평론/ } },
   { what: 'a capacity or demand surge read as an electrical surge', src: /\bsurges?\b/i, except: /power surge|voltage|storm surge|electric|lightning/i,
@@ -181,7 +181,7 @@ const SENSE = [
     bad: { sv: /betyg|\bgrade\b/i, da: /karakter|kvalitet\S* og kvalitet|kvalitets- og ai/i, he: /ציון|ציונים/, fi: /laatu ja laatu|laadukas ja laadukas|\bgrade\b/i,
            de: /qualität\S*\s+und\s+qualität|qualitäts-\s*und\s*qualität/i, nl: /kwaliteit\S*\s+en\s+kwaliteit/i } },
   { what: 'a cockpit screen read as an aircraft cockpit', src: /\bcockpits?\b/i,
-    bad: { es: /cabina/i, pt: /cabine/i, it: /pilotaggio|\bcabina/i, ko: /조종/, ar: /قمرة|طيّ?ار/, he: /טייס/, fi: /ohjaamo/i, ja: /操縦/, zh: /机舱/,
+    bad: { es: /cabina/i, pt: /cabine/i, it: /pilotaggio|\bcabina|pozzett/i, ko: /조종/, ar: /قمرة|طيّ?ار/, he: /טייס/, fi: /ohjaamo/i, ja: /操縦/, zh: /机舱/,
            fr: /poste de pilotage|\bcabine/i, de: /pilotenkanzel/i, nl: /stuurhut/i, sv: /förarhytt/i, da: /førerkabine/i, hi: /विमान/ } },
   { what: 'a claims title read as two nouns side by side', src: /^(VP )?Claims (?!and\b|&)[^.,;:!?]*$/,
     bad: { de: /^(VP )?(Versicherungsansprüche|Schadenfälle|Ansprüche) (?!und\b|&)\S|VP Insurance/i, fi: /^(VP )?(Vakuutuskorvaukset|Korvaukset) (?!ja\b|&)\S|^VP Vakuutuskorvaukset$/i,
@@ -189,14 +189,18 @@ const SENSE = [
            nl: /^(VP )?(Verzekeringsclaims|Schadeclaims) (?!en\b|&)\S|^VP Verzekeringsclaims$/i, it: /VP Insurance/i } },
   { what: 'an insurance claim in Portuguese without its preposition', src: /\bclaims?\b/i, except: /claims? (that|to be)|(FDA[- ]cleared|marketing|label|product|ESG|green|patent|warranty) claims?/i,
     bad: { pt: { test: t => /^sinistros?\b/.test(t) || [...t.matchAll(/([A-Za-zÀ-ÿ&]+) sinistros?\b/g)].some(m => !/^(de|dos|das|do|da|os|as|o|e|ou|nem|aos|nos|nas|com|em|por|para|sobre|seus|suas|seu|sua|novos|mais|todos|cujos|quais|quantos|sem|entre|até|a|ao|à|pelos|pelas|como|que|esses|estes|dois|três|muitos|menos)$/i.test(m[1])) } } },
-  { what: 'claims adjudication read as a court ruling, an arbitration or a tender award', src: /\badjudicat/i,
-    bad: { de: /rechtsprechung|\bgericht|\burteil/i, nl: /arbitrage|rechtspraak|berechting/i, fr: /adjudication/i, it: /aggiudica/i, pt: /julgament|adjudica/i,
-           sv: /domstol|rättskip|dömande/i, da: /domstol|retspleje/i, fi: /tuomio|oikeudenk/i } },
+  { what: 'claims adjudication read as a court ruling, an arbitration or a tender award', src: /\badjudicat/i, except: /\b(dispute|court|tribunal|construction|contract award)\b/i,
+    bad: { de: /rechtsprechung|\bgericht|\burteil|zuschlag/i, nl: /arbitrage|rechtspraak|berechting|gerecht|vonnis|toewijz/i, fr: /adjudication|arbitrag|\bjugé|ajust/i, it: /aggiudica/i,
+           pt: /julgament|adjudica/i, es: /adjudica/i, sv: /domstol|rättskip|dömande|domslut/i, da: /domstol|retspleje|(?<!god)kendelse/i, fi: /tuomio|oikeudenk/i,
+           ja: /判決/, ko: /판결|재판/, zh: /判决/, he: /פסק דין/, ar: /قضائ|(?<![\u0621-\u064A])(?:ال)?حكم(?![\u0621-\u064A])/ } },
+  { what: 'a health claim adjudication read as property damage', src: /\badjudicat/i, onlyOn: ['health_insurance', 'pharmacy_pbm', 'healthcare', 'digital_health'],
+    bad: { de: /schaden|schäden/i } },
   { what: 'an X & Y agent read as X, and an agent for Y', src: /^[^.]+ (&|and) [^.]+ Agent$/,
     bad: { fr: /\bet (l')?agent\b/i, it: /\be (l')?agente\b/i, pt: /\be (o )?agente\b/i, es: /\by (el )?agente\b/i, de: /\bund (KI-)?Agent/i, nl: /\ben (AI-)?agent\b/i,
            sv: /\boch (AI-)?agent\b/i, da: /\bog (AI-)?agent\b/i, fi: /\bja (tekoäly|AI-?)?agentti\b/i, he: /וסוכן/, ar: /ووكيل/ } },
-  { what: 'contestability read as competitiveness', src: /\bcontestab/i,
-    bad: { da: /konkurrence/i, sv: /konkurrens/i, de: /wettbewerb/i, nl: /concurrentie/i, fi: /kilpailu/i, fr: /compétitiv/i, es: /competitiv/i, it: /competitiv/i, pt: /competitiv/i } },
+  { what: 'contestability read as competitiveness or as controversial', src: /\bcontestab/i,
+    bad: { da: /konkurrence/i, sv: /konkurrens|omstridd/i, de: /wettbewerb/i, nl: /concurrentie/i, fi: /kilpailu|kiistanalai/i, fr: /compétitiv|^revue contestable$/i,
+           es: /competitiv/i, it: /competitiv/i, pt: /competitiv|^revisão contestável$/i, ja: /異議を唱えることができる/, ko: /논쟁의 여지/, he: /שנוי במחלוקת/, ar: /المراجعة القابلة للطعن/ } },
   { what: 'revenue assurance read as insurance', src: /\brevenue assurance\b/i,
     bad: { de: /versicherung/i, nl: /verzekering/i, sv: /försäkring/i, da: /forsikring/i, fi: /vakuutu/i, es: /seguro/i, it: /assicurazion/i, pt: /seguro/i,
            ja: /保険/, zh: /保险/, ko: /보험/, he: /ביטוח/, hi: /बीमा/ } },
@@ -326,6 +330,40 @@ const SENSE = [
     bad: { fi: /tarjoil/i, ja: /盛り付/, zh: /端上/ } },
   { what: 'an installed base read as a basic service', src: /\binstalled base\b/i, bad: { fi: /peruspalvelu/i } },
   { what: 'trade spend read as consumption in shops', src: /\btrade spend\b/i, bad: { fi: /kulutus/i } },
+  { what: 'the next best action read as the second best', src: /\bnext[- ]best\b/i,
+    bad: { ja: /次善/, ko: /차선/, de: /nächstbest|nächste[nrs]? beste[nrs]?\b/i, sv: /näst bäst/i, da: /næst-?bedst|næste-bedste/i, fi: /toiseksi parh|seuraavaksi parh/i } },
+  { what: 'data marts read as markets or the month of March', src: /(?<![\w-])marts?\b/i, except: /\bmarkets?\b|marketplace|Walmart|Kmart/i,
+    bad: { de: /märkte|\bmarkt\b|-markt\b/i, nl: /\bmarkt(en)?\b|markten\b/i, fr: /\bmarchés?\b/i, es: /\bmercados?\b/i, pt: /\bmercados?\b/i, it: /\bmercat[io]\b/i,
+           sv: /\bmars\b|marknad/i, da: /(?<!data ?)\bmarts\b|markeder/i, fi: /datakaup|tietokaup|\bkaupat\b|markkin(?!oint)|[a-zäöå]pistee/i, he: /מרץ|מרס/,
+           ar: /أسواق|سوق/, hi: /बाज़ार|बाजार/, ja: /市場/, ko: /시장/, zh: /市场/ } },
+  { what: 'GB-scale read as British', src: /\bGB[- ]scale\b/i,
+    bad: { de: /britisch/i, it: /britannic|ingles/i, fi: /englann|britann/i, fr: /britanni/i, es: /británic/i, pt: /britânic/i, nl: /\bbrits/i, sv: /brittisk/i, da: /britisk/i,
+           ja: /英国|イギリス/, ko: /영국/, zh: /英国/, ar: /بريطان/, he: /בריט/, hi: /ब्रिटेन|ब्रिटिश/ } },
+  { what: 'a loan cure rate read as healing, hardening, recovery or an exchange rate', src: /\bcure rates?\b/i,
+    bad: { de: /heilung/i, nl: /genezing|curate/i, it: /guarigion/i, sv: /härdning|kurering/i, da: /kurshastighed/i, fi: /parantum|kovettum/i, he: /ריפוי/, ar: /الشفاء|التعافي/,
+           ja: /治癒/, ko: /치료/, es: /recuperaci|curaci/i } },
+  { what: 'a delinquency roll rate read as rolling, sliding or a rollover', src: /\broll rates?\b/i,
+    bad: { nl: /rolsnelheid/i, it: /rollio/i, sv: /rullhastighet|rullningstakt/i, da: /rullehastighed/i, fi: /kiertymis/i, he: /גליל|גלישה/, ar: /التدحرج/, ko: /롤 이자율|롤 금리/, pt: /rolagem/i } },
+  { what: 'broadcast programming read as writing code', src: /\bprogramming\b/i, onlyOn: ['media_broadcasting'],
+    bad: { de: /programmier/i, sv: /programmering/i, da: /programmering/i, fi: /ohjelmoin/i, nl: /programmeren/i, ja: /プログラミング/, ko: /프로그래밍/, zh: /编程/, he: /תכנות/, ar: /البرمجة/ } },
+  { what: 'an insurance reserve read as a spare or a preliminary', src: /\breserv(e|es)\b/i, onlyOn: ['insurance_pandc', 'life_insurance', 'health_insurance'],
+    bad: { ja: /予備/, ko: /예비/ } },
+  { what: 'a programming slate read as stone or a writing slate', src: /\bslate\b/i, onlyOn: ['media_broadcasting'],
+    bad: { fr: /ardoise/i, es: /pizarra/i, it: /ardesia/i, pt: /ardósia/i, nl: /leisteen/i, da: /skifer/i, sv: /skiffer/i, de: /schiefer/i, fi: /liuske/i, he: /צפחה/, zh: /板岩/, ar: /لائحة/ } },
+  { what: 'a ratio read as a price', src: /^(?![\s\S]*\b(take|bill|billing|billable|effective|freight|interchange|discount|interest|exchange|FX|tax|spot|day|daily|hourly|labou?r|net effective|room|ad|CPM|base|shipping|tariff|price|pricing|premium|commission|fee|pay|wage|policy|mortgage|swap|coupon|forward|repo|funding|lending|deposit|savings|loan|card|reimbursement|contract|negotiated|charge|cost)\b)[\w&/ -]{0,40}\brate$/i,
+    bad: { de: /\btarif/i, it: /\btariff/i, es: /\btarifa/i, pt: /\btarifa/i, fr: /\btarif/i, nl: /\btarie/i, sv: /\btariff/i, da: /\btarif/i, fi: /\btariffi/i } },
+  { what: 'a crude slate and blend read as the same word twice', src: /^Crude slate & blend$/i,
+    bad: Object.fromEntries(LANGS.map(l => [l, { test: t => /(\p{L}{4,})[\s\S]*\1/iu.test(t) || /(\p{Script=Han}{2})[\s\S]*\1/u.test(t) }])) },
+  { what: 'the loss-mitigation abbreviation read as the word with', src: /\bLoss Mit\b/,
+    bad: { it: /perdita con/i, pt: /perda mit/i, nl: /verlies mit/i, ko: /미트/, ja: /ミット/, es: /pérdida con/i, fr: /perte avec/i, de: /verlust mit/i, sv: /förlust med/i, da: /tab med/i } },
+  { what: 'a quality command centre read as an order or a software command', src: /\bquality command\b/i,
+    bad: { de: /befehl/i, ko: /명령/, ja: /コマンド/, nl: /commando/i, sv: /kvalitetskommando/i, da: /kvalitetskommando/i, fi: /laatu komento|laatukomento/i, he: /פיקוד/ } },
+  { what: 'a trust and compliance team read as orders to trust and comply', src: /\bTrust & Comply\b/,
+    bad: { pt: /confie|cumpra/i, nl: /vertrouw en voldoe/i, it: /fidati|rispetta\b/i, sv: /lita på/i, da: /overhold\b/i, fi: /luota|noudata/i } },
+  { what: 'an insurance benefit read as an advantage or a perk', src: /\bbenefit payouts?\b/i, onlyOn: ['life_insurance', 'insurance_pandc', 'health_insurance'],
+    bad: { nl: /voordeel/i, ko: /혜택/, he: /הטב/ } },
+  ...['Banner', 'Canvas', 'Slate'].map(name => ({ what: `the education system ${name} translated`, src: new RegExp('\\b' + name + '\\b'), onlyOn: ['education'],
+    bad: Object.fromEntries(LANGS.map(l => [l, { test: t => !t.includes(name) }])) })),
   ...['Databricks Vector Search', 'Anthropic', 'OpenAI', 'Amazon Bedrock', 'AWS Glue', 'Oracle', 'Sparkplug', 'Power BI', 'Pub/Sub', 'Event Hubs', 'Kinesis']
     .map(name => ({ what: `the name ${name} translated`, src: new RegExp(name.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')),
       bad: Object.fromEntries(LANGS.map(l => [l, { test: t => !t.includes(name) }])) })),
@@ -350,11 +388,17 @@ function offline(){
       if(/[\u200B\uFEFF]/.test(t)) fails.push(`[${l}] a zero-width space hides in '${s.slice(0, 60)}'`);
       if(l === 'he' && /[\u0591-\u05C7]/.test(t)) fails.push(`[he] vowel points in '${s.slice(0, 60)}'`);
       if(build && !build.SENTENCE_END.test(s) && build.ADDED_END.test(t)) fails.push(`[${l}] a full stop the English does not have in '${s.slice(0, 60)}' => '${t.slice(-40)}'`);
-      const lost = build && build.protect(s, l).found.find(f => (named.has(f) || named.has(one(f))) && !t.includes(f) && !(named.has(one(f)) && t.includes(one(f))));
+      const found = build ? build.protect(s, l).found : [];
+      const lost = found.find(f => (named.has(f) || named.has(one(f))) && !t.includes(f) && !(named.has(one(f)) && t.includes(one(f))));
       if(lost) fails.push(`[${l}] '${lost}' should read as written in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
+      const bare = found.reduce((x, f) => x.split(f).join(' '), t);
+      const CJK = '[\u3000-\u30ff\u3400-\u9fff\uff00-\uffef]', esc = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const split = found.find(f => (l === 'ja' || l === 'zh') ? (new RegExp('^' + CJK).test(f) && new RegExp(CJK + ' +' + esc(f)).test(t)) || (new RegExp(CJK + '$').test(f) && new RegExp(esc(f) + ' +' + CJK).test(t))
+        : l === 'he' && /^[\u05D0-\u05EA]/.test(f) && new RegExp('(^|[\\s(])[ובלמהשכ]{1,3}-\u2060?' + esc(f)).test(t));
+      if(split) fails.push(`[${l}] '${split}' is cut off from the word next to it in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
       for(const r of SENSE){
         if(!r.bad[l] || !r.src.test(s) || (r.except && r.except.test(s)) || (r.only && r.only.indexOf(s) < 0) || (r.notOn && r.notOn.includes(from[s])) || (r.onlyOn && !r.onlyOn.includes(from[s]))) continue;
-        if(r.bad[l].test(t)) fails.push(`[${l}] ${r.what}: '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
+        if(r.bad[l].test(r.bad[l] instanceof RegExp ? bare : t)) fails.push(`[${l}] ${r.what}: '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
       }
     }
     for(const s of TOUR){

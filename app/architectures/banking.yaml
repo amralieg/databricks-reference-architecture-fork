@@ -603,6 +603,7 @@ consumers:
         summary: Rate and liquidity scenarios with hedge recommendations.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Capital & Liquidity
         icon: aibi

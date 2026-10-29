@@ -571,6 +571,7 @@ consumers:
         summary: Owners and JV partners via Delta Sharing.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Project Command
         icon: gauge

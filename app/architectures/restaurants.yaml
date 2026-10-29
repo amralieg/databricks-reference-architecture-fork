@@ -100,7 +100,7 @@ sources:
             interval: Nightly batch + period close
   - name: Labor & Scheduling
     icon: people
-    simplified: 2
+    simplified: 3
     tiles:
       - name: HotSchedules
         icon: people
@@ -381,6 +381,7 @@ pipelines:
           - Food Cost Control
   - name: Technical
     icon: code
+    simplified: 3
     tiles:
       - name: Data Engineers
         mark: Lakeflow
@@ -537,6 +538,7 @@ consumers:
         summary: P&L, audit scores and compliance by franchisee on one surface.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Comp Sales & Operations
         icon: aibi

@@ -584,6 +584,7 @@ consumers:
         summary: Analyst notebooks, VS Code and JetBrains against governed product and revenue data with Genie Code.
   - name: Growth Activation
     icon: zfunnel
+    simplified: 2
     tiles:
       - name: Reverse ETL to CDP
         icon: reverse

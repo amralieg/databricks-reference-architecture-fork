@@ -78,6 +78,12 @@ function audit(L) {
     const lead = rtl ? px(lc.right - t.right) : px(t.left - lc.left);
     if (Math.abs(lead) > L.centre) out.push(`${zone(bd)}: title '${label(lbl)}' starts ${lead.toFixed(1)}px in from its leading edge`);
   });
+  document.querySelectorAll('.band-row.medallion .medal-arrow').forEach(a => {
+    const st = a.previousElementSibling, cyl = st && st.querySelector('svg');
+    if (!vis(a) || !cyl || !vis(cyl)) return;
+    const r = a.getBoundingClientRect(), s = cyl.getBoundingClientRect(), off = px((r.top + r.bottom) / 2 - (s.top + s.bottom) / 2);
+    if (Math.abs(off) > L.centre) out.push(`b-infra: the medallion arrow after '${label(st)}' sits ${off.toFixed(1)}px off its cylinder's center line`);
+  });
   document.querySelectorAll('.cloud').forEach(cl => {
     const lbl = cl.querySelector(':scope > .cloud-lbl');
     if (vis(cl) && lbl && getComputedStyle(cl).flexDirection === 'row') title(lbl, cl);
@@ -120,14 +126,19 @@ function audit(L) {
 
 const PLAT_STYLE = {
   '.plat-head': ['fontSize', 'minHeight'], '.ph-mark': ['width', 'height'],
-  '.band-lbl': ['flexBasis'], '.bl-name': ['fontSize', 'fontWeight', 'flexDirection'], '.bl-ic': ['width', 'height'],
+  '.band:not(.b-work) > .band-lbl': ['flexBasis'], '.b-work > .band-lbl': ['flexBasis'], '.bl-name': ['fontSize', 'fontWeight', 'flexDirection'], '.bl-ic': ['width', 'height'],
   '.pcard': ['flexDirection', 'gap', 'paddingTop', 'paddingLeft'], '.pico': ['width', 'height'], '.pico svg': ['width', 'height'],
   '.p-name': ['fontSize', 'fontWeight'], '.ph-name': ['fontSize', 'fontWeight'], '.pl-name': ['fontSize', 'fontWeight'], '.tagpill': ['fontSize'],
-  '.foot-chip': ['gap', 'paddingLeft'], '.fc-name': ['fontSize'], '.oi-lbl': ['fontSize', 'flexBasis'],
-  '.fmt': ['fontSize', 'paddingTop'], '.fmt-logo': ['height'], '.mstage': ['flexBasis'], '.mstage svg': ['width'], '.ms-n': ['fontSize'], '.medal-arrow': ['marginTop'],
+  '.foot-chip': ['gap', 'paddingLeft'], '.foot-chip svg': ['width'], '.fc-name': ['fontSize'], '.oi-lbl': ['fontSize', 'flexBasis'],
+  '.fmt': ['fontSize', 'paddingTop'], '.fmt-logo': ['height'], '.mstage': ['flexBasis'], '.mstage svg': ['width'], '.ms-n': ['fontSize'],
 };
+const PLAT_SCALED = new Set([
+  '.band:not(.b-work) > .band-lbl flexBasis', '.bl-name fontSize', '.bl-ic width', '.bl-ic height', '.p-name fontSize', '.ph-name fontSize',
+  '.pl-name fontSize', '.foot-chip svg width', '.fc-name fontSize', '.oi-lbl fontSize', '.oi-lbl flexBasis', '.fmt fontSize', '.ms-n fontSize',
+]);
 function platSig(STYLE) {
   const vis = e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; };
+  const step = parseFloat(getComputedStyle(document.getElementById('platform')).getPropertyValue('--pk')) || 1;
   const roots = [...document.querySelectorAll('.plat-head, #plat-top, #platform')];
   const all = sel => roots.flatMap(r => (r.matches(sel) ? [r] : []).concat([...r.querySelectorAll(sel)])).filter(vis);
   const tiles = all('.atom').map(e => { const rec = byId[e.dataset.id]; return rec && rec.tile ? rec.tile.n || rec.tile.tag || '' : ''; }).filter(Boolean).sort();
@@ -136,7 +147,7 @@ function platSig(STYLE) {
     const vals = new Set(all(sel).filter(e => p !== 'fontSize' || !e.style.fontSize).map(e => getComputedStyle(e)[p]));
     if (vals.size) style[`${sel} ${p}`] = [...vals].sort().join(' | ');
   }));
-  return { tiles, style };
+  return { tiles, style, step };
 }
 function platDiff(key, s, d) {
   const out = [];
@@ -144,8 +155,16 @@ function platDiff(key, s, d) {
   const lost = only(d.tiles, s.tiles), extra = only(s.tiles, d.tiles);
   if (lost.length) out.push(`[${key}] Simplified leaves out platform tiles Detailed shows: ${lost.join(', ')}`);
   if (extra.length) out.push(`[${key}] Simplified shows platform tiles Detailed does not: ${extra.join(', ')}`);
+  if (d.step !== 1) out.push(`[${key}] the Detailed platform carries a type step of ${d.step}, not 1`);
+  if (!(s.step > 1)) out.push(`[${key}] the Simplified platform carries no type step above Detailed (--pk reads ${s.step})`);
+  const scale = (v, f) => v.split(' | ').map(x => /^-?[\d.]+px$/.test(x) ? +(parseFloat(x) * f).toFixed(2) + 'px' : x).sort().join(' | ');
+  const same = (a, b) => {
+    const x = (a || '').split(' | '), y = (b || '').split(' | ');
+    return x.length === y.length && x.every((v, i) => v === y[i] || (/px$/.test(v) && /px$/.test(y[i]) && Math.abs(parseFloat(v) - parseFloat(y[i])) <= 0.05));
+  };
   new Set(Object.keys(s.style).concat(Object.keys(d.style))).forEach(k => {
-    if (s.style[k] !== d.style[k]) out.push(`[${key}] platform ${k} reads ${s.style[k] || 'nothing'} in Simplified and ${d.style[k] || 'nothing'} in Detailed`);
+    const want = PLAT_SCALED.has(k) && d.style[k] ? scale(d.style[k], s.step) : d.style[k];
+    if (!same(s.style[k], want)) out.push(`[${key}] platform ${k} reads ${s.style[k] || 'nothing'} in Simplified and ${d.style[k] || 'nothing'} in Detailed${PLAT_SCALED.has(k) ? `, which the ${s.step} step makes ${want}` : ''}`);
   });
   return out;
 }
@@ -225,5 +244,5 @@ function panelAudit(L) {
   console.log(`views: ${VIEWS.length}, boards, clouds, shapes and languages measured: ${checked}`);
   if (errs.length) fails.push(...errs.slice(0, 5).map(e => 'page error: ' + e));
   if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.forEach(f => console.log('  - ' + f)); process.exit(1); }
-  console.log('PASS: in every platform box the tiles sit midway between top and bottom, titles are centred and start at the leading edge, arm cards are evenly spaced, highlight dots clear the borders and never cover a title or its icon, every cloud, top-band and rail tile holds its content at its vertical middle, the cloud band is the size of the Genie Agents band, the platform shows the same tiles with the same type, icons and spacing in both views, and panel link arrows end their rows in every language');
+  console.log('PASS: in every platform box the tiles sit midway between top and bottom, titles are centered and start at the leading edge, arm cards are evenly spaced, highlight dots clear the borders and never cover a title or its icon, every cloud, top-band and rail tile holds its content at its vertical middle, the cloud band is the size of the Genie Agents band, the medallion arrows ride their cylinders, the platform shows the same tiles, icons and spacing in both views with Simplified\'s type one fixed step larger, and panel link arrows end their rows in every language');
 })().catch(e => { console.error(e); process.exit(2); });

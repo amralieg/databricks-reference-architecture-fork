@@ -129,6 +129,7 @@ sources:
             interval: Continuous (near real-time)
   - name: Customer & Billing
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP IS-U
         icon: erp
@@ -184,7 +185,6 @@ sources:
             interval: Continuous (payments + notifications)
   - name: GIS & Outage Mgmt
     icon: globe
-    simplified: 3
     tiles:
       - name: Esri ArcGIS Utility
         icon: globe
@@ -605,6 +605,7 @@ consumers:
         summary: Municipalities, regulators and research partners accessing governed products, reducing bespoke exports with copies and transfer behavior dependent on the sharing mode.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: OMS Control Tower
         icon: gauge

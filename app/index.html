@@ -836,7 +836,7 @@
      and its separation. */
   .colhead > svg:not(.ph-mark) { width:16px; height:16px; margin-inline-end:7px; }
   .pockhead > svg { width:13px; height:13px; margin-inline-end:5px; }
-  .bl-ic { flex:0 0 auto; width:17px; height:17px; margin:1px 0 0; margin-inline-end:7px; color:var(--brand); }
+  .bl-ic { flex:0 0 auto; width:calc(17px * var(--pk, 1)); height:calc(17px * var(--pk, 1)); margin:1px 0 0; margin-inline-end:7px; color:var(--brand); }
   .cl-ic { flex:0 0 auto; width:var(--cl-ic); height:var(--cl-ic); margin:0; margin-inline-end:7px; color:var(--brand); }
   .rg-ic { flex:0 0 auto; width:12px; height:12px; margin-inline-end:5px; opacity:.75; }
   .pl-ic { flex:0 0 auto; width:15px; height:15px; margin-inline-end:6px; color:var(--brand); }
@@ -1277,7 +1277,7 @@
   .arm { flex:0 0 calc(var(--armw) - 8px); min-width:0; display:flex; }
   .arm > .band { flex:1 1 auto; flex-direction:column; gap:6px; padding:7px 8px; }
   .arm .band-lbl { flex:0 0 auto; padding-top:0; }
-  .arm .band-lbl .bl-name { font-size:15px; }
+  .arm .band-lbl .bl-name { font-size:calc(15px * var(--pk, 1)); }
 
   /* ---------- platform style: Z, S, T, T180 ----------
      Four shapes out of two independent facts, so nothing here is written four
@@ -1437,7 +1437,7 @@
   .arm .band-row.cards { flex-direction:column; gap:5px; padding-block:5px; flex:1 1 auto; align-items:stretch; justify-content:space-evenly; }
   .arm .band-row.cards > .pcard { flex:0 0 auto; }
   .arm .pcard { padding:5px 7px; align-items:center; }
-  .arm .pcard .p-name { font-size:13px; }
+  .arm .pcard .p-name { font-size:calc(13px * var(--pk, 1)); }
   .arm .pcard .p-sub { font-size:10.5px; }
 
   /* A band names its group and takes both slots from it. No alias in between:
@@ -1475,9 +1475,9 @@
     --gc-bg:var(--g-violet-bg); --gc-tile:var(--g-violet-tile); --gc-bd:var(--g-violet-bd); --gc-line:var(--g-violet-line); --gc-head:var(--g-violet-head); --gc-ink:var(--g-violet-ink); }
   .band.t-grey   { border-color:var(--line);        background:var(--card); }
 
-  .band-lbl { flex:0 0 138px; min-width:0; padding-top:2px; }
+  .band-lbl { flex:0 0 calc(138px * var(--pk, 1)); min-width:0; padding-top:2px; }
   .band-lbl .bl-name { display:flex; align-items:flex-start;
-    font-size:16px; font-weight:800; letter-spacing:-.015em; line-height:1.15; }
+    font-size:calc(16px * var(--pk, 1)); font-weight:800; letter-spacing:-.015em; line-height:1.15; }
   .band-lbl .bl-sub { font-size:11px; color:var(--muted); line-height:1.35; margin-top:5px; }
   /* right bookend: a clickable band-lbl mirrored to the right edge. Narrower than
      the left label because its two words are short, and right-aligned so it reads
@@ -1522,7 +1522,7 @@
     display:grid; place-items:center; box-shadow:var(--shadow-ico); }
   .pico svg { width:19px; height:19px; color:var(--brand); }
   .ptxt { min-width:0; }
-  .p-name { display:block; font-size:14.5px; font-weight:750; line-height:1.2; letter-spacing:-.01em; }
+  .p-name { display:block; font-size:calc(14.5px * var(--pk, 1)); font-weight:750; line-height:1.2; letter-spacing:-.01em; }
   .p-sub { display:block; font-size:11.5px; color:var(--muted); line-height:1.3; margin-top:2px; }
   .p-caps { display:block; font-size:11px; color:var(--muted); line-height:1.45; margin-top:3px; }
   /* a divider, not a word: held to the 3:1 graphical threshold, and
@@ -1554,7 +1554,7 @@
     transition:.12s; position:relative; }
   .phead:hover { border-color:var(--brand); background:var(--card); }
   .ph-top { display:flex; align-items:center; gap:6px; }
-  .ph-name { font-size:15px; font-weight:800; letter-spacing:-.015em; line-height:1.12; white-space:nowrap; }
+  .ph-name { font-size:calc(15px * var(--pk, 1)); font-weight:800; letter-spacing:-.015em; line-height:1.12; white-space:nowrap; }
   .ph-sub { display:block; font-size:11px; color:var(--muted); line-height:1.3; margin-top:4px;
     max-width:132px; }
   .panel-cols { display:flex; gap:8px; align-items:flex-start; flex:1 1 auto; min-width:0; }
@@ -1605,7 +1605,7 @@
   .plaincol { border:1px solid transparent; border-radius:9px; padding:4px 5px;
     cursor:pointer; font:inherit; text-align:left; background:transparent; transition:.12s; }
   .plaincol:hover { border-color:var(--brand); background:var(--card); }
-  .plaincol .pl-name { display:flex; align-items:center; font-size:14.5px; font-weight:800;
+  .plaincol .pl-name { display:flex; align-items:center; font-size:calc(14.5px * var(--pk, 1)); font-weight:800;
     letter-spacing:-.015em; line-height:1.12; }
   .plaincol .pl-sub { display:block; font-size:11px; color:var(--muted); line-height:1.3; margin-top:4px; }
 
@@ -1646,13 +1646,13 @@
     text-align:left; font:inherit; cursor:pointer; transition:.12s;
     border:1px solid var(--gc-bd); background:var(--gc-tile); border-radius:999px; padding:3px 12px; }
   .foot-chip:hover { border-color:var(--brand); box-shadow:var(--shadow); }
-  .foot-chip svg { width:16px; height:16px; color:var(--brand); flex:0 0 auto; }
-  .foot-chip .fc-name { font-size:13px; font-weight:800; letter-spacing:-.01em; }
+  .foot-chip svg { width:calc(16px * var(--pk, 1)); height:calc(16px * var(--pk, 1)); color:var(--brand); flex:0 0 auto; }
+  .foot-chip .fc-name { font-size:calc(13px * var(--pk, 1)); font-weight:800; letter-spacing:-.01em; }
 
   /* open-infra row bits: one fixed six-up grid, then the medallion strip */
   .band-row.infra { display:flex; align-items:center; gap:12px; flex-wrap:nowrap; }
   .b-infra .band-body { flex-direction:column; gap:6px; }
-  .oi-lbl { font-size:12px; font-weight:800; color:var(--ink); flex:0 0 100px;
+  .oi-lbl { font-size:calc(12px * var(--pk, 1)); font-weight:800; color:var(--ink); flex:0 0 calc(100px * var(--pk, 1));
     letter-spacing:-.01em; line-height:1.25; }
   /* The tile row above carries no label, so a label in flow here would indent
      this row alone and the stages would centre on a box 100px narrower than the
@@ -1660,8 +1660,8 @@
      box, which is what puts the three stages under their own column. */
   .band-row.medallion { display:flex; align-items:center; gap:6px; flex-wrap:nowrap; }
   .oi-lbl > .badge-dot { margin-top:-3px; }
-  .band-row.medallion .oi-lbl { position:relative; transform:none; flex:0 0 84px;
-    max-width:84px; }
+  .band-row.medallion .oi-lbl { position:relative; transform:none; flex:0 0 calc(84px * var(--pk, 1));
+    max-width:calc(84px * var(--pk, 1)); }
   /* Cylinders shrink toward the glyph and the connectors take three times their
      share of the row slack, so the medallion hops read long instead of stubby
      while the arrows keep their --as standoff off each cylinder. */
@@ -1671,10 +1671,10 @@
      and a centred flex row overflows both sides when that happens. Stacking the
      pill under the name is what keeps every cell inside its column. */
   .fmt-grid .fmt { flex-direction:column; justify-content:center; gap:1px; flex:1 1 auto;
-    padding:3px 5px; font-size:10px; font-weight:750; text-transform:none; letter-spacing:0; }
+    padding:3px 5px; font-size:calc(10px * var(--pk, 1)); font-weight:750; text-transform:none; letter-spacing:0; }
   .fmt-grid .fmt-h { display:flex; align-items:center; justify-content:center; gap:2px;
     min-width:0; text-align:center; white-space:normal; line-height:1.2; }
-  .fmt-grid .fmt svg { width:11px; height:11px; }
+  .fmt-grid .fmt svg { width:calc(11px * var(--pk, 1)); height:calc(11px * var(--pk, 1)); }
   /* Official project marks. The height is pinned and the width left to the
      lockup's own aspect ratio, so five different shapes sit in one grid without
      any of them being stretched. The selector has to outrank `.fmt svg`, which
@@ -1711,7 +1711,7 @@
     cursor:pointer; transition:.12s; }
   .mstage:hover { background:var(--card); box-shadow:var(--shadow); transform:translateY(-1px); }
   .mstage svg { display:block; width:30px; height:30px; flex:0 0 auto; stroke-width:1.5; }
-  .mstage .ms-n { display:block; font-size:11px; font-weight:850; letter-spacing:.06em;
+  .mstage .ms-n { display:block; font-size:calc(11px * var(--pk, 1)); font-weight:850; letter-spacing:.06em;
     text-transform:uppercase; line-height:1.1; white-space:nowrap; flex:0 0 auto; }
   .mstage .ms-s { display:block; font-size:9.5px; line-height:1.25; color:var(--muted);
     font-weight:600; min-width:min-content; white-space:normal; text-align:center; max-width:7rem; }
@@ -1728,7 +1728,7 @@
      of floating as an 82px stub in the middle; the 2px seam (--as) keeps the head
      off the next cylinder and the tail off the previous one. Same 14x10 head and 3px
      wire as every other connector, so the medallion reads identical to the rest. */
-  .medal-arrow { flex:0 1 64px; min-width:52px; align-self:flex-start; margin-top:29px; height:14px; position:relative; }
+  .medal-arrow { flex:0 1 64px; min-width:52px; align-self:flex-start; margin-top:calc(17px + 12px * var(--pk, 1)); height:14px; position:relative; }
   .medal-arrow::before { content:""; position:absolute; left:var(--as); right:calc(9px + var(--as)); top:1px; height:12px;
     --cwire:color-mix(in srgb, var(--flow-medal) 66%, transparent);
     background:
@@ -1751,10 +1751,10 @@
      the palette, so these take the slate group tile + border like the consumer
      and cloud tiles do, which is what makes the whole band follow the palette. */
   .fmt { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--gc-line); background:var(--gc-tile);
-    border-radius:7px; padding:4px 9px; font:inherit; font-size:11.5px; font-weight:800; letter-spacing:.04em;
+    border-radius:7px; padding:4px 9px; font:inherit; font-size:calc(11.5px * var(--pk, 1)); font-weight:800; letter-spacing:.04em;
     text-transform:uppercase; color:var(--ink); cursor:pointer; transition:.12s; white-space:nowrap; flex:0 0 auto; }
   .fmt:hover { border-color:var(--brand); color:var(--brand-ink); }
-  .fmt svg { width:14px; height:14px; color:var(--brand); flex:0 0 auto; }
+  .fmt svg { width:calc(14px * var(--pk, 1)); height:calc(14px * var(--pk, 1)); color:var(--brand); flex:0 0 auto; }
   /* margin-left:auto keeps the group right-aligned, and grouping the three means
      they wrap together onto the next line instead of one at a time. */
   .anyx { display:inline-flex; align-items:center; gap:5px; border:1px solid transparent; border-radius:7px;
@@ -1877,7 +1877,8 @@
   html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p7 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*6); }
   html:not([data-dir="rtl"]) .pocket.ppl :not(.pockhead):not(.colhead) > .badge-dot.hl-p8,
   html:not([data-dir="rtl"]) .rail.ppl   :not(.pockhead):not(.colhead) > .badge-dot.hl-p8 { left:auto; right:calc(var(--dot-edge) + var(--dot-pitch)*7); }
-  .band-lbl, .cloud-lbl { --dot-top:calc(-1 * var(--lbl-dot)); }
+  .cloud-lbl { --dot-top:calc(-1 * var(--lbl-dot)); }
+  .band-lbl { --dot-top:calc(-1 * var(--lbl-dot) - 1px); }
   .cloud-lbl:has(.cl-ic) { --dot-top:calc((var(--cl-ic) - var(--dot-sz)) / 2); --dot-edge:calc(var(--cl-ic) + 9px); }
   /* A highlight switched off in the Highlights menu hides that colour everywhere;
      paintHighlights re-packs the survivors into the corners after each toggle. */
@@ -2567,6 +2568,8 @@
   }
 
   body.view-simple { --glabelh:18px; }
+  body.view-simple #plat-top, body.view-simple #platform { --pk:1.3; }
+  body.view-simple .plat-stack .band-row.cards:not(.gridrow) > .pcard.grow { flex-basis:auto; }
   body.view-simple .rtiles { gap:4px; }
   body.view-simple .rtiles:not(.paired) > .rtile:last-child:nth-child(odd), .rtiles > .rtile.wide { grid-column:1 / -1; }
   body.view-simple .rgroup { gap:4px; }
@@ -5142,7 +5145,7 @@ function renderTop(target){
 
 /* ---------- full build ---------- */
 const CUSTOM_LS = "dbxarch.dais2026.custom";
-const SCHEMA = 52;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
+const SCHEMA = 53;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
 /* Keys inside a provider dataset that hold tile arrays. Every surface that shows
    provider-specific content reads from this list, so adding a surface later means
    adding one key here rather than hunting for loops. */
@@ -7164,14 +7167,30 @@ function wordRoom(b, k){
     ? (br.right - pr.left) / k - parseFloat(cs.paddingLeft) - parseFloat(cs.borderLeftWidth)
     : (pr.right - br.left) / k - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth);
 }
+function besideText(b, k){
+  const cs = getComputedStyle(b);
+  if(!/flex$/.test(cs.display) || !cs.flexDirection.startsWith("row") || cs.flexWrap !== "nowrap") return 0;
+  if(![...b.childNodes].some(n=> n.nodeType === 3 && n.textContent.trim())) return 0;
+  const gap = parseFloat(cs.columnGap) || 0;
+  return [...b.children].filter(c=> !c.classList.contains("kw") && c.getClientRects().length && !/^(absolute|fixed)$/.test(getComputedStyle(c).position))
+    .reduce((s, c)=>{ const m = getComputedStyle(c); return s + c.getBoundingClientRect().width / k + parseFloat(m.marginLeft) + parseFloat(m.marginRight) + gap; }, 0);
+}
+function unbroken(el){ return /^(nowrap|pre)$/.test(getComputedStyle(el).whiteSpace); }
+function runWidth(o, b, k){
+  if(o !== b && !unbroken(b)) return o.getBoundingClientRect().width / k;
+  const r = document.createRange(); r.selectNodeContents(b);
+  return r.getBoundingClientRect().width / k;
+}
 function shrinkWords(board, k, widen){
   board.querySelectorAll("[data-wfit]").forEach(el=>{ el.style.fontSize = ""; el.removeAttribute("data-wfit"); });
   const owners = wordBlocks(board);
   owners.forEach((b, o)=>{
-    if(!b || /^(nowrap|pre)$/.test(getComputedStyle(b).whiteSpace)) return;
-    let room = wordRoom(b, k);
-    if(room === Infinity || (b.scrollWidth <= b.clientWidth && b.getBoundingClientRect().width / k <= room + 0.5)) return;
-    let widest = widestWord(o, k);
+    if(!b) return;
+    const need = unbroken(o) || unbroken(b) ? ()=> runWidth(o, b, k) : ()=> widestWord(o, k);
+    const roomOf = ()=> wordRoom(b, k) - (o === b ? besideText(b, k) : 0);
+    let room = roomOf();
+    if(room === Infinity || (b.scrollWidth <= b.clientWidth && b.getBoundingClientRect().width / k <= wordRoom(b, k) + 0.5)) return;
+    let widest = need();
     if(widest <= room + 0.5) return;
     const base = parseFloat(getComputedStyle(o).fontSize), floor = Math.min(WORD_MIN_PX, base);
     let size = base;
@@ -7179,7 +7198,7 @@ function shrinkWords(board, k, widen){
       size = Math.max(floor, Math.floor(size * (room - 0.5) / widest * 10) / 10);
       o.style.fontSize = size + "px";
       o.setAttribute("data-wfit", "");
-      room = wordRoom(b, k); widest = widestWord(o, k);
+      room = roomOf(); widest = need();
     }
     const tile = widen && widest > room + 0.5 && o.closest(".rtile");
     if(tile && tile.parentElement.classList.contains("rtiles")) tile.classList.add("wide");
@@ -9087,7 +9106,6 @@ function pptxTheme(){
    as pictures, because those are artwork rather than geometry. */
 
 const PPT_SW = 12192000, PPT_SH = 6858000;   /* 13.333in x 7.5in, 16:9 */
-const PDF_PW = 842, PDF_PH = 595, PDF_TT = 24, PDF_BM = 6;
 const PPT_FONT = "Calibri";
 /* Every run carries the Latin face plus, when the content language needs a
    different script, the matching complex-script (cs, Arabic/Devanagari) or
@@ -9287,14 +9305,14 @@ function collectBoardInner(){
   const at = (x, y)=> ({ x:(x - B.left) / fitK, y:(y - B.top) / fitK });
   const rel = r=> Object.assign(at(r.left, r.top), { w:r.width / fitK, h:r.height / fitK });
   const label = (el, sel)=>{ const n = el.querySelector(sel); return n ? n.textContent.replace(/\s+/g, " ").trim() : ""; };
-  const group = (kind, parent, name, link, key)=>{
+  const group = (kind, parent, name, link)=>{
     const id = "g" + (groups.length + 1);
-    groups.push({ id, kind, parent, name:name || "", link:link || "", key:key || "" });
+    groups.push({ id, kind, parent, name:name || "", link:link || "" });
     return id;
   };
   const enter = (el, g)=>{
     for(const [sel, key] of EXPORT_ZONES) if(el.matches(sel)){
-      if(!zones[key]) zones[key] = group("zone", g, label(el, ".colhead, .pockhead, .ph-title, .cl-name span") || key, "", key);
+      if(!zones[key]) zones[key] = group("zone", g, label(el, ".colhead, .pockhead, .ph-title, .cl-name span") || key);
       return zones[key];
     }
     if(el.matches(".band, .band-row, .rgroup, .cloud-sec")) return group("box", g, label(el, ".band-lbl, .rg-label"));
@@ -9728,14 +9746,10 @@ function pptxParts(slides, title){
   /* Media parts are numbered across the whole package, not per slide, so a
      second slide carrying images cannot collide with the first. */
   let mediaSeq = 0;
-  const allMedia = [], named = new Map();
-  slides.forEach(s=>{ s.mediaNames = (s.media || []).map(m=>{
-    if(!named.has(m)){
-      named.set(m, "image" + (++mediaSeq) + "." + (m.ext || "png"));
-      allMedia.push({ name:"ppt/media/" + named.get(m), data:m.u8 || m });
-    }
-    return named.get(m);
-  }); });
+  slides.forEach(s=>{ s.mediaNames = (s.media || []).map(m=> "image" + (++mediaSeq) + "." + (m.ext || "png")); });
+  const allMedia = [];
+  slides.forEach(s=> (s.media || []).forEach((m, i)=>
+    allMedia.push({ name:"ppt/media/" + s.mediaNames[i], data:m.u8 || m })));
   const hasSvg = allMedia.some(m=> /\.svg$/.test(m.name));
   const empty = '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>' +
     '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/>' +
@@ -10022,44 +10036,32 @@ function excalidrawJson(model){
     appState:{ viewBackgroundColor:model.bg, gridSize:null }, files });
 }
 
-async function pptxEditableSlide(model, logos){
-  const fit = pptxBoardFit(model.W, model.H);
-  logos = logos || await logoPngs(exportLogos(model));
-  return pptxTreeSlide(docTitle(), fit, logos, exportTree(model).map(node=> ({ node, k:fit.k, ox:fit.ox, oy:fit.oy })));
-}
-function pptxTreeSlide(title, fit, logos, items){
-  const slide = { media:[], hlinks:[], body:"" }, used = new Map();
-  const collect = k=>{
-    if(k.shape){
-      const li = k.shape.t === "img" ? logos.refs[k.shape.ref] : -1;
-      if(li >= 0 && !used.has(li)){
-        const u = logos.uniq[li];
-        used.set(li, used.size);
-        slide.media.push(u.png, u.svgMedia || (u.svgMedia = { u8:new TextEncoder().encode(u.xml), ext:"svg" }));
-      }
-      return;
-    }
+async function pptxEditableSlide(model){
+  const fit = pptxBoardFit(model.W, model.H), tree = exportTree(model);
+  const logos = await logoPngs(exportLogos(model));
+  const slide = { media:[], hlinks:[], body:"" };
+  logos.uniq.forEach(u=> slide.media.push(u.png, { u8:new TextEncoder().encode(u.xml), ext:"svg" }));
+  const collect = k=>{ if(!k.group) return;
     if(k.group.link && slide.hlinks.indexOf(k.group.link) < 0) slide.hlinks.push(k.group.link);
-    k.kids.forEach(collect);
-  };
-  items.forEach(it=> collect(it.node));
+    k.kids.forEach(collect); };
+  tree.forEach(collect);
+  const E = v=> Math.round(v * fit.k);
   let id = 2;
-  const node = (k, rid, it)=>{
+  const node = (k, rid)=>{
     if(k.shape){
-      const s = k.shape, li = s.t === "img" ? used.get(logos.refs[s.ref]) : undefined;
-      return pptxShapeXml(s, id++, it.k, it.ox, it.oy,
-        li != null ? { png:pptxSlideRel(slide, "img", li * 2), svg:pptxSlideRel(slide, "img", li * 2 + 1) } : null, rid);
+      const s = k.shape, li = s.t === "img" ? logos.refs[s.ref] : -1;
+      return pptxShapeXml(s, id++, fit.k, fit.ox, fit.oy,
+        li >= 0 ? { png:pptxSlideRel(slide, "img", li * 2), svg:pptxSlideRel(slide, "img", li * 2 + 1) } : null, rid);
     }
-    const E = v=> Math.round(v * it.k);
     const g = k.group, r = g.link ? pptxSlideRel(slide, "link", slide.hlinks.indexOf(g.link)) : rid, gid = id++;
-    const x = E(k.box.x) + it.ox, y = E(k.box.y) + it.oy, cx = Math.max(1, E(k.box.w)), cy = Math.max(1, E(k.box.h));
+    const x = E(k.box.x) + fit.ox, y = E(k.box.y) + fit.oy, cx = Math.max(1, E(k.box.w)), cy = Math.max(1, E(k.box.h));
     const xf = '<a:off x="' + x + '" y="' + y + '"/><a:ext cx="' + cx + '" cy="' + cy + '"/>';
     return '<p:grpSp><p:nvGrpSpPr><p:cNvPr id="' + gid + '" name="' + xmlEsc(g.name || g.kind) + '"' +
       (r ? '><a:hlinkClick r:id="' + r + '"/></p:cNvPr>' : "/>") + "<p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>" +
       "<p:grpSpPr><a:xfrm>" + xf + xf.replace("a:off", "a:chOff").replace("a:ext", "a:chExt") + "</a:xfrm></p:grpSpPr>" +
-      k.kids.map(c=> node(c, r, it)).join("") + "</p:grpSp>";
+      k.kids.map(c=> node(c, r)).join("") + "</p:grpSp>";
   };
-  slide.body = pptxTitleStrip(id++, title, fit.pad, fit.bandH) + items.map(it=> node(it.node, "", it)).join("");
+  slide.body = pptxTitleStrip(id++, docTitle(), fit) + tree.map(k=> node(k, "")).join("");
   return slide;
 }
 
@@ -10941,17 +10943,17 @@ async function dbxLogoRgbOnBg(h, bgHex, wordmarkHex){
   return { stream:enc, w:w, h:h };
 }
 function pptxBoardFit(W, H){
-  const SW = PPT_SW, SH = PPT_SH, pad = 0.03;
+  const SW = PPT_SW, SH = PPT_SH, pad = 0.03, edge = 0.018;
   const bandH = Math.round(SH * 0.052), availH = SH * (1 - pad * 2) - bandH;
   const k = Math.min(SW * (1 - pad * 2) / W, availH / H);
-  return { pad, bandH, k, ox:Math.round((SW - W * k) / 2), oy:Math.round(SH * pad + bandH) };
+  return { pad, bandH, k, top:Math.round(SH * edge), ox:Math.round((SW - W * k) / 2), oy:Math.round(SH * (pad * 2 - edge) + bandH) };
 }
-function pptxTitleStrip(id, title, pad, bandH){
-  const SW = PPT_SW, SH = PPT_SH;
+function pptxTitleStrip(id, title, fit){
+  const SW = PPT_SW;
   return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="Title"/>' +
     '<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="' +
-    Math.round(SW * pad) + '" y="' + Math.round(SH * pad) + '"/><a:ext cx="' +
-    Math.round(SW * (1 - pad * 2)) + '" cy="' + bandH + '"/></a:xfrm>' +
+    Math.round(SW * fit.pad) + '" y="' + fit.top + '"/><a:ext cx="' +
+    Math.round(SW * (1 - fit.pad * 2)) + '" cy="' + fit.bandH + '"/></a:xfrm>' +
     '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>' +
     '<p:txBody><a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" anchor="t">' +
     '<a:noAutofit/></a:bodyPr><a:lstStyle/><a:p><a:pPr algn="' + ooxmlAlgn("l") + '"' +
@@ -10961,149 +10963,12 @@ function pptxTitleStrip(id, title, pad, bandH){
     '</a:solidFill>' + pptxRunFonts() + '</a:rPr><a:t>' + xmlEsc(title) +
     '</a:t></a:r></a:p></p:txBody></p:sp>';
 }
-const ZOOM_MIN_PT = { simple:9, detailed:8 }, ZOOM_GAP = 8, ZOOM_GROW = 2;
-const ZOOM_AREAS = [{ keys:["platform"], boxes:true }, { keys:["src", "ing", "ppl", "cons"] }, { keys:["top", "cloud"], boxes:true }];
-function zoomMinText(n){
-  if(n.shape) return n.shape.t === "text" ? n.shape.size : Infinity;
-  return n.kids.reduce((m, k)=> Math.min(m, zoomMinText(k)), Infinity);
-}
-function zoomExtent(kids){
-  let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
-  kids.forEach(k=>{ const e = k.shape ? shapeExtent(k.shape) : k.box;
-    x1 = Math.min(x1, e.x); y1 = Math.min(y1, e.y); x2 = Math.max(x2, e.x + e.w); y2 = Math.max(y2, e.y + e.h); });
-  return { x:x1, y:y1, w:Math.max(1, x2 - x1), h:Math.max(1, y2 - y1) };
-}
-function zoomClip(s, y1, y2){
-  if(s.t === "arrow" || s.t === "poly") return null;
-  const e = shapeExtent(s);
-  if(s.t !== "rect"){ const c = e.y + e.h / 2; return c >= y1 && c < y2 ? s : null; }
-  const a = Math.max(e.y, y1), b = Math.min(e.y + e.h, y2);
-  if(b - a < 1) return null;
-  return a === e.y && b === e.y + e.h ? s : Object.assign({}, s, { box:Object.assign({}, s.box, { y:a, h:b - a }) });
-}
-function zoomSplit(n, maxH){
-  const subs = new Map();
-  n.kids.forEach(k=>{ if(k.group) subs.set(k, k.box.h > maxH ? zoomSplit(k, maxH) : [k]); });
-  const rows = [];
-  [...subs.values()].flat().sort((a, b)=> a.box.y - b.box.y).forEach(p=>{
-    const r = rows[rows.length - 1];
-    if(r && p.box.y < r.y2 - 0.5) r.y2 = Math.max(r.y2, p.box.y + p.box.h);
-    else rows.push({ y1:p.box.y, y2:p.box.y + p.box.h });
-  });
-  const cuts = [];
-  let top = n.box.y;
-  rows.forEach((r, i)=>{ if(i && r.y2 - top > maxH){ top = (rows[i - 1].y2 + r.y1) / 2; cuts.push(top); } });
-  let end = rows.length ? rows[rows.length - 1].y2 : Infinity;
-  n.kids.forEach(k=>{ if(k.shape && k.shape.t !== "rect" && k.shape.t !== "arrow"){ const e = shapeExtent(k.shape);
-    if(e.y + e.h / 2 >= (cuts[cuts.length - 1] || -Infinity)) end = Math.max(end, e.y + e.h); } });
-  const bounds = [-Infinity].concat(cuts, [isFinite(end) ? end + Math.min(ZOOM_GAP, Math.max(0, n.box.y + n.box.h - end)) : Infinity]);
-  return bounds.slice(1).map((y2, i)=>{
-    const y1 = bounds[i], kids = [];
-    n.kids.forEach(k=>{
-      if(k.shape){ const s = zoomClip(k.shape, y1, y2); if(s) kids.push({ shape:s }); }
-      else subs.get(k).forEach(p=>{ const c = p.box.y + p.box.h / 2; if(c >= y1 && c < y2) kids.push(p); });
-    });
-    return kids.length ? { group:n.group, kids, box:zoomExtent(kids) } : null;
-  }).filter(Boolean);
-}
-function zoomShelf(blocks, k, AW, AH, byZone){
-  const W = AW / k, H = AH / k, rows = [];
-  let total = -ZOOM_GAP;
-  for(const b of blocks){
-    const w = b.node.box.w, h = b.node.box.h;
-    if(w > W) return null;
-    const r = rows.find(r=> (!byZone || r.items[0].zone === b.zone) && r.w + ZOOM_GAP + w <= W && total - r.h + Math.max(r.h, h) <= H);
-    if(r){ total += Math.max(r.h, h) - r.h; r.items.push(b); r.w += ZOOM_GAP + w; r.h = Math.max(r.h, h); continue; }
-    if(total + ZOOM_GAP + h > H) return null;
-    total += ZOOM_GAP + h;
-    rows.push({ items:[b], w, h });
-  }
-  return { rows, W, H, total };
-}
-function zoomSlides(model, AW, AH, minUnits){
-  const tree = exportTree(model), slides = [];
-  const need = n=>{ const px = zoomMinText(n); return isFinite(px) ? minUnits / px : 0; };
-  ZOOM_AREAS.forEach(area=>{
-    const blocks = [];
-    area.keys.forEach(key=>{
-      const z = tree.find(n=> n.group && n.group.kind === "zone" && n.group.key === key);
-      if(!z) return;
-      (area.boxes ? z.kids.filter(k=> k.group) : [z]).forEach(n=>{
-        const k = need(n);
-        zoomSplit(n, k ? AH / k : Infinity).forEach(p=> blocks.push({ node:p, need:need(p), zone:z.group.name }));
-      });
-    });
-    if(!blocks.length) return;
-    const shelf = (bs, k)=> zoomShelf(bs, k, AW, AH, area.boxes);
-    const pack = order=>{
-      const out = [];
-      order.forEach(b=>{
-        const s = out.find(s=> shelf(s.blocks.concat(b), Math.max(s.need, b.need)));
-        if(s){ s.blocks.push(b); s.need = Math.max(s.need, b.need); }
-        else out.push({ blocks:[b], need:b.need });
-      });
-      return out;
-    };
-    const by = f=> blocks.slice().sort((a, b)=> f(b) - f(a));
-    const orders = area.boxes ? [blocks, by(b=> b.node.box.w), by(b=> b.node.box.h)] : [blocks];
-    const first = orders.map(pack).reduce((a, b)=> b.length < a.length ? b : a);
-    const needOf = bs=> Math.max(...bs.map(b=> b.need));
-    const fillOf = bs=> bs.reduce((a, b)=> a + b.node.box.w * b.node.box.h, 0) * needOf(bs) * needOf(bs);
-    let best = null, score = null;
-    for(let n = 1; n <= first.length && !best; n++) orders.forEach(order=>{
-      const rec = (i, left, acc)=>{
-        if(left === 1){
-          const g = order.slice(i);
-          if(!shelf(g, needOf(g))) return;
-          const fills = acc.concat([g]).map(fillOf), sc = [Math.min(...fills), -Math.max(...fills)];
-          if(!score || sc[0] > score[0] || (sc[0] === score[0] && sc[1] > score[1])){ score = sc; best = acc.concat([g]); }
-          return;
-        }
-        for(let j = i + 1; j <= order.length - left + 1; j++){
-          const g = order.slice(i, j);
-          if(shelf(g, needOf(g))) rec(j, left - 1, acc.concat([g]));
-        }
-      };
-      rec(0, n, []);
-    });
-    best = best ? best.map(g=> ({ blocks:g, need:needOf(g) })) : first;
-    best.forEach((s, i)=>{
-      const read = s.blocks.slice().sort((a, b)=> blocks.indexOf(a) - blocks.indexOf(b));
-      if(shelf(read, s.need)) s.blocks = read;
-      const hi = Math.min(...s.blocks.map(b=> Math.min(AW / b.node.box.w, AH / b.node.box.h)));
-      let lo = shelf(s.blocks, s.need) ? s.need : 0, up = s.need ? Math.max(lo, Math.min(hi, s.need * ZOOM_GROW)) : hi;
-      if(shelf(s.blocks, up)) lo = up;
-      else for(let j = 0; j < 30; j++){ const m = (lo + up) / 2; if(shelf(s.blocks, m)) lo = m; else up = m; }
-      const k = lo, fit = shelf(s.blocks, k), items = [];
-      let y = (fit.H - fit.total) / 2;
-      fit.rows.forEach(r=>{
-        let x = (fit.W - r.w) / 2;
-        r.items.forEach(b=>{ items.push({ node:b.node, x:x * k, y:y * k }); x += b.node.box.w + ZOOM_GAP; });
-        y += r.h + ZOOM_GAP;
-      });
-      const names = blocks.map(b=> b.zone).filter((z, j, a)=> a.indexOf(z) === j && s.blocks.some(b=> b.zone === z));
-      slides.push({ title:names.join(" \u00b7 ") + (best.length > 1 ? " (" + (i + 1) + "/" + best.length + ")" : ""), k, items });
-    });
-  });
-  return slides;
-}
-function deckZoomPlan(model){
-  const fit = pptxBoardFit(model.W, model.H), AW = PPT_SW * (1 - fit.pad * 2), AH = PPT_SH * (1 - fit.pad * 2) - fit.bandH;
-  const pdf = Math.min(1, (PDF_PW - PDF_BM * 2) * 12700 / AW, (PDF_PH - PDF_TT - PDF_BM) * 12700 / AH);
-  return { fit, AW, AH, W:model.W, H:model.H, slides:zoomSlides(model, AW, AH, (ZOOM_MIN_PT[viewMode] || 8) * 12700 / pdf) };
-}
-function pptxZoomSlides(plan, logos){
-  const ox = Math.round(PPT_SW * plan.fit.pad), oy = Math.round(PPT_SH * plan.fit.pad + plan.fit.bandH);
-  return plan.slides.map(sl=> pptxTreeSlide(sl.title, plan.fit, logos, sl.items.map(it=> ({ node:it.node, k:sl.k,
-    ox:ox + Math.round(it.x - it.node.box.x * sl.k), oy:oy + Math.round(it.y - it.node.box.y * sl.k) }))));
-}
 async function exportPptx(){
   const title = docTitle();
   const coverGlyphPng = await (async()=>{ const cv = await coverGlyphCanvas(1400, ooxmlRtl()); return cv ? canvasPngU8(cv) : null; })();
   const coverLogoPng = await dbxLogoPngU8(140, expInk());
-  const model = collectBoard(), logos = await logoPngs(exportLogos(model));
-  const board = await pptxEditableSlide(model, logos), zoom = pptxZoomSlides(deckZoomPlan(model), logos);
-  return zipStore(pptxParts([pptxCoverSlide(coverGlyphPng, coverLogoPng), pptxIndexSlide(), board].concat(zoom, await pptxNarrativeSlides(coverGlyphPng)), title));
+  const board = await pptxEditableSlide(collectBoard());
+  return zipStore(pptxParts([pptxCoverSlide(coverGlyphPng, coverLogoPng), pptxIndexSlide(), board].concat(await pptxNarrativeSlides(coverGlyphPng)), title));
 }
 /* A copy of this page with the live state frozen in, so the download opens with
    the same edits and cloud provider the user is looking at. */
@@ -11546,15 +11411,15 @@ function dsClosing(){ const col = dsCols(), links = closingLinks();
    rasterised like the other non-Latin pages, and the transparent board image is
    drawn over them where boardPage() puts it. Latin languages keep the crisp
    vector boardPage(). */
-function dsBoard(title){
+function dsBoard(){
   const rtl = (typeof I18N !== "undefined" && I18N.dir === "rtl");
   return '<div style="position:absolute;left:18.7px;right:18.7px;top:10px;font-weight:700;font-size:18.7px;' +
     'line-height:1.2;white-space:nowrap;overflow:hidden;' + (rtl ? "text-align:right;" : "") + '">' +
-    xmlEsc(title || docTitle()) + '</div>';
+    xmlEsc(docTitle()) + '</div>';
 }
 async function boardPdfBlob(){
-  const zoom = deckZoomPlan(collectBoard());
-  const { canvas, w, h } = await boardCanvas(Math.min(3, Math.sqrt(16e6 / (zoom.W * zoom.H))));
+  const model = collectBoard();
+  const { canvas, w, h } = await boardCanvas(Math.min(3, Math.sqrt(16e6 / (model.W * model.H))));
   const px = canvas.getContext("2d").getImageData(0, 0, w, h).data;
   const rgb = new Uint8Array(w * h * 3), alpha = new Uint8Array(w * h);
   for(let i=0, j=0, k=0; i<px.length; i+=4){ rgb[j++]=px[i]; rgb[j++]=px[i+1]; rgb[j++]=px[i+2]; alpha[k++]=px[i+3]; }
@@ -11570,7 +11435,7 @@ async function boardPdfBlob(){
      it rides as a second XObject (/Im1) above the kicker; RAST covers carry it in
      dsCover instead. */
   const coverLogoImg = await dbxLogoRgbOnBg(140, expBg(), expInk());
-  const PW = PDF_PW, PH = PDF_PH, M = 14;                  /* A4 landscape, points */
+  const PW = 842, PH = 595, M = 14;                        /* A4 landscape, points */
   const TB = 26;                          /* title strip, points, above the board */
   const NM = 54;                          /* margin on the narrative pages, points */
   const enc = new TextEncoder();
@@ -11717,36 +11582,24 @@ async function boardPdfBlob(){
   };
 
   /* ---- page: the board as it stands ---- */
-  /* Title hugs the very top edge and the board is top-aligned right beneath it
+  /* Title hugs the very top edge and the board is top-aligned a line beneath it
      with tight side/bottom margins, so the platform reads as large as the page
      allows instead of floating centred behind a wide margin (more zoom room).
      The board title anchors to the reading side (right for RTL content). */
   const boardDraw = im=>{
-    const TT = PDF_TT;                      /* title band from the top edge */
-    const BM = PDF_BM;                      /* tight side/bottom board margin */
+    const TT = 24;                          /* title band from the top edge */
+    const BM = 6;                           /* tight side/bottom board margin */
+    const GAP = 14;
     const availW = PW - BM * 2, availH = PH - TT - BM;
     const k = Math.min(availW / w, availH / h);
-    const dw = w * k, dh = h * k, dx = (PW - dw) / 2, dy = (PH - TT) - dh;
+    const dw = w * k, dh = h * k, dx = (PW - dw) / 2, dy = (PH - TT) - dh - Math.min(GAP, availH - dh);
     return "q " + dw.toFixed(2) + " 0 0 " + dh.toFixed(2) + " " + dx.toFixed(2) + " " + dy.toFixed(2) +
       " cm " + im + " Do Q\n";
   };
-  const boardPage = (title, draw)=>{
-    title = title || docTitle();
-    const tx = ooxmlRtl() ? (PW - M - pdfTextW(title, 14)) : M;
-    const c = rectF(bgc, 0, 0, PW, PH) + (draw || boardDraw)("/Im0") + txt("F1", 14, ink, tx, PH - 20, title);
+  const boardPage = ()=>{
+    const tx = ooxmlRtl() ? (PW - M - pdfTextW(docTitle(), 14)) : M;
+    const c = rectF(bgc, 0, 0, PW, PH) + boardDraw("/Im0") + txt("F1", 14, ink, tx, PH - 20, docTitle());
     return { content:c, annots:[], usesImage:true, imgIndex:0 };
-  };
-  const zoomDraw = sl=> im=>{
-    const x0 = Math.min(...sl.items.map(it=> it.x)), y0 = Math.min(...sl.items.map(it=> it.y));
-    const cw = Math.max(...sl.items.map(it=> it.x + it.node.box.w * sl.k)) - x0, ch = Math.max(...sl.items.map(it=> it.y + it.node.box.h * sl.k)) - y0;
-    const f = Math.min((PW - PDF_BM * 2) / cw, (PH - PDF_TT - PDF_BM) / ch), left = (PW - cw * f) / 2 - x0 * f;
-    const n = v=> v.toFixed(2);
-    return sl.items.map(it=>{
-      const s = sl.k * f, b = it.node.box, X = left + it.x * f, top = PDF_TT + (it.y - y0) * f;
-      return "q " + n(X) + " " + n(PH - top - b.h * s) + " " + n(b.w * s) + " " + n(b.h * s) + " re W n " +
-        n(zoom.W * s) + " 0 0 " + n(zoom.H * s) + " " + n(X - b.x * s) + " " + n(PH - top - (zoom.H - b.y) * s) +
-        " cm " + im + " Do Q\n";
-    }).join("");
   };
 
   /* ---- page: Contents / index, right after the cover ---- */
@@ -11974,8 +11827,6 @@ async function boardPdfBlob(){
   deckSections().forEach(sec=>{
     if(sec.kind === "board"){
       pages.push(RAST ? { raster:true, html:dsBoard(), board:true } : boardPage());
-      zoom.slides.forEach(sl=> pages.push(RAST ? { raster:true, html:dsBoard(sl.title), board:true, draw:zoomDraw(sl) }
-        : boardPage(sl.title, zoomDraw(sl))));
       si++; return;
     }
     const role = DECK_ROLES[si % DECK_ROLES.length];
@@ -12055,7 +11906,7 @@ async function boardPdfBlob(){
     let content, imgIdxList = [], annots = "";
     if(p.raster){
       imgIdxList = p.board ? [p.imgIndex, 0] : [p.imgIndex];
-      content = "q " + PW + " 0 0 " + PH + " 0 0 cm /Im0 Do Q\n" + (p.board ? (p.draw || boardDraw)("/Im1") : "");
+      content = "q " + PW + " 0 0 " + PH + " 0 0 cm /Im0 Do Q\n" + (p.board ? boardDraw("/Im1") : "");
     } else {
       content = p.content;
       /* a page paints /Im0../ImN in the order it recorded them: several glyph

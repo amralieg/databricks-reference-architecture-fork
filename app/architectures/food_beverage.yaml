@@ -499,6 +499,7 @@ consumers:
         summary: Sanitation tasks, line checks and downtime codes pushed to tablets on the line.
   - name: Retail & Co-pack
     icon: partner
+    simplified: 2
     tiles:
       - name: Retailer VMI Portal
         icon: share
@@ -553,7 +554,6 @@ consumers:
         summary: Scan data and accruals reconciled to incremental volume and margin by retailer event.
   - name: AI/BI Dashboards
     icon: aibi
-    simplified: 2
     tiles:
       - name: Plant OEE & Yield
         icon: aibi
