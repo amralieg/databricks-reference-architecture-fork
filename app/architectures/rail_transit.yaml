@@ -3,6 +3,7 @@ description: 'For freight railroads and passenger transit operators: rolling-sto
 sources:
   - name: Asset & Maintenance
     icon: erp
+    simplified: 2
     tiles:
       - name: IBM Maximo
         icon: erp
@@ -94,6 +95,7 @@ sources:
             interval: Continuous signaling events
   - name: Dispatch & Network Ops
     icon: stream
+    simplified: 2
     tiles:
       - name: RailConnect TMS
         icon: stream
@@ -281,6 +283,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'GTFS Schedule'
         icon: zbraces
@@ -545,6 +548,7 @@ consumers:
         summary: Notebooks, VS Code and JetBrains against governed data and Genie Code.
   - name: Riders & Partners
     icon: partner
+    simplified: 2
     tiles:
       - name: GTFS-RT Open Feeds
         icon: share

@@ -3,6 +3,7 @@ description: 'Advisor-led wealth and private banking: custody and clearing, port
 sources:
   - name: Custody & Clearing
     icon: partner
+    simplified: 4
     tiles:
       - name: Pershing NetX360
         icon: partner
@@ -67,6 +68,7 @@ sources:
             interval: Continuous (API/events)
   - name: Portfolio Management
     icon: chart
+    simplified: 2
     tiles:
       - name: Addepar
         icon: chart
@@ -126,6 +128,7 @@ sources:
             interval: Nightly portfolio extracts
   - name: Advisor CRM
     icon: crm
+    simplified: 4
     tiles:
       - name: Salesforce FSC
         icon: crm
@@ -190,6 +193,7 @@ sources:
             interval: Nightly CDC
   - name: Financial Planning
     icon: sheet
+    simplified: 3
     tiles:
       - name: eMoney Advisor
         icon: sheet
@@ -252,6 +256,7 @@ sources:
             interval: Daily research updates
   - name: Onboarding & Compliance
     icon: gavel
+    simplified: 3
     tiles:
       - name: Fenergo Onboarding
         icon: identity
@@ -342,6 +347,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'ISO 20022'
         icon: zbraces

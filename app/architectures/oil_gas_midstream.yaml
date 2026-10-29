@@ -9,7 +9,7 @@ sources:
         summary: Line pressures, flow rates and compressor-station tags from the pipeline historian.
         citations:
           - aveva-pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores high-frequency line pressure, flow and compressor and pump-station tags across the pipeline network as the operational time-series system of record.
         who_uses_it: Pipeline controllers, reliability engineers and integrity teams.
         data_out:
@@ -274,6 +274,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: OPC-UA Pipeline Gateway
         icon: iot
@@ -566,6 +567,7 @@ consumers:
         summary: Shippers, regulators and connecting pipelines reading live tables with no copy.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Control Room
         icon: gauge

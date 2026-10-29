@@ -3,6 +3,7 @@ description: Seasonal collections, omnichannel retail, demand sensing, and susta
 sources:
   - name: PLM & Design
     icon: product
+    simplified: 2
     tiles:
       - name: Centric PLM
         icon: product
@@ -50,6 +51,7 @@ sources:
             interval: On-iteration / daily sync
   - name: ERP & Supply
     icon: erp
+    simplified: 2
     tiles:
       - name: Infor CloudSuite Fashion
         icon: erp
@@ -162,6 +164,7 @@ sources:
             interval: Continuous (near real-time)
   - name: Manufacturing
     icon: zplug
+    simplified: 2
     tiles:
       - name: Lectra Fashion
         icon: zplug
@@ -256,6 +259,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'X12 EDI'
         icon: zbraces
@@ -284,6 +288,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: Edited Retail Intel
         icon: market

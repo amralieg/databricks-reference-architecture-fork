@@ -3,6 +3,7 @@ description: 'Telehealth and virtual-care platforms: video and asynchronous visi
 sources:
   - name: Virtual Care Platform
     icon: erp
+    simplified: 2
     tiles:
       - name: Amwell Platform
         icon: erp
@@ -74,6 +75,7 @@ sources:
             interval: Continuous session stream
   - name: Clinical & EHR (FHIR)
     icon: partner
+    simplified: 2
     tiles:
       - name: Epic FHIR APIs
         icon: erp
@@ -138,6 +140,7 @@ sources:
             interval: Continuous (API)
   - name: RPM & Wearables
     icon: iot
+    simplified: 2
     tiles:
       - name: Validic Device Hub
         icon: iot
@@ -197,6 +200,7 @@ sources:
             interval: Continuous (device sync)
   - name: Member Engagement
     icon: custlake
+    simplified: 2
     tiles:
       - name: SF Health Cloud
         icon: crm
@@ -604,6 +608,7 @@ consumers:
         summary: Coaching and care-plan updates written to the care-management workflow on Lakebase in the tool the care team works in.
   - name: Regulatory & Reporting
     icon: gavel
+    simplified: 2
     tiles:
       - name: HIPAA & HITRUST
         icon: gavel

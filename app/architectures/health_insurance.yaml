@@ -3,6 +3,7 @@ description: 'Health payers: member enrollment, claims adjudication, provider ne
 sources:
   - name: Core Admin & Claims
     icon: erp
+    simplified: 3
     tiles:
       - name: Facets Core Admin
         icon: erp
@@ -58,6 +59,7 @@ sources:
             interval: Daily edit + recovery cycle
   - name: Clinical & UM
     icon: people
+    simplified: 3
     tiles:
       - name: Epic Payer Platform
         icon: custlake
@@ -110,6 +112,7 @@ sources:
             interval: Continuous HL7/clinical feed
   - name: Pharmacy & Network
     icon: product
+    simplified: 3
     tiles:
       - name: CVS Caremark PBM
         icon: market
@@ -176,6 +179,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'X12N'
         icon: zbraces

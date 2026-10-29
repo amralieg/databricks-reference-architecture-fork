@@ -9,7 +9,7 @@ sources:
         summary: 'The operational historian of record: high-frequency SCADA and PPC time-series from every turbine, inverter and plant controller, the source of availability and performance signals.'
         citations:
           - pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores high-frequency SCADA and plant-controller time-series from every turbine, inverter and site controller as the operational system of record for availability and performance.
         who_uses_it: Performance engineers, reliability engineers and production analysts.
         data_out:
@@ -74,6 +74,7 @@ sources:
             interval: Continuous inverter telemetry
   - name: Trading & Markets
     icon: market
+    simplified: 3
     tiles:
       - name: ERCOT / CAISO
         icon: market
@@ -140,6 +141,7 @@ sources:
             interval: Daily settlement + intraday
   - name: O&M & Field Service
     icon: erp
+    simplified: 2
     tiles:
       - name: IBM Maximo EAM
         icon: erp
@@ -205,7 +207,7 @@ sources:
   - name: Grid & Metering
     icon: network
     tiles:
-      - name: Revenue Meters/MDM
+      - name: Revenue Meters / MDM
         icon: db
         summary: Certified revenue-grade meter reads and the meter data management estate, the billed basis for generation, export and settlement.
         category: Revenue Metering / MDM
@@ -707,7 +709,7 @@ agent_usecases:
           - ION Commodities ETRM
           - ICE Power Markets
           - ERCOT / CAISO
-          - Revenue Meters/MDM
+          - Revenue Meters / MDM
         teams:
           - Energy Trading
           - PPA Origination
@@ -908,7 +910,7 @@ agent_usecases:
         how_built: Interconnection and grid-code obligations, revenue-meter and curtailment reads and REC and carbon positions are conformed to Gold and published through AI/BI on Unity Catalog definitions for external filing.
         components:
           - ISO Interconnection
-          - Revenue Meters/MDM
+          - Revenue Meters / MDM
           - REC Registries
           - AI/BI
           - Unity Catalog

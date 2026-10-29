@@ -3,6 +3,7 @@ description: 'Life and annuity carriers: policy administration, underwriting, cl
 sources:
   - name: Policy Administration
     icon: erp
+    simplified: 3
     tiles:
       - name: FINEOS Life
         icon: erp
@@ -105,6 +106,7 @@ sources:
             interval: Continuous (API at application)
   - name: Claims & Customer
     icon: market
+    simplified: 3
     tiles:
       - name: Sedgwick Life Claims
         icon: market
@@ -217,6 +219,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'ACORD L&A XML'
         icon: zbraces

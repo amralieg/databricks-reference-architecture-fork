@@ -70,6 +70,7 @@ sources:
             interval: Nightly batch
   - name: Servicing Platforms
     icon: db
+    simplified: 2
     tiles:
       - name: Black Knight MSP
         icon: erp
@@ -125,6 +126,7 @@ sources:
             interval: Multiple remittance cycles monthly
   - name: Underwriting & Credit
     icon: gavel
+    simplified: 2
     tiles:
       - name: Fannie Mae DU
         icon: govcat
@@ -324,6 +326,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'MISMO'
         icon: zbraces
@@ -589,6 +592,7 @@ consumers:
         summary: Fair-lending and default cases pushed to the review queue analysts already work.
   - name: Regulatory & Reporting
     icon: gavel
+    simplified: 2
     tiles:
       - name: HMDA / LAR Filings
         icon: gavel

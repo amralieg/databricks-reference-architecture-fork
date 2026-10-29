@@ -200,7 +200,7 @@ const SCENES = {
     q: '?industry=banking' + AZ, at: [760, 700],
     async run(a) {
       await a.hold(600);
-      await a.glideTo({ sel: '#lang-btn' }, 1000);
+      await a.glideTo({ sel: '#opt-btn' }, 1000);
       await a.hold(250);
       await a.click();
       await a.page.waitForSelector('#lang-menu button[data-lang="ar"]', { state: 'visible' });

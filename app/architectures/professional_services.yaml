@@ -3,6 +3,7 @@ description: 'Consulting, agencies, accounting and audit, and engineering servic
 sources:
   - name: PSA & Delivery
     icon: erp
+    simplified: 3
     tiles:
       - name: Kantata PSA
         icon: erp
@@ -58,6 +59,7 @@ sources:
             interval: Continuous CDC
   - name: CRM & Pipeline
     icon: crm
+    simplified: 3
     tiles:
       - name: Salesforce Sales Cloud
         icon: crm
@@ -109,6 +111,7 @@ sources:
             interval: Hourly sync
   - name: Finance & ERP
     icon: erp
+    simplified: 3
     tiles:
       - name: Workday Financials
         icon: erp
@@ -154,6 +157,7 @@ sources:
             interval: Nightly batch + monthly close
   - name: Time & Billing
     icon: sheet
+    simplified: 3
     tiles:
       - name: Deltek Vantagepoint
         icon: erp
@@ -204,6 +208,7 @@ sources:
             interval: Nightly batch
   - name: Talent & Knowledge
     icon: people
+    simplified: 2
     tiles:
       - name: Workday HCM
         icon: people
@@ -268,6 +273,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'XBRL GL'
         icon: zbraces
@@ -505,6 +511,7 @@ consumers:
         summary: Analyst notebooks, VS Code and JetBrains against governed engagement and finance data.
   - name: Delivery & Clients
     icon: partner
+    simplified: 2
     tiles:
       - name: Client Delta Sharing
         icon: share

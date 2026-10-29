@@ -3,6 +3,7 @@ description: 'Electric transmission and distribution utilities and distribution 
 sources:
   - name: Metering & AMI
     icon: iot
+    simplified: 2
     tiles:
       - name: Itron OpenWay
         icon: iot
@@ -63,13 +64,14 @@ sources:
             interval: Continuous endpoint alarms
   - name: SCADA & Grid Ops
     icon: stream
+    simplified: 4
     tiles:
       - name: AVEVA PI Historian
         icon: db
         summary: Substation analogs, breaker operations and equipment alarms at SCADA sampling rates.
         citations:
           - osisoft-pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores substation analogs, breaker operations and equipment alarms at SCADA sampling rates as the grid time-series system of record.
         who_uses_it: Control-centre operators, protection engineers and grid analytics teams.
         data_out:
@@ -182,6 +184,7 @@ sources:
             interval: Continuous (payments + notifications)
   - name: GIS & Outage Mgmt
     icon: globe
+    simplified: 3
     tiles:
       - name: Esri ArcGIS Utility
         icon: globe

@@ -3,6 +3,7 @@ description: 'Crypto exchanges, custodians and digital-asset firms: on-chain ind
 sources:
   - name: On-Chain & Nodes
     icon: network
+    simplified: 2
     tiles:
       - name: Alchemy Node RPC
         icon: network
@@ -369,6 +370,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'IVMS 101'
         icon: zbraces
@@ -574,6 +576,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart

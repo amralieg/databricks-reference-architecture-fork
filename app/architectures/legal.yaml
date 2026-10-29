@@ -3,6 +3,7 @@ description: 'Law firms and corporate legal departments: matter management, e-di
 sources:
   - name: Document & DMS
     icon: db
+    simplified: 3
     tiles:
       - name: iManage Work
         icon: db
@@ -56,6 +57,7 @@ sources:
             interval: Nightly batch
   - name: Practice & Billing
     icon: erp
+    simplified: 2
     tiles:
       - name: Elite 3E
         icon: erp
@@ -103,6 +105,7 @@ sources:
             interval: Hourly / nightly sync
   - name: E-Discovery
     icon: gavel
+    simplified: 2
     tiles:
       - name: RelativityOne
         icon: gavel
@@ -150,6 +153,7 @@ sources:
             interval: Continuous (API polling)
   - name: Contracts & Research
     icon: sheet
+    simplified: 3
     tiles:
       - name: Ironclad CLM
         icon: product
@@ -216,6 +220,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 3
     tiles:
       - name: 'LEDES'
         icon: zbraces
@@ -246,6 +251,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: EDRM XML Load Files
         icon: api
@@ -497,6 +503,7 @@ consumers:
           - pacer
   - name: Regulatory & Reporting
     icon: gavel
+    simplified: 2
     tiles:
       - name: LEDES & Accrual Reporting
         icon: gavel

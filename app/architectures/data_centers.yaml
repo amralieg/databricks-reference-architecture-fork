@@ -67,6 +67,7 @@ sources:
             interval: Continuous
   - name: Building & Power
     icon: iot
+    simplified: 2
     tiles:
       - name: JCI Metasys
         icon: iot
@@ -177,6 +178,7 @@ sources:
             interval: Continuous
   - name: Interconnect & Net
     icon: network
+    simplified: 2
     tiles:
       - name: Equinix Fabric
         icon: network
@@ -327,6 +329,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'Redfish'
         icon: zbraces

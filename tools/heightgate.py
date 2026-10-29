@@ -45,6 +45,18 @@ DRIVER = r"""
     var board = document.getElementById("board");
     var dw = parseFloat(getComputedStyle(document.body).getPropertyValue("--designw"));
     var clip = 0, squeezed = 0, clipped = [];
+    function textLines(n){
+      var tops = [], walk = document.createTreeWalker(n, NodeFilter.SHOW_TEXT), t;
+      while((t = walk.nextNode())){
+        if(!t.textContent.trim()) continue;
+        var rg = document.createRange(); rg.selectNodeContents(t);
+        Array.prototype.forEach.call(rg.getClientRects(), function(r){
+          if(r.width < 0.5) return;
+          if(!tops.some(function(y){ return Math.abs(y - r.top) < r.height / 2; })) tops.push(r.top);
+        });
+      }
+      return tops.length;
+    }
     /* .rg-label is in this list because it is the one label on the board that
        cannot wrap: a group header is nowrap, so an over-long industry group name
        is silently cut rather than reflowed, and a clip check that skipped it
@@ -54,9 +66,7 @@ DRIVER = r"""
         clip++;
         if(clipped.length < 4) clipped.push(n.textContent.trim());
       }
-      var lh = parseFloat(getComputedStyle(n).lineHeight) || 14;
-      if(Math.round(n.getBoundingClientRect().height / lh) >= 3 &&
-         n.textContent.trim().split(/\s+/).length <= 2) squeezed++;
+      if(textLines(n) >= 3 && n.textContent.trim().split(/\s+/).length <= 2) squeezed++;
     });
     return { h: board.offsetHeight,
              scale: Math.round(board.getBoundingClientRect().width / dw * 1000) / 1000,

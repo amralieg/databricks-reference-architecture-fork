@@ -3,6 +3,7 @@ description: 'For freight carriers and 3PLs: transportation and fleet management
 sources:
   - name: TMS & Planning
     icon: erp
+    simplified: 2
     tiles:
       - name: Oracle OTM
         icon: erp
@@ -53,6 +54,7 @@ sources:
             interval: Daily rating + scorecard refresh
   - name: WMS & Fulfillment
     icon: db
+    simplified: 3
     tiles:
       - name: Manhattan Active WMS
         icon: db
@@ -108,6 +110,7 @@ sources:
             interval: Continuous automation telemetry
   - name: Fleet & Telematics
     icon: iot
+    simplified: 2
     tiles:
       - name: Samsara Fleet
         icon: iot
@@ -153,6 +156,7 @@ sources:
             interval: Continuous (near real-time)
   - name: Carrier & Freight
     icon: partner
+    simplified: 2
     tiles:
       - name: project44 Visibility
         icon: api
@@ -203,6 +207,7 @@ sources:
             interval: Continuous message flow
   - name: Finance & Claims
     icon: chart
+    simplified: 2
     tiles:
       - name: SAP TM Settlement
         icon: market
@@ -256,6 +261,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 4
     tiles:
       - name: 'EDIFACT Transport'
         icon: zbraces

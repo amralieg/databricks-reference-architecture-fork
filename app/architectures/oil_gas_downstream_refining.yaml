@@ -24,7 +24,7 @@ sources:
         summary: Process historian time-series for unit analytics, energy intensity and abnormal event detection.
         citations:
           - aspen-ip21
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores process historian time-series for unit analytics, yield accounting, energy intensity and abnormal-event detection across the refinery.
         who_uses_it: Process engineers, yield accounting and Energy teams.
         data_out:
@@ -221,6 +221,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'PIDX XML'
         icon: zbraces
@@ -246,6 +247,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: OPC-UA Plant Gateway
         icon: iot
@@ -541,6 +543,7 @@ consumers:
         summary: Buyers, terminals and regulators reading live tables with no copy.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Operations Console
         icon: gauge
@@ -560,6 +563,7 @@ consumers:
         summary: Flare, leak and permit exceedances plus renewable-feedstock share and co-processing allocation before inspections and board review.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Unit Yield & Energy
         icon: aibi

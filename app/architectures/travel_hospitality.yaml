@@ -3,6 +3,7 @@ description: 'For a hotel, resort or travel operator: property management, centr
 sources:
   - name: PMS & Operations
     icon: erp
+    simplified: 3
     tiles:
       - name: Oracle OPERA Cloud
         icon: erp
@@ -53,6 +54,7 @@ sources:
             interval: Nightly batch + intraday deltas
   - name: CRS & Distribution
     icon: market
+    simplified: 2
     tiles:
       - name: Amadeus iHotelier
         icon: globe
@@ -98,6 +100,7 @@ sources:
             interval: Continuous (ARI + bookings)
   - name: Revenue Management
     icon: chart
+    simplified: 2
     tiles:
       - name: IDeaS G3 RMS
         icon: market
@@ -144,6 +147,7 @@ sources:
             interval: Multiple shops daily
   - name: Guest & Loyalty
     icon: custlake
+    simplified: 2
     tiles:
       - name: Salesforce Loyalty
         icon: custlake
@@ -244,6 +248,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'OpenTravel XML'
         icon: zbraces
@@ -498,6 +503,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -510,6 +516,7 @@ consumers:
         summary: Revenue science notebooks against governed PMS and RMS data.
   - name: Distribution & OTA
     icon: partner
+    simplified: 2
     tiles:
       - name: Channel Rate API
         icon: api
@@ -544,6 +551,7 @@ consumers:
           - mews
   - name: Regulatory & Reporting
     icon: gavel
+    simplified: 2
     tiles:
       - name: Tourism Tax Filings
         icon: gavel

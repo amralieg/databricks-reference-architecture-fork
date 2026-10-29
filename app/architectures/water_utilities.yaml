@@ -3,6 +3,7 @@ description: 'Municipal and investor-owned water and wastewater utilities: SCADA
 sources:
   - name: CIS & Billing
     icon: erp
+    simplified: 2
     tiles:
       - name: Oracle Utilities C2M
         icon: erp
@@ -59,7 +60,7 @@ sources:
         summary: Historian for pumps, tanks, pressure and flow across the distribution network.
         citations:
           - aveva-pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores pump, tank, pressure and flow tags across the distribution network as the operational time-series system of record.
         who_uses_it: Control-room operators, pump & energy leads and hydraulic modellers.
         data_out:
@@ -104,6 +105,7 @@ sources:
             interval: Continuous telemetry
   - name: AMI & Metering
     icon: iot
+    simplified: 2
     tiles:
       - name: Itron OpenWay
         icon: iot
@@ -503,6 +505,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart

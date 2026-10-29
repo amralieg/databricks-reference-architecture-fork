@@ -3,6 +3,7 @@ description: Media buying, campaign delivery, audience targeting, brand safety, 
 sources:
   - name: Ad Platforms & DSP
     icon: market
+    simplified: 4
     tiles:
       - name: Google Campaign Manager
         icon: erp
@@ -538,6 +539,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -675,6 +677,7 @@ consumers:
           - App Developers
   - name: Agent Harnesses
     icon: agents
+    simplified: 4
     tiles:
       - name: Omnigent OSS
         icon: omni

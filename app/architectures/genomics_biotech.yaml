@@ -3,6 +3,7 @@ description: 'Genomics and biotechnology: sequencing pipelines, variant interpre
 sources:
   - name: Sequencing & Omics
     icon: stream
+    simplified: 2
     tiles:
       - name: Illumina BaseSpace
         icon: db
@@ -71,6 +72,7 @@ sources:
             interval: Per-scan on acquisition
   - name: Lab & Sample Mgmt
     icon: erp
+    simplified: 3
     tiles:
       - name: Benchling R&D Cloud
         icon: notebook

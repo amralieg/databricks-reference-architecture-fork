@@ -19,15 +19,28 @@ See `README.md`. What every change here depends on:
   only ONE board file to edit; a fix in `app/index.html` reaches the AI app automatically.
 - Every board has two views on the same shape and boxes: Simplified, the default, and
   Detailed. Simplified keeps the first tiles of each group (`SIMPLE_RAIL_CAP`,
-  `SIMPLE_TOP_CAP`), every tile marked `core: true`, the use cases with customer stories, the
-  platform headline set and the cloud tiles a reader needs (`SIMPLE_CLOUD_ROLES`: storage,
-  identity, catalog, model providers with Anthropic/OpenAI, BI, cloud ETL, streaming and
-  federation, plus one compute tile named Compute). CI/CD, monitoring, operational stores and
-  orchestrators wait for Detailed. So the first tile of every group in an industry YAML is its
+  `SIMPLE_TOP_CAP`), every tile marked `core: true`, the use cases with customer stories and
+  the cloud tiles a reader needs (`SIMPLE_CLOUD_ROLES`: storage, identity, catalog, model
+  providers with Anthropic / OpenAI, BI, cloud ETL, streaming and federation, plus one compute
+  tile named Compute). CI/CD, monitoring, operational stores and orchestrators wait for
+  Detailed. So the first tile of every group in an industry YAML is its
   most essential one and never repeats what another group already leads with, and every other
   system, consumer or team the industry cannot be read without carries `core: true`: an
   airline board without its GDS, or a bank without its core banking system, is not credible.
   Keep at most one extra Business team, since the Teams pocket sets the board's height.
+  Simplified then fills the room it leaves: a Sources, Ingestion, Consumers or Teams group shows
+  its first `simplified: N` tiles when the YAML records one (`simple:N` on the generic board's
+  group in `app/index.html`). `tools/fill_simple.js` sets them, adding each group's next tile in
+  turn while the board stays at its Simplified height in every shape, on every cloud, in English
+  and German, and no label clips. It never adds an orchestrator, a monitoring or CI/CD tool or an
+  operational write-back store. Rerun it after a change to a board's rails and commit what it
+  writes. The platform is drawn the same in both views, every tile at the same type, icon and
+  spacing; Simplified only leaves out captions, capability tags and descriptions. In both views
+  the cloud band takes the size of the Genie Agents band, label column included.
+- No word ever breaks across lines, in any language. A name too long for its tile shrinks to fit,
+  down to 10px; a rail tile whose longest word still does not fit takes the whole width of its
+  group. Names joined by a slash are written with spaced slashes ("Anthropic / OpenAI") so the
+  line can break at the spaces; acronym pairs (I/O, A/B) and product names keep theirs.
 
 ## 2. Layout
 
@@ -233,9 +246,10 @@ node   tools/verify_all_sections.js         # 70 industries + the generic board,
 node   tools/verify_i18n_coverage.js        # translation coverage over the DATA corpus
 node   tools/verify_ui_i18n.js                # every string a reader sees is translated with the right sense in all fifteen languages: wrong-sense terms, names that stay as written, leftover tokens and the tour offline; the board, the panels, the tour, tooltips and the Excel headers on screen
 node   tools/verify_highlights.js           # every tile on every board and cloud draws the dots of the highlights that match it: one connector list for dot and callout, aliases, no orphaned resources
-node   tools/verify_label_fit.js            # every panel, card, heading and band label fits its box, and no heading runs under its zoom button, in all sixteen languages and every board shape; no tile name breaks a word without a hyphen on any board or cloud
-node   tools/verify_core.js                 # every board and cloud, both views, Branded and Categorized: Simplified shows every core tile and every group's first tile, the cloud BI tool, model providers with Anthropic/OpenAI, storage, identity, catalog, ETL, streaming and one Compute tile, and no CI/CD, monitoring, operational store or orchestrator; Detailed keeps every tile
-node   tools/verify_alignment.js            # every board, cloud, shape and language in both views: platform-box titles centred and at their leading edge, tiles midway between top and bottom, arm cards evenly spaced, highlight dots clear of borders, Simplified app names under their icons, panel link arrows at the end of their rows
+node   tools/verify_label_fit.js            # every panel, card, heading and band label fits its box, and no heading runs under its zoom button, in all sixteen languages and every board shape; on every board, cloud and language in both views no word breaks across lines, sticks out of its box or is cut off
+node   tools/verify_core.js                 # every board and cloud, both views, Branded and Categorized: Simplified shows every core tile and every group's first tile, the cloud BI tool, model providers with Anthropic / OpenAI, storage, identity, catalog, ETL, streaming and one Compute tile, and no CI/CD, monitoring, operational store or orchestrator; Detailed keeps every tile
+node   tools/verify_alignment.js            # every board, cloud, shape and language in both views: platform-box titles centred and at their leading edge, tiles midway between top and bottom, arm cards evenly spaced, highlight dots clear of borders, every cloud, top-band and rail tile holding its content at its vertical middle, the cloud band the size of the Genie Agents band, the platform showing the same tiles with the same type, icons and spacing in both views, panel link arrows at the end of their rows
+node   tools/fill_simple.js --check          # every Simplified count recorded in a board's YAML still fills the free space of its rails, without growing the board in any shape, cloud or language
 python3 tools/linkgate.py                    # structural completeness, retired names, seller phrasing, outcome-map use cases still on their boards, every chip alias names a chip on some board and a LINKS entry (add --urls for live link check, --scope highlights to skip third-party citations)
 python3 tools/heightgate.py                  # every board in every shape against the reference height, no clipping, a board that does not load measured once more; a board already over it holds its height in tools/heightgate_baseline.json and may not grow (--tighten after one shrinks)
 node   tools/perfgate.js                     # motion rests at idle, reduced motion honoured, boot fetches once and in parallel; the opening intro plays once the board is built, ends on input and leaves nothing behind

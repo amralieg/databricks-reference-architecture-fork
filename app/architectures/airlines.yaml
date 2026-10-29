@@ -562,6 +562,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Qlik / ThoughtSpot
         icon: chart
@@ -574,6 +575,7 @@ consumers:
         summary: Notebooks, VS Code and JetBrains against governed data and Genie Code.
   - name: Distribution & Partners
     icon: partner
+    simplified: 3
     tiles:
       - name: NDC Offer & Order API
         icon: api

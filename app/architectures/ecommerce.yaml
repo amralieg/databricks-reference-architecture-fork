@@ -3,6 +3,7 @@ description: 'For a digital-first retailer: catalog, discovery, orders, fulfillm
 sources:
   - name: Commerce Platform
     icon: apps
+    simplified: 3
     tiles:
       - name: Shopify Plus
         icon: apps
@@ -53,6 +54,7 @@ sources:
             interval: Hourly / nightly sync
   - name: OMS & Payments
     icon: erp
+    simplified: 3
     tiles:
       - name: Manhattan Active Omni
         icon: erp
@@ -109,6 +111,7 @@ sources:
             interval: Continuous (API)
   - name: Fulfillment & WMS
     icon: stream
+    simplified: 2
     tiles:
       - name: ShipBob WMS
         icon: stream
@@ -206,6 +209,7 @@ sources:
             interval: Continuous event stream
   - name: Marketplaces
     icon: market
+    simplified: 2
     tiles:
       - name: Amazon Seller Central
         icon: market
@@ -255,6 +259,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'UBL'
         icon: zbraces
@@ -571,6 +576,7 @@ consumers:
         summary: Brand partners via Delta Sharing.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Attribution Hub
         icon: chart

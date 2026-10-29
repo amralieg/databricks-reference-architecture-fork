@@ -80,7 +80,7 @@ function snapshot({ cloud, display }) {
       MUST_SHOW.forEach(role => {
         if (!snap.simple.cloudTiles.some(t => t.role === role && t.shown)) fails.push(`[simple ${cloud}] ${id}: no ${role} tile from the cloud is on the board`);
       });
-      if (!snap.simple.cloudTiles.some(t => t.n === 'Anthropic/OpenAI' && t.shown)) fails.push(`[simple ${cloud}] ${id}: Anthropic/OpenAI is not on the board`);
+      if (!snap.simple.cloudTiles.some(t => t.n === 'Anthropic / OpenAI' && t.shown)) fails.push(`[simple ${cloud}] ${id}: Anthropic / OpenAI is not on the board`);
       const net = snap.simple.cloudTiles.filter(t => t.role === 'network' && t.shown);
       if (net.length !== 1 || net[0].label !== 'Compute') fails.push(`[simple ${cloud}] ${id}: compute shows as ${JSON.stringify(net.map(t => t.label))}, not one tile named Compute`);
       ['Serverless Compute', 'Classic Compute'].forEach(n => {
@@ -94,5 +94,5 @@ function snapshot({ cloud, display }) {
   console.log(`boards: ${ids.length}, clouds: ${CLOUDS.length}, views: ${VIEWS.length}, board renders checked: ${checked}, core tiles checked per view: ${coreTotal}`);
   if (errs.length) fails.push(...errs.slice(0, 5).map(e => 'page error: ' + e));
   if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.forEach(f => console.log('  - ' + f)); process.exit(1); }
-  console.log('PASS: on every board and cloud, Simplified shows every core tile (by name when Branded, by its category when Categorized) and the first tile of every group, the cloud BI tool, model providers with Anthropic/OpenAI, storage, identity, catalog, ETL and streaming, one Compute tile, and no CI/CD, monitoring, operational store or orchestrator; Detailed keeps every tile and both compute planes under their own names');
+  console.log('PASS: on every board and cloud, Simplified shows every core tile (by name when Branded, by its category when Categorized) and the first tile of every group, the cloud BI tool, model providers with Anthropic / OpenAI, storage, identity, catalog, ETL and streaming, one Compute tile, and no CI/CD, monitoring, operational store or orchestrator; Detailed keeps every tile and both compute planes under their own names');
 })().catch(e => { console.error(e); process.exit(2); });

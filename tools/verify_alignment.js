@@ -97,12 +97,55 @@ function audit(L) {
         out.push(`${zone(bx)}: a highlight dot on '${label(lbl)}' covers its title or icon`);
     });
   });
-  if (document.body.classList.contains('view-simple')) document.querySelectorAll('.b-apps .pcard').forEach(pc => {
-    const ic = pc.querySelector('.pico'), nm = pc.querySelector('.p-name');
-    if (!vis(pc) || !ic || !nm) return;
-    const rg = document.createRange(); rg.selectNodeContents(nm);
-    const a = ic.getBoundingClientRect(), n = rg.getBoundingClientRect(), d = px((n.left + n.right) / 2 - (a.left + a.right) / 2);
-    if (Math.abs(d) > L.centre) out.push(`b-apps: '${label(nm)}' sits ${d.toFixed(1)}px off the centre of its icon`);
+  document.querySelectorAll('.cloudwrap .ctile, .hband.top .ctile, .rtile').forEach(t => {
+    if (!vis(t)) return;
+    const body = ink([...t.children].filter(c => !c.classList.contains('badge-dot')));
+    if (!body) return;
+    const c = edges(t, true), off = px((body.top + body.bottom) / 2 - (c.top + c.bottom) / 2);
+    const where = t.closest('.cloudwrap') ? 'cloud' : t.closest('.hband.top') ? 'top band' : 'rail';
+    if (Math.abs(off) > L.centre) out.push(`${where}: '${label(t)}' sits ${off.toFixed(1)}px off the vertical middle of its tile`);
+  });
+  const tb = document.getElementById('topband'), cb = document.getElementById('cloud');
+  if (document.body.classList.contains('fitting') && tb && cb && vis(tb) && vis(cb)) {
+    const a = tb.getBoundingClientRect(), b = cb.getBoundingClientRect();
+    Object.entries({ width: b.width - a.width, height: b.height - a.height, 'left edge': b.left - a.left }).forEach(([what, d]) => {
+      if (Math.abs(px(d)) > 0.5) out.push(`bands: the cloud band's ${what} is ${px(d).toFixed(1)}px off the Genie Agents band's`);
+    });
+    const la = tb.querySelector(':scope > .cloud-lbl'), lb = cb.querySelector(':scope > .cloud-lbl');
+    const dw = la && lb ? px(lb.getBoundingClientRect().width - la.getBoundingClientRect().width) : 0;
+    if (Math.abs(dw) > 0.5) out.push(`bands: the cloud band's label column is ${dw.toFixed(1)}px off the Genie Agents band's`);
+  }
+  return out;
+}
+
+const PLAT_STYLE = {
+  '.plat-head': ['fontSize', 'minHeight'], '.ph-mark': ['width', 'height'],
+  '.band-lbl': ['flexBasis'], '.bl-name': ['fontSize', 'fontWeight', 'flexDirection'], '.bl-ic': ['width', 'height'],
+  '.pcard': ['flexDirection', 'gap', 'paddingTop', 'paddingLeft'], '.pico': ['width', 'height'], '.pico svg': ['width', 'height'],
+  '.p-name': ['fontSize', 'fontWeight'], '.ph-name': ['fontSize', 'fontWeight'], '.pl-name': ['fontSize', 'fontWeight'], '.tagpill': ['fontSize'],
+  '.foot-chip': ['gap', 'paddingLeft'], '.fc-name': ['fontSize'], '.oi-lbl': ['fontSize', 'flexBasis'],
+  '.fmt': ['fontSize', 'paddingTop'], '.fmt-logo': ['height'], '.mstage': ['flexBasis'], '.mstage svg': ['width'], '.ms-n': ['fontSize'], '.medal-arrow': ['marginTop'],
+};
+function platSig(STYLE) {
+  const vis = e => { const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; };
+  const roots = [...document.querySelectorAll('.plat-head, #plat-top, #platform')];
+  const all = sel => roots.flatMap(r => (r.matches(sel) ? [r] : []).concat([...r.querySelectorAll(sel)])).filter(vis);
+  const tiles = all('.atom').map(e => { const rec = byId[e.dataset.id]; return rec && rec.tile ? rec.tile.n || rec.tile.tag || '' : ''; }).filter(Boolean).sort();
+  const style = {};
+  Object.entries(STYLE).forEach(([sel, props]) => props.forEach(p => {
+    const vals = new Set(all(sel).filter(e => p !== 'fontSize' || !e.style.fontSize).map(e => getComputedStyle(e)[p]));
+    if (vals.size) style[`${sel} ${p}`] = [...vals].sort().join(' | ');
+  }));
+  return { tiles, style };
+}
+function platDiff(key, s, d) {
+  const out = [];
+  const only = (a, b) => { const left = [...b]; return a.filter(x => { const i = left.indexOf(x); if (i < 0) return true; left.splice(i, 1); return false; }); };
+  const lost = only(d.tiles, s.tiles), extra = only(s.tiles, d.tiles);
+  if (lost.length) out.push(`[${key}] Simplified leaves out platform tiles Detailed shows: ${lost.join(', ')}`);
+  if (extra.length) out.push(`[${key}] Simplified shows platform tiles Detailed does not: ${extra.join(', ')}`);
+  new Set(Object.keys(s.style).concat(Object.keys(d.style))).forEach(k => {
+    if (s.style[k] !== d.style[k]) out.push(`[${key}] platform ${k} reads ${s.style[k] || 'nothing'} in Simplified and ${d.style[k] || 'nothing'} in Detailed`);
   });
   return out;
 }
@@ -129,12 +172,14 @@ function panelAudit(L) {
   const errs = [], fails = [];
   page.on('pageerror', e => errs.push(e.message));
   let checked = 0;
-  const run = async tag => {
+  const sigs = {};
+  const run = async (view, key) => {
     await page.waitForTimeout(250);
     await page.evaluate(() => fitBoard());
     const r = await page.evaluate(audit, LIMITS);
+    (sigs[key] = sigs[key] || {})[view] = await page.evaluate(platSig, PLAT_STYLE);
     checked++;
-    r.forEach(m => fails.push(`[${tag}] ${m}`));
+    r.forEach(m => fails.push(`[${view} ${key}] ${m}`));
   };
   for (const view of VIEWS) {
     await page.goto(withView(base, view), { waitUntil: 'networkidle' });
@@ -150,23 +195,23 @@ function panelAudit(L) {
         return document.body.classList.contains('view-simple') === (view === 'simple');
       }, { id, view });
       if (!ok) { fails.push(`[${view} ${id}] did not open in the ${view} view`); continue; }
-      await run(`${view} ${id}`);
+      await run(view, id);
     }
     for (const cloud of CLOUDS) {
       await page.goto(withView(`${base}?cloud=${cloud}`, view), { waitUntil: 'networkidle' });
       await boardReady(page);
-      await run(`${view} ${cloud}`);
+      await run(view, cloud);
     }
     const SHAPES = await page.evaluate(() => SHAPES.map(s => s.k));
     for (const shape of SHAPES) {
       await page.goto(withView(`${base}?shape=${shape}`, view), { waitUntil: 'networkidle' });
       await boardReady(page);
-      await run(`${view} shape ${shape}`);
+      await run(view, `shape ${shape}`);
     }
     for (const lang of LANGS) {
       await page.goto(withView(`${base}?lang=${lang}`, view), { waitUntil: 'networkidle' });
       await boardReady(page);
-      await run(`${view} ${lang}`);
+      await run(view, lang);
       if (view !== VIEWS[0]) continue;
       await page.click('.b-gov .pcard');
       await page.waitForFunction(() => document.body.classList.contains('detail-open'), null, { timeout: 5000 }).catch(() => {});
@@ -176,8 +221,9 @@ function panelAudit(L) {
   }
   await browser.close();
   server.close();
+  Object.entries(sigs).forEach(([key, v]) => { if (v.simple && v.detailed) fails.push(...platDiff(key, v.simple, v.detailed)); });
   console.log(`views: ${VIEWS.length}, boards, clouds, shapes and languages measured: ${checked}`);
   if (errs.length) fails.push(...errs.slice(0, 5).map(e => 'page error: ' + e));
   if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.forEach(f => console.log('  - ' + f)); process.exit(1); }
-  console.log('PASS: in every platform box the tiles sit midway between top and bottom, titles are centred and start at the leading edge, arm cards are evenly spaced, highlight dots clear the borders and never cover a title or its icon, Simplified app names centre under their icons, and panel link arrows end their rows in every language');
+  console.log('PASS: in every platform box the tiles sit midway between top and bottom, titles are centred and start at the leading edge, arm cards are evenly spaced, highlight dots clear the borders and never cover a title or its icon, every cloud, top-band and rail tile holds its content at its vertical middle, the cloud band is the size of the Genie Agents band, the platform shows the same tiles with the same type, icons and spacing in both views, and panel link arrows end their rows in every language');
 })().catch(e => { console.error(e); process.exit(2); });

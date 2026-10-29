@@ -3,6 +3,7 @@ description: 'Retail, mail and specialty pharmacies and the pharmacy benefit man
 sources:
   - name: Pharmacy Systems
     icon: erp
+    simplified: 2
     tiles:
       - name: McKesson EnterpriseRx
         icon: erp
@@ -142,6 +143,7 @@ sources:
             interval: Continuous (network)
   - name: Formulary & Pricing
     icon: sheet
+    simplified: 2
     tiles:
       - name: First Databank FDB
         icon: db
@@ -263,6 +265,7 @@ sources:
             interval: Daily split-billing cycle
   - name: Wholesale & Dispensing
     icon: compute
+    simplified: 4
     tiles:
       - name: Cencora Supply
         icon: storage
@@ -617,6 +620,7 @@ consumers:
         summary: Plan sponsors, manufacturers and covered entities reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Rebate Cockpit
         icon: market
@@ -636,6 +640,7 @@ consumers:
         summary: Claims, prescriber and pharmacy behaviour scored for fraud, waste and abuse so special investigations work the highest-value cases first.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Rebate & Net Cost
         icon: aibi

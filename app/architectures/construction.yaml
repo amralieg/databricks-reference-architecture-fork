@@ -3,6 +3,7 @@ description: 'For EPC firms and general contractors: capital program controls, b
 sources:
   - name: Project Management
     icon: sheet
+    simplified: 2
     tiles:
       - name: Procore
         icon: sheet
@@ -56,6 +57,7 @@ sources:
             interval: Weekly + progress-update batch
   - name: ERP & Job Cost
     icon: erp
+    simplified: 2
     tiles:
       - name: Trimble Viewpoint Vista
         icon: erp
@@ -251,6 +253,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'IFC'
         icon: zbraces
@@ -544,6 +547,7 @@ consumers:
           - samsara
   - name: Regulatory & Reporting
     icon: gavel
+    simplified: 2
     tiles:
       - name: OSHA Logs
         icon: gavel

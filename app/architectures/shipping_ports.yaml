@@ -3,6 +3,7 @@ description: 'For port and terminal operators, container-terminal-led with bulk-
 sources:
   - name: Terminal Operating
     icon: erp
+    simplified: 2
     tiles:
       - name: Navis N4 TOS
         icon: erp
@@ -58,6 +59,7 @@ sources:
             interval: Nightly batch + hourly deltas
   - name: Vessel & Traffic
     icon: stream
+    simplified: 2
     tiles:
       - name: Port Community System
         icon: api
@@ -104,6 +106,7 @@ sources:
             interval: Hourly / daily API pulls
   - name: Cargo & Customs
     icon: gavel
+    simplified: 2
     tiles:
       - name: Descartes Customs
         icon: gavel
@@ -152,6 +155,7 @@ sources:
             interval: Continuous documents / daily batch
   - name: Equipment & Yard
     icon: iot
+    simplified: 3
     tiles:
       - name: Kalmar Insight
         icon: iot
@@ -198,6 +202,7 @@ sources:
             interval: Continuous (seconds)
   - name: Finance & Tariffs
     icon: market
+    simplified: 2
     tiles:
       - name: Jade Master Terminal
         icon: erp
@@ -551,6 +556,7 @@ consumers:
         summary: Carriers and shippers reading live dwell and berth data via Delta Sharing.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Berth Planner
         icon: gauge

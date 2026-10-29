@@ -3,6 +3,7 @@ description: 'Enterprise security operations: threat detection and correlation, 
 sources:
   - name: SIEM & Log Analytics
     icon: observ
+    simplified: 2
     tiles:
       - name: Splunk Enterprise
         icon: observ
@@ -551,6 +552,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -582,6 +584,7 @@ consumers:
           - servicenow
   - name: Detection Delivery
     icon: cicd
+    simplified: 2
     tiles:
       - name: Detection CI/CD
         icon: cicd

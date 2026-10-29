@@ -55,7 +55,7 @@ INDUSTRIES_BATCH_ENERGY_UTILITIES = {
                 ]},
                 {"box": "SCADA & Grid Ops", "ic": "stream", "tiles": [
                     tile("AVEVA PI Historian", "db", "Substation analogs, breaker operations and equipment alarms at SCADA sampling rates.", "osisoft-pi",
-                         cat="Process/Time-Series Historian",
+                         cat="Process / Time-Series Historian",
                          what="Stores substation analogs, breaker operations and equipment alarms at SCADA sampling rates as the grid time-series system of record.",
                          users="Control-centre operators, protection engineers and grid analytics teams.",
                          data_out=data_out(

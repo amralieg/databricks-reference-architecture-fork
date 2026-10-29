@@ -5,24 +5,57 @@ const { serve, boardReady, withView, VIEWS } = require("./lib_serve");
 
 const LANGS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "app", "translations", "manifest.json"), "utf8")).languages.map(l => l.code);
 
-function splitAudit(){
-  const out = [];
-  document.querySelectorAll(".rtile .t-name, .ctile .ct-name").forEach(el => {
-    if (!el.getClientRects().length) return;
-    const chars = [];
-    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    for (let n; (n = walk.nextNode());) for (let i = 0; i < n.textContent.length; i++) {
-      const r = document.createRange(); r.setStart(n, i); r.setEnd(n, i + 1);
-      const rs = [...r.getClientRects()], b = rs[rs.length - 1];
-      chars.push({ c: n.textContent[i], top: b ? b.top : null, h: b ? b.height : 0, rs });
+function wordAudit(){
+  const WORD = /[^\s\p{scx=Han}\p{scx=Hira}\p{scx=Kana}]+/gu;
+  const board = document.getElementById("board"), out = [];
+  const k = board.getBoundingClientRect().width / board.offsetWidth || 1;
+  const blockOf = e => { while (e && getComputedStyle(e).display.startsWith("inline")) e = e.parentElement; return e; };
+  const name = e => ((e.className && e.className.baseVal === undefined ? e.className : "") || e.tagName.toLowerCase()).toString().split(" ")[0];
+  const blocks = new Map(), seq = new Map();
+  const walk = document.createTreeWalker(board, NodeFilter.SHOW_TEXT);
+  for (let n; (n = walk.nextNode());) {
+    seq.set(n, seq.size);
+    const p = n.parentElement;
+    if (!n.textContent.trim() || !p || p.closest("svg, style, script, textarea") || !p.getClientRects().length || getComputedStyle(p).visibility === "hidden") continue;
+    const b = blockOf(p);
+    if (b) (blocks.get(b) || blocks.set(b, []).get(b)).push(n);
+  }
+  blocks.forEach((nodes, b) => {
+    const cs = getComputedStyle(b), br = b.getBoundingClientRect();
+    if (cs.textOverflow === "ellipsis") {
+      const r = document.createRange(); r.selectNodeContents(b);
+      const box = br.width - (parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth)) * k;
+      if (b.scrollWidth > b.clientWidth + 0.5 || r.getBoundingClientRect().width > box + 0.05 * k) out.push(`'${b.textContent.trim().slice(0, 48)}' is cut off in ${name(b)}`);
     }
-    for (let i = 1; i < chars.length; i++) {
-      const a = chars[i - 1], b = chars[i];
-      if (a.top == null || b.top == null || b.top - a.top < a.h / 2) continue;
-      if (!/[\p{L}\p{N}]/u.test(a.c) || !/[\p{L}\p{N}]/u.test(b.c) || /[\p{sc=Han}\p{sc=Hiragana}\p{sc=Katakana}\p{sc=Hangul}]/u.test(a.c + b.c)) continue;
-      if (b.rs.some(r => Math.abs(r.top - a.top) < a.h / 2 && r.width > 1)) continue;
-      out.push(`'${el.textContent.trim().slice(0, 48)}' splits a word with no hyphen at '${chars.slice(0, i).map(x => x.c).join("").split(/\s/).pop()}|'`);
-      break;
+    let left = br.left + (parseFloat(cs.paddingLeft) + parseFloat(cs.borderLeftWidth)) * k - 0.5;
+    let right = br.right - (parseFloat(cs.paddingRight) + parseFloat(cs.borderRightWidth)) * k + 0.5;
+    const p = b.parentElement;
+    if (p && p !== board && /flex$/.test(getComputedStyle(p).display) && !/^(absolute|fixed)$/.test(cs.position)) {
+      const pc = getComputedStyle(p), pr = p.getBoundingClientRect();
+      left = Math.max(left, pr.left + (parseFloat(pc.paddingLeft) + parseFloat(pc.borderLeftWidth)) * k - 0.5);
+      right = Math.min(right, pr.right - (parseFloat(pc.paddingRight) + parseFloat(pc.borderRightWidth)) * k + 0.5);
+    }
+    const words = [];
+    const joined = (a, b) => {
+      if (seq.get(b) !== seq.get(a) + 1) return false;
+      const r = document.createRange(); r.setStartAfter(a); r.setEndBefore(b);
+      return !r.cloneContents().querySelector("br");
+    };
+    nodes.forEach(n => {
+      for (const m of n.textContent.matchAll(WORD)) {
+        const w = { a: n, i: m.index, z: n, j: m.index + m[0].length, t: m[0] };
+        const prev = words[words.length - 1];
+        if (m.index === 0 && prev && prev.j === prev.z.textContent.length && joined(prev.z, n)) { prev.z = n; prev.j = w.j; prev.t += w.t; }
+        else words.push(w);
+      }
+    });
+    for (const w of words) {
+      if (w.t.length < 2) continue;
+      const r = document.createRange(); r.setStart(w.a, w.i); r.setEnd(w.z, w.j);
+      const rs = [...r.getClientRects()].filter(x => x.width > 0.5);
+      if (!rs.length) continue;
+      if (rs.some(x => x.top - rs[0].top >= rs[0].height / 2)) { out.push(`'${w.t.slice(0, 40)}' breaks across lines in ${name(b)}`); continue; }
+      if (rs.some(x => x.right > right || x.left < left)) out.push(`'${w.t.slice(0, 40)}' sticks out of ${name(b)}`);
     }
   });
   return out;
@@ -32,11 +65,11 @@ function splitAudit(){
   const server = await serve();
   const base = "http://127.0.0.1:" + server.address().port + "/index.html";
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+  const page = await browser.newPage({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 2 });
   await page.addInitScript(() => { try { localStorage.setItem("dbx-arch-tour-v1", "1"); } catch (e) {} });
   const errs = [];
   page.on("pageerror", e => errs.push(e.message));
-  const fails = [];
+  const fails = [], words = [];
   let checked = 0, boards = 0;
   await page.goto(base, { waitUntil: "networkidle" });
   await boardReady(page);
@@ -75,18 +108,30 @@ function splitAudit(){
     checked += r.n;
     if (r.view !== view) fails.push(`[${lang} ${shape}] opened in ${r.view}, not ${view}`);
     r.out.forEach(m => fails.push(`[${view} ${lang} ${shape}] ${m}`));
-    (await page.evaluate(splitAudit)).forEach(m => fails.push(`[${view} ${lang} ${shape}] ${m}`));
+    (await page.evaluate(wordAudit)).forEach(m => words.push([m, `${view} ${lang} ${shape}`]));
   }
-  for (const view of VIEWS) for (const ind of BOARDS) for (const cloud of ["azure", "aws", "gcp"]) {
-    await page.goto(withView(`${base}?industry=${ind}&cloud=${cloud}`, view), { waitUntil: "networkidle" });
+  const CLOUDS = ["azure", "aws", "gcp"];
+  for (const view of VIEWS) for (const [li, lang] of LANGS.entries()) {
+    await page.goto(withView(`${base}?lang=${lang}`, view), { waitUntil: "networkidle" });
     await boardReady(page);
-    boards++;
-    (await page.evaluate(splitAudit)).forEach(m => fails.push(`[${view} ${ind} ${cloud}] ${m}`));
+    for (const [bi, ind] of ["generic", ...BOARDS].entries()) for (const cloud of ind === "generic" ? CLOUDS : [CLOUDS[(bi + li) % 3]]) {
+      await page.evaluate(async ([ind, cloud]) => {
+        if (ARCH.industry !== ind) await applyIndustry(ind);
+        await loadLogos(cloud);
+        if (ARCH.cloud.provider !== cloud) { ARCH.cloud.provider = cloud; build(); fitBoard(); }
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      }, [ind, cloud]);
+      boards++;
+      (await page.evaluate(wordAudit)).forEach(m => words.push([m, `${view} ${lang} ${ind} ${cloud}`]));
+    }
   }
   await browser.close();
   server.close();
-  console.log(`views: ${VIEWS.length}, languages: ${LANGS.length}, shapes: ${SHAPES.length}, labels checked: ${checked}, boards checked for split words: ${boards}`);
+  const seen = new Map();
+  words.forEach(([m, at]) => seen.set(m, (seen.get(m) || []).concat(at)));
+  seen.forEach((at, m) => fails.push(`${m} (${at.length}x: ${at.slice(0, 3).join("; ")})`));
+  console.log(`views: ${VIEWS.length}, languages: ${LANGS.length}, shapes: ${SHAPES.length}, labels checked: ${checked}, boards checked word by word: ${boards}`);
   if (errs.length) fails.push(...errs.slice(0, 5).map(e => "page error: " + e));
-  if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.slice(0, 120).forEach(f => console.log("  - " + f)); process.exit(1); }
-  console.log("PASS: every panel, card, heading and band label fits its box, and no tile name breaks a word without a hyphen, in both views, every language, shape, board and cloud");
+  if (fails.length) { console.log(`\nFAIL (${fails.length})`); fails.slice(0, 160).forEach(f => console.log("  - " + f)); process.exit(1); }
+  console.log("PASS: every panel, card, heading and band label fits its box, and no word anywhere on the board breaks across lines, sticks out of its box or is cut off, in both views, every language, shape, board and cloud");
 })().catch(e => { console.error(e); process.exit(2); });

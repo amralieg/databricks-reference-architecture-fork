@@ -3,6 +3,7 @@ description: 'Discrete and process manufacturers: ERP and MES shop-floor executi
 sources:
   - name: ERP & Planning
     icon: erp
+    simplified: 4
     tiles:
       - name: SAP S/4HANA
         icon: erp
@@ -66,6 +67,7 @@ sources:
             interval: Intraday to daily benchmarks
   - name: MES & Shop Floor
     icon: stream
+    simplified: 3
     tiles:
       - name: Siemens Opcenter
         icon: stream
@@ -112,6 +114,7 @@ sources:
             interval: Per-batch + hourly
   - name: Quality & PLM
     icon: gavel
+    simplified: 3
     tiles:
       - name: PTC Windchill
         icon: product
@@ -159,13 +162,14 @@ sources:
             interval: Hourly / per-inspection
   - name: IoT & Historians
     icon: iot
+    simplified: 2
     tiles:
       - name: AVEVA PI System
         icon: iot
         summary: High-frequency sensor and actuator tags from lines, utilities and environmental systems.
         citations:
           - aveva-pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Collects high-frequency sensor and actuator tags from lines, utilities and environmental systems for OEE, energy and anomaly analytics.
         who_uses_it: Reliability engineers, Process engineering and Energy management.
         data_out:
@@ -179,7 +183,7 @@ sources:
         summary: Process historian data for batch analytics, energy intensity and abnormal event detection.
         citations:
           - aspen-ip21
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores process historian time-series for batch analytics, energy intensity and abnormal-event detection at process sites.
         who_uses_it: Process engineers, batch analytics and Energy teams.
         data_out:
@@ -220,6 +224,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'MTConnect'
         icon: zbraces
@@ -255,6 +260,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: OPC-UA Plant Gateway
         icon: iot
@@ -469,6 +475,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Qlik / ThoughtSpot
         icon: chart
@@ -535,6 +542,7 @@ consumers:
         summary: Customers, co-mans and auditors reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Plant Performance
         icon: gauge

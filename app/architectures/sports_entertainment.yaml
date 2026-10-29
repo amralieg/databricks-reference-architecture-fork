@@ -3,6 +3,7 @@ description: 'Teams, venues and media rights: ticketing and fan engagement, game
 sources:
   - name: Ticketing & CRM
     icon: erp
+    simplified: 3
     tiles:
       - name: Ticketmaster Archtics
         icon: erp
@@ -111,6 +112,7 @@ sources:
             interval: Continuous during sessions
   - name: Broadcast & OTT
     icon: partner
+    simplified: 2
     tiles:
       - name: Deltatre OTT Platform
         icon: api
@@ -157,6 +159,7 @@ sources:
             interval: Daily / weekly measurement
   - name: Sponsorship & Ads
     icon: market
+    simplified: 2
     tiles:
       - name: SponsorUnited
         icon: partner
@@ -221,6 +224,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'SportsML'
         icon: zbraces
@@ -246,6 +250,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: Stats Perform Feeds
         icon: api
@@ -439,6 +444,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart

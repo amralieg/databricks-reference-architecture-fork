@@ -3,6 +3,7 @@ description: 'Game studios and publishers: player lifecycle, in-game economy and
 sources:
   - name: Game Engines & Telemetry
     icon: iot
+    simplified: 4
     tiles:
       - name: Unity Client Telemetry
         icon: stream
@@ -353,6 +354,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'glTF'
         icon: zbraces
@@ -680,6 +682,7 @@ consumers:
         summary: Studios, affiliates and regulators reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Live Ops Console
         icon: gauge

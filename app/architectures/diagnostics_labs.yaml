@@ -3,6 +3,7 @@ description: 'Clinical diagnostic and pathology labs: order and specimen managem
 sources:
   - name: LIS & Pathology
     icon: db
+    simplified: 4
     tiles:
       - name: Epic Beaker LIS
         icon: db
@@ -77,6 +78,7 @@ sources:
             interval: Nightly batch + intraday
   - name: LIMS & Molecular
     icon: erp
+    simplified: 4
     tiles:
       - name: LabWare LIMS
         icon: erp
@@ -137,6 +139,7 @@ sources:
             interval: Nightly batch
   - name: Analyzers & Middleware
     icon: iot
+    simplified: 3
     tiles:
       - name: DI Instrument Manager
         icon: connect
@@ -194,6 +197,7 @@ sources:
             interval: Continuous
   - name: Digital Pathology
     icon: media
+    simplified: 3
     tiles:
       - name: Philips IntelliSite
         icon: media
@@ -257,6 +261,7 @@ sources:
             interval: Per-slide on inference
   - name: Interfaces, RCM & QC
     icon: api
+    simplified: 2
     tiles:
       - name: Rhapsody Engine
         icon: api

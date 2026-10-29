@@ -3,6 +3,7 @@ description: 'Mobile and fixed operators: network inventory and performance, cus
 sources:
   - name: BSS & Billing
     icon: erp
+    simplified: 2
     tiles:
       - name: Amdocs CES
         icon: erp
@@ -63,6 +64,7 @@ sources:
             interval: Continuous
   - name: OSS & Inventory
     icon: db
+    simplified: 2
     tiles:
       - name: Ericsson ENM
         icon: stream
@@ -307,6 +309,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'CDR'
         icon: zbraces

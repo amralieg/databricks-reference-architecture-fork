@@ -3,6 +3,7 @@ description: 'For a CPG manufacturer: demand planning, trade promotion, retail e
 sources:
   - name: ERP & Manufacturing
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP IBP / S/4
         icon: erp
@@ -143,6 +144,7 @@ sources:
             interval: Daily + post-event runs
   - name: Field & DSD
     icon: stream
+    simplified: 3
     tiles:
       - name: Salesforce Consumer Goods
         icon: custlake
@@ -498,6 +500,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -510,6 +513,7 @@ consumers:
         summary: Planning notebooks on governed syndicated data.
   - name: Retailers & Brokers
     icon: partner
+    simplified: 2
     tiles:
       - name: EDI 852/867
         icon: api

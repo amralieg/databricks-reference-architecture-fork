@@ -3,6 +3,7 @@ description: 'Grocery retail and wholesale: store operations, replenishment, fre
 sources:
   - name: Store & POS
     icon: market
+    simplified: 3
     tiles:
       - name: NCR Voyix POS
         icon: market
@@ -59,6 +60,7 @@ sources:
             interval: Multiple scans per day
   - name: Merchandising & Promo
     icon: sheet
+    simplified: 2
     tiles:
       - name: Relex Space Planning
         icon: sheet
@@ -151,6 +153,7 @@ sources:
             interval: Daily + intraday markdown runs
   - name: E-com & Fulfillment
     icon: partner
+    simplified: 2
     tiles:
       - name: Instacart Marketplace
         icon: partner
@@ -216,6 +219,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'X12 EDI'
         icon: zbraces
@@ -475,6 +479,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Qlik / ThoughtSpot
         icon: chart

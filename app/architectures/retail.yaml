@@ -3,6 +3,7 @@ description: 'For a multi-banner retailer: merchandising and pricing, inventory 
 sources:
   - name: ERP & Merchandising
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP S/4HANA Retail
         icon: erp
@@ -59,6 +60,7 @@ sources:
             interval: Continuous movement events
   - name: Commerce & POS
     icon: market
+    simplified: 2
     tiles:
       - name: Salesforce Commerce
         icon: partner
@@ -115,6 +117,7 @@ sources:
             interval: Continuous (near real-time)
   - name: Inventory & Supply
     icon: product
+    simplified: 3
     tiles:
       - name: Manhattan Active Omni
         icon: stream
@@ -527,6 +530,7 @@ consumers:
           - manhattan-omni
   - name: Regulatory & Reporting
     icon: gavel
+    simplified: 2
     tiles:
       - name: Product Safety Recall
         icon: gavel

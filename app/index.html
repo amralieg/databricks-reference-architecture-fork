@@ -607,10 +607,6 @@
   .hbtn.ico-only { width:30px; padding:0; gap:0; border-radius:9px; font-size:14px; }
   .hbtn.ico-only .btn-lbl { display:none; }
   .ext-mark { font-size:.62em; line-height:1; margin-inline-start:1px; opacity:.7; vertical-align:super; }
-  /* The palette's identity IS its five swatches, so it keeps them as its glyph
-     and sizes to fit them rather than the fixed 30px square, which was clipping
-     the last swatch. */
-  #pal-btn.ico-only { width:auto; padding:0 7px; }
   /* Line-drawn glyphs (download, stage, language) sized to sit level with the
      unicode glyphs and the text controls in a 28px-tall bar. */
   .ico-svg { width:15px; height:15px; display:block; fill:none; stroke:currentColor;
@@ -1159,6 +1155,8 @@
     color:var(--g-ink, var(--muted)); }
   .rgroup-t .rg-label { min-width:0; line-height:1.1; white-space:nowrap;
     overflow:hidden; text-overflow:ellipsis; }
+  .rgroup-t.rg-wrap { height:auto; min-height:var(--glabelh); letter-spacing:0; }
+  .rgroup-t.rg-wrap .rg-label { white-space:normal; }
   /* per-zone accent, so a group label always reads as part of its own zone */
   /* Each zone owns one hue, and its section labels, tile notches and enclosing
      line all take it, so a zone reads as one thing and as distinct from the zone
@@ -1225,7 +1223,7 @@
   .rail.ing  .rtile .ic, .rail.ing  .rtile svg.mark { color:var(--g-teal-ink); }
   .rail.ppl  .rtile .ic, .rail.ppl  .rtile svg.mark { color:var(--g-violet-ink); }
   .rtile.cloudy .ic, .rtile.cloudy svg.mark { color:var(--g-amber-ink); }
-  .rtile .t-name { font-size:11px; font-weight:650; line-height:1.2; min-width:0; overflow-wrap:break-word; }
+  .rtile .t-name { font-size:11px; font-weight:650; line-height:1.2; min-width:0; }
   /* ---------- platform (Z shape) ---------- */
   /* Two elements draw one box. The corners that meet are square and the shared
      border is erased by .plat-body::before across the overlap only, so the pair
@@ -1524,10 +1522,7 @@
     display:grid; place-items:center; box-shadow:var(--shadow-ico); }
   .pico svg { width:19px; height:19px; color:var(--brand); }
   .ptxt { min-width:0; }
-  /* overflow-wrap pairs with the <wbr> escWrap inserts: the break opportunity is
-     preferred, this is the fallback for a name with no camelCase seam. */
-  .p-name { display:block; font-size:14.5px; font-weight:750; line-height:1.2; letter-spacing:-.01em;
-    overflow-wrap:anywhere; }
+  .p-name { display:block; font-size:14.5px; font-weight:750; line-height:1.2; letter-spacing:-.01em; }
   .p-sub { display:block; font-size:11.5px; color:var(--muted); line-height:1.3; margin-top:2px; }
   .p-caps { display:block; font-size:11px; color:var(--muted); line-height:1.45; margin-top:3px; }
   /* a divider, not a word: held to the 3:1 graphical threshold, and
@@ -1626,6 +1621,8 @@
      top and one in the middle. The icon rides above the stacked words. */
   .b-work .band-lbl { flex:0 0 96px; align-self:center; }
   .b-work .band-lbl .bl-name { align-items:flex-start; white-space:normal; }
+  .b-work .band-lbl .bl-name, .b-work .band-rlbl .bl-name { flex-direction:column; gap:4px; }
+  .b-work .bl-name .bl-ic { margin:0; }
   .b-work .band-lbl .bl-name > span { min-width:0; }
   .b-work .band-rlbl { flex:0 0 96px; align-self:center; }
   /* Both bookends are a fixed 96px column carrying a two-word label that stacks
@@ -1636,7 +1633,7 @@
      lang attribute in applyLang), so long words break cleanly instead of
      clipping. English words are short enough that this never triggers. */
   .b-work .band-lbl .bl-name > span,
-  .b-work .band-rlbl .bl-name > span { min-width:0; overflow-wrap:break-word; hyphens:auto; }
+  .b-work .band-rlbl .bl-name > span { min-width:0; }
   /* The two rectangles (Genie, Agent Bricks) stretch to one shared height and
      top-align their contents, so the boxes line up as a pair whatever each one
      holds. */
@@ -1708,7 +1705,7 @@
   /* One stacked column per stage: the layer name on top, the cylinder in the
      middle, the caption beneath, so Bronze, Silver and Gold each read
      top-to-bottom under the open formats. */
-  .mstage { flex:0 0 66px; min-width:0; position:relative; display:flex; flex-direction:column;
+  .mstage { flex:0 0 66px; min-width:min-content; position:relative; display:flex; flex-direction:column;
     align-items:center; justify-content:flex-start; gap:3px; text-align:center; font:inherit;
     border:0; background:transparent; border-radius:9px; padding:5px 2px;
     cursor:pointer; transition:.12s; }
@@ -1717,7 +1714,7 @@
   .mstage .ms-n { display:block; font-size:11px; font-weight:850; letter-spacing:.06em;
     text-transform:uppercase; line-height:1.1; white-space:nowrap; flex:0 0 auto; }
   .mstage .ms-s { display:block; font-size:9.5px; line-height:1.25; color:var(--muted);
-    font-weight:600; min-width:0; white-space:normal; text-align:center; max-width:7rem; }
+    font-weight:600; min-width:min-content; white-space:normal; text-align:center; max-width:7rem; }
   /* the layer's colour lives on the glyph and its name, nowhere else */
   .m-bronze svg, .m-bronze .ms-n { color:var(--m-bronze); }
   .m-silver svg, .m-silver .ms-n { color:var(--m-silver); }
@@ -1796,9 +1793,9 @@
   .hband.top .cloud-body, .cloudwrap .cloud-body { flex:1 1 auto;
     align-content:start; }
   .hband.top .cloud-body { grid-auto-rows:1fr; align-items:stretch; }
-  .hband.top .ctile { height:100%; align-items:flex-start; }
+  .hband.top .ctile { height:100%; }
   .cloudwrap .cloud-body { grid-auto-rows:1fr; align-items:stretch; align-content:stretch; }
-  .cloudwrap .ctile { height:100%; align-items:flex-start; }
+  .cloudwrap .ctile { height:100%; }
   .cloud-sec + .cloud-sec { border-left:1px dashed var(--line); padding-left:13px; }
 
   /* A fixed column count keeps the last row balanced instead of leaving an orphan. */
@@ -1810,8 +1807,9 @@
   .ctile:hover { border-color:var(--cloud-accent); box-shadow:var(--shadow); transform:translateY(-1px); }
   .ctile .ic { width:15px; height:15px; flex:0 0 auto; color:var(--cloud-accent); }
   .ctile .ct { min-width:0; }
-  .ctile .ct-name { display:block; font-size:11.5px; font-weight:700; line-height:1.2; overflow-wrap:break-word; }
-  .rtile .t-name.hy, .ctile .ct-name.hy { hyphens:auto; }
+  .ctile .ct-name { display:block; font-size:11.5px; font-weight:700; line-height:1.2; }
+  .kw { white-space:nowrap; }
+  html[data-lang="ko"] .board { word-break:keep-all; }
   /* The group's own ink, not the neutral grey. Grey reads fine on a white card and
      it does not survive the chip being tinted: on the denser palettes it fell to
      3.7 against the fill it now sits on. The ink is the one colour solved against
@@ -2180,8 +2178,12 @@
   /* Share menu: brand glyphs keep their own colours (recognition), so they use
      fill, not the stroke the toolbar icons use. The sub-header echoes the exact
      text that will be posted so the sharer sees it before choosing a network. */
-  .opt-menu { min-width:236px; }
-  .opt-menu .share-menu { border-top:1px solid var(--line); margin-top:5px; padding-top:1px; }
+  .share-menu { min-width:216px; }
+  .flash-tip { position:absolute; top:calc(100% + 7px); left:50%; transform:translateX(-50%); z-index:91;
+    white-space:nowrap; background:var(--card); color:var(--ink); border:1px solid var(--line);
+    border-left:3px solid var(--brand); border-radius:8px; box-shadow:var(--shadow-lg);
+    padding:4px 9px; font-size:11px; font-weight:650; pointer-events:none; }
+  .flash-tip:empty { display:none; }
   .share-menu .sh-title { font-size:11px; font-weight:650; color:var(--ink); padding:1px 9px 7px;
     line-height:1.35; border-bottom:1px solid var(--line); margin-bottom:4px; }
   .share-menu button .sh-ic { width:16px; height:16px; flex:0 0 auto; }
@@ -2191,7 +2193,21 @@
   /* block, and the wrapper a flex box: as an inline element the glyph sat on a
      text baseline and the line box kept a descender's worth of space under it,
      which pushed the shape 2.3px above the centre of the word beside it */
-  #shape-ico { display:inline-flex; align-items:center; }
+  #theme-ico { display:inline-flex; align-items:center; }
+  .opt-menu { width:304px; max-height:min(88vh, 720px); }
+  .opt-sec { display:grid; grid-template-columns:1fr 1fr; gap:1px 2px; }
+  .opt-sec > .men-hd, .opt-sec > .men-sub, .opt-sec > .dl-note { grid-column:1 / -1; }
+  .opt-sec > .men-sub { font-size:9.5px; font-weight:650; color:var(--faint); padding:3px 9px 1px; }
+  .opt-sec + .opt-sec { border-top:1px solid var(--line); margin-top:5px; padding-top:1px; }
+  .opt-acts { grid-template-columns:1fr; }
+  #pal-menu { grid-template-columns:repeat(5, 1fr); }
+  #shape-menu { grid-template-columns:repeat(4, 1fr); }
+  #lang-menu button { padding:5px 9px; }
+  .opt-tiles button { flex-direction:column; justify-content:center; gap:4px;
+    padding:5px 2px 4px; font-size:10px; text-align:center; }
+  .opt-tiles button.on { box-shadow:inset 0 0 0 1.5px var(--brand-ink); }
+  .pal-menu .opt-tiles button.on::after { content:none; }
+  .opt-sec[inert] { opacity:.45; }
   .shp { display:block; flex:0 0 auto; width:20px; height:15px; color:var(--brand); }
   .shp path { fill:none; stroke:currentColor; stroke-width:2.1; stroke-linejoin:round; }
 
@@ -2550,61 +2566,26 @@
     .fmt-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
   }
 
-  body.view-simple { --glabelh:18px; --headh:44px; }
+  body.view-simple { --glabelh:18px; }
   body.view-simple .rtiles { gap:4px; }
-  body.view-simple .rtiles > .rtile:last-child:nth-child(odd) { grid-column:1 / -1; }
+  body.view-simple .rtiles:not(.paired) > .rtile:last-child:nth-child(odd), .rtiles > .rtile.wide { grid-column:1 / -1; }
   body.view-simple .rgroup { gap:4px; }
   body.view-simple .rgroup-t { font-size:13px; }
   body.view-simple .rtile { gap:5px; padding:5px 6px; }
   body.view-simple .rtile .ic, body.view-simple .rtile svg.mark { width:15px; height:15px; }
   body.view-simple .rtile .t-name { font-size:13px; line-height:1.15; }
-  body.view-simple .colhead { font-size:18px; }
+  body.view-simple .colhead:not(.plat-head) { font-size:18px; }
   body.view-simple .pockhead { font-size:15px; }
   body.view-simple .colhead > svg:not(.ph-mark) { width:20px; height:20px; }
   body.view-simple .pockhead > svg { width:17px; height:17px; }
-  body.view-simple .plat-head { font-size:24px; }
-  body.view-simple .ph-mark { width:24px; height:24px; }
-  body.view-simple .band-lbl { flex-basis:168px; }
-  body.view-simple .arm .band-lbl { flex-basis:auto; }
-  body.view-simple .band-lbl .bl-name, body.view-simple .arm .band-lbl .bl-name { font-size:20px; }
-  body.view-simple .arm .pcard .p-name { font-size:18px; }
-  body.view-simple .b-work .band-lbl, body.view-simple .b-work .band-rlbl { flex-basis:96px; }
-  body.view-simple .b-work .band-lbl .bl-name { flex-direction:column; align-items:flex-start; gap:4px; }
-  body.view-simple .b-work .band-rlbl .bl-name { flex-direction:column; align-items:flex-start; gap:4px; }
-  body.view-simple .b-work .bl-name .bl-ic { margin:0; }
-  body.view-simple .pcard { gap:10px; padding:5px 7px; align-items:center; }
-  body.view-simple .pico { width:40px; height:40px; }
-  body.view-simple .pico svg { width:24px; height:24px; }
-  body.view-simple .p-name { font-size:19px; }
-  body.view-simple .b-apps .pcard { flex-direction:column; align-items:center; gap:6px; text-align:center; }
-  body.view-simple .b-apps .ptxt { width:100%; }
-  body.view-simple .panel-head .pico { width:34px; height:34px; }
-  body.view-simple .panel-head .pico svg { width:21px; height:21px; }
-  body.view-simple .ph-name { font-size:20px; }
-  body.view-simple .plaincol .pl-name { font-size:19px; }
-  body.view-simple .foot-chip { gap:9px; padding:5px 15px; }
-  body.view-simple .foot-chip svg { width:20px; height:20px; }
-  body.view-simple .foot-chip .fc-name { font-size:17px; }
-  body.view-simple .oi-lbl { font-size:16px; }
-  body.view-simple .band-row.medallion .oi-lbl { flex-basis:110px; max-width:110px; }
-  body.view-simple .fmt-grid .fmt { font-size:13px; padding:5px 7px; }
-  body.view-simple .fmt.has-logo .fmt-logo { height:30px; }
-  body.view-simple .fmt.logo-mark .fmt-logo { height:20px; }
-  body.view-simple .mstage { flex-basis:84px; }
-  body.view-simple .mstage svg { width:38px; height:38px; }
-  body.view-simple .mstage .ms-n { font-size:14px; }
-  body.view-simple .medal-arrow { margin-top:36px; }
-  body.view-simple .cloud-lbl .cl-name { font-size:19px; }
-  body.view-simple .hband .cloud-lbl { flex-basis:220px; }
+  body.view-simple .pcard { align-items:center; }
+  body.view-simple .cloud-lbl .cl-name { font-size:16px; }
   body.view-simple .provlogo { height:42px; }
   body.view-simple .cloud-body { gap:9px; }
-  body.view-simple .ctile { gap:9px; padding:7px 10px; }
-  body.view-simple .ctile .ic { width:20px; height:20px; }
-  body.view-simple .ctile .ct-name { font-size:17px; line-height:1.18; }
-  body.view-simple .hband.top .cloud-lbl { flex-basis:150px; }
-  body.view-simple .hband.top .ctile { flex-direction:column; align-items:flex-start; gap:5px; padding:7px 6px; }
-  body.view-simple .hband.top .ctile .ct { width:100%; }
-  body.view-simple .hband.top .ctile .ct-name { font-size:15px; }
+  body.view-simple .hband .ctile { flex-direction:column; align-items:flex-start; justify-content:center; gap:5px; padding:7px 6px; }
+  body.view-simple .ctile .ic { width:18px; height:18px; }
+  body.view-simple .hband .ctile .ct { width:100%; }
+  body.view-simple .ctile .ct-name { font-size:13.5px; line-height:1.18; }
   /* ── First-visit guided tour ──────────────────────────────────────────────
      A spotlight walk-through of the board, ported from the model-viewer tour.
      The hole is one element whose huge outer box-shadow dims the whole page
@@ -2706,7 +2687,13 @@
   </div>
 
   <div class="htools">
-  <!-- Industry leads the toolbar, ahead of the cloud switch: it decides what the
+  <button class="hbtn" id="feedback-btn" title="Share your feedback on this reference architecture (opens a form in a new tab)"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg> <span id="feedback-lbl">Feedback</span><sup class="ext-mark" aria-hidden="true">&#8599;</sup></button>
+  <div class="pal-wrap" id="share-wrap">
+    <button class="hbtn ico-only" id="share-btn" title="Share this reference architecture on LinkedIn, X, Reddit and more (links straight to this industry)"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M8.1 10.9l7.8-3.7M8.1 13.1l7.8 3.7"/></svg></button>
+    <span class="flash-tip" id="share-flash" role="status" aria-live="polite"></span>
+    <div class="pal-menu share-menu" id="share-menu"></div>
+  </div>
+  <!-- Industry comes ahead of the cloud switch: it decides what the
        whole board is about, where the cloud switch only decides one band. -->
   <div class="pal-wrap" id="ind-wrap">
     <button class="hbtn" id="ind-btn" title="Specialise the boxes outside the platform for one industry: sources, ingestion, teams, use cases, apps and consumers"><span id="ind-ico">◈</span> <span id="ind-lbl">Pick an Industry (70 available)</span></button>
@@ -2726,14 +2713,6 @@
   <div class="pal-wrap" id="hl-wrap">
     <button class="hbtn ico-only" id="hl-btn" title="Choose which highlight dots the boxes show"><svg class="ico-svg hl-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><circle cx="8" cy="16" r="3"/><circle cx="16" cy="16" r="3"/></svg> <span id="hl-lbl" class="btn-lbl">Highlights</span></button>
     <div class="pal-menu" id="hl-menu"></div>
-  </div>
-  <div class="pal-wrap" id="pal-wrap">
-    <button class="hbtn ico-only" id="pal-btn" title="Choose a colour scheme. Each one works in both light and dark, and downloads follow the choice."><span class="pal-dots" id="pal-dots" aria-hidden="true"></span></button>
-    <div class="pal-menu" id="pal-menu"></div>
-  </div>
-  <div class="pal-wrap" id="shape-wrap">
-    <button class="hbtn ico-only" id="shape-btn" title="Choose the shape the platform is drawn in"><span id="shape-ico">Z</span></button>
-    <div class="pal-menu" id="shape-menu"></div>
   </div>
   <div class="dl-wrap" id="dl-wrap">
     <button class="hbtn ico-only" id="dl-btn" title="Download, export or import this architecture"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></button>
@@ -2765,18 +2744,17 @@
     </div>
     <input type="file" id="arch-import" accept=".yaml,.yml,text/yaml" hidden>
   </div>
-  <div class="pal-wrap" id="lang-wrap">
-    <button class="hbtn ico-only" id="lang-btn" title="Translate the architecture content. The toolbar and menus stay in English; product and brand names are never translated."><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></button>
-    <div class="pal-menu" id="lang-menu"></div>
-  </div>
-  <button class="hbtn ico-only" id="theme-btn" title="Switch between the light and dark palette. Downloads follow whichever is on screen."><span id="theme-ico">◐</span> <span id="theme-lbl" class="btn-lbl">Dark</span></button>
+  <button class="hbtn ico-only" id="theme-btn" title="Switch between the light and dark palette. Downloads follow whichever is on screen."><span id="theme-ico"></span> <span id="theme-lbl" class="btn-lbl">Dark</span></button>
   <div class="pal-wrap" id="opt-wrap">
-    <button class="hbtn" id="opt-btn" type="button" title="Take the guided tour, dock the details panel, send feedback or share this board"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg> <span id="opt-lbl">Options</span></button>
+    <button class="hbtn ico-only" id="opt-btn" type="button" title="Choose the platform shape, language and colour scheme, take the guided tour or dock the details panel"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     <div class="pal-menu opt-menu" id="opt-menu">
-      <button id="tour-btn" type="button" title="Take a guided tour of the board"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.6 8.4-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1Z"/></svg><span>Take the guided tour</span></button>
-      <button id="side-btn" type="button" title="Show the details panel docked on the side" aria-pressed="false"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg><span>Dock the details panel</span></button>
-      <button id="feedback-btn" type="button" title="Share your feedback on this reference architecture (opens a form in a new tab)"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg><span>Send feedback<sup class="ext-mark" aria-hidden="true">&#8599;</sup></span></button>
-      <div class="share-menu" id="share-menu"></div>
+      <div class="opt-sec opt-tiles" id="shape-menu" title="Choose the shape the platform is drawn in"></div>
+      <div class="opt-sec" id="lang-menu" title="Translate the architecture content. The toolbar and menus stay in English; product and brand names are never translated."></div>
+      <div class="opt-sec opt-tiles" id="pal-menu" title="Choose a colour scheme. Each one works in both light and dark, and downloads follow the choice."></div>
+      <div class="opt-sec opt-acts">
+        <button id="tour-btn" type="button" title="Take a guided tour of the board"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.6 8.4-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1Z"/></svg><span>Take the guided tour</span></button>
+        <button id="side-btn" type="button" title="Show the details panel docked on the side" aria-pressed="false"><svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg><span>Dock the details panel</span></button>
+      </div>
     </div>
   </div>
   </div>
@@ -3375,9 +3353,6 @@ function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,
    narrow for CustomerLake wraps it as Customer / Lake. Without it the only place
    the line can break is wherever the character happens to land, which read as
    "CustomerL / ake". */
-function escWrap(s){ return esc(s).replace(/([a-z])([A-Z])/g, "$1<wbr>$2"); }
-function escSlash(s){ return esc(s).replace(/\/(?=\S)/g, "/<wbr>"); }
-
 /* ==================================================================
    2. CONTENT MODEL — the whole architecture lives here.
       Layout renders itself from this object; edit mode mutates it.
@@ -3517,7 +3492,7 @@ const ARCH = {
          Genie Ontology rule below spans only the two middle panels (Genie and Agent
          Bricks) exactly as the reference slide shows. */
       rlbl:{ n:"Agentic Dev", s:"Develop and deploy agents, apps, and models", ic:"dev",
-        long:"The developer surface of the platform: notebooks, IDE integrations, MLflow, AI Runtime serverless GPU compute and Declarative Automation Bundles (formerly Databricks Asset Bundles) for shipping agents, apps and models to production.",
+        long:"The developer surface of the platform: notebooks, IDE integrations, MLflow and Declarative Automation Bundles (formerly Databricks Asset Bundles) for deploying agents, apps and models to production.",
         caps:["MLflow","AI Runtime (serverless GPU)","Automation Bundles","IDE + notebooks"], rel:["Agent Bricks","Unity Gateway"] },
       foot:{ n:"Genie Ontology", ic:"ontology", st:"Public Preview",
         long:"The live, self-improving context layer beneath every Genie and agent. Extracts knowledge snippets from tables, queries, dashboards, pipelines and connected apps into a living graph of how the company works, and ranks authority with OntoRank (a PageRank-inspired algorithm scoring usage, recency and source credibility). Lifted agent answer accuracy from ~50% to 84.5% on the Summit benchmark.",
@@ -3611,13 +3586,13 @@ const ARCH = {
     src: { id:"src", name:"Sources",
       note:"Each source lands once. Federated sources are read where they are, without a copy.",
       groups:[
-      { box:"Structured", ic:"sheet", tiles:[
+      { box:"Structured", ic:"sheet", simple:4, tiles:[
         { n:"Business Applications", ic:"erp", long:"Systems of record for finance, supply chain, HR and customers. Ingested with Lakeflow Connect or federated in place.", what:"Packaged systems of record (ERP, WMS, HRIS, CRM) that hold master data and the day-to-day transactions the business runs on, ingested with Lakeflow Connect or read in place with federation.", users:"Finance, supply chain, HR and sales-operations teams, and the data engineers who model their extracts.", dataOut:{ batch:{ types:["structured"], vol:"GBs/day of transactions + master data", interval:"Nightly extract + intraday deltas" }, stream:{ types:["semi-structured"], vol:"change events on key entities", interval:"Continuous CDC where available" } } },
         { n:"Operational Databases", core:true, ic:"db", long:"OLTP databases captured with CDC through Lakeflow Connect.", what:"The OLTP databases behind live applications, captured row-by-row so the lakehouse mirrors production without loading the source system.", users:"Application and platform-engineering teams, and analysts who need current operational data.", dataOut:{ stream:{ types:["structured"], vol:"100s-1000s of row changes/sec", interval:"Continuous CDC (near real-time)" } } },
         { n:"Data Warehouses", core:true, ic:"db", long:"Existing warehouses migrated with Lakebridge or federated through Lakehouse Federation.", what:"Incumbent enterprise warehouses holding historical marts and conformed dimensions, migrated with Lakebridge or read in place through Lakehouse Federation.", users:"BI, finance and analytics teams during and after migration.", dataOut:{ batch:{ types:["structured"], vol:"TB-scale historical marts", interval:"Bulk migration, then queried on demand" } } },
         { n:"Mainframe & Legacy", ic:"mainframe", long:"Mainframe and legacy extracts, batch-landed then normalised in Lakeflow pipelines.", what:"Mainframe and legacy systems (core banking, claims, billing) whose fixed-width and EBCDIC extracts are batch-landed and normalised in Lakeflow pipelines.", users:"Core operations, back-office and modernization teams.", dataOut:{ batch:{ types:["structured", "semi-structured"], vol:"GBs/day fixed-width + VSAM extracts", interval:"Nightly batch windows" } } },
       ]},
-      { box:"Semi-structured", ic:"zbraces", tiles:[
+      { box:"Semi-structured", ic:"zbraces", simple:2, tiles:[
         { n:"Files & Object Stores", ic:"file", long:"CSV, JSON, Parquet and archive files landed in cloud object storage and ingested with Auto Loader.", what:"Structured-ish files (CSV, JSON, Parquet, archives) dropped into cloud object storage and picked up incrementally by Auto Loader as they arrive.", users:"Data-engineering teams and partners exchanging file drops.", dataOut:{ batch:{ types:["semi-structured"], vol:"MBs-TBs per landing", interval:"On arrival (event-driven)" } } },
         { n:"Logs & Telemetry", ic:"observ", long:"Application, infrastructure, network and security logs feeding the lakehouse and Lakewatch.", what:"Application, infrastructure, network and security logs streamed into the lakehouse for observability, security analytics and Lakewatch.", users:"Platform, SRE and security-operations teams.", dataOut:{ stream:{ types:["semi-structured"], vol:"1000s of log events/sec", interval:"Continuous" } } },
         { n:"SaaS Applications", core:true, ic:"saas", long:"SaaS platforms ingested through the 100+ managed Lakeflow connectors.", what:"Cloud SaaS platforms (marketing, support, finance, product) pulled through the 100+ managed Lakeflow connectors on a schedule.", users:"Revenue, marketing, support and finance analytics teams.", dataOut:{ batch:{ types:["semi-structured", "structured"], vol:"MBs-GBs/day via API", interval:"Scheduled connector syncs" } } },
@@ -3660,7 +3635,7 @@ const ARCH = {
        Databricks product. The Databricks ingest tools sit inside the arm above. */
     ing: { id:"ing", name:"External Ingestion", groups:[
       { box:"Cloud ETL", ic:"etl", from:"ingest", tiles:[] },
-      { box:"3rd Party", ic:"zplug", tiles:[
+      { box:"3rd Party", ic:"zplug", simple:2, tiles:[
         { n:"Managed ELT", ic:"etl", long:"Third-party managed connectors (Fivetran, Airbyte and similar) landing SaaS and database sources into the lakehouse, used where a source is not yet covered by Lakeflow Connect.", what:"Third-party managed connectors (Fivetran, Airbyte and similar) that land SaaS and database sources into the lakehouse where a source is not yet covered by Lakeflow Connect.", users:"Data engineers and analytics teams onboarding long-tail SaaS and database sources.", dataOut:{ batch:{ types:["structured","semi-structured"], vol:"GBs/day of connector syncs", interval:"Scheduled syncs (15 min to daily)" } } },
         { n:"Custom ETL Tool", ic:"etl", long:"Incumbent ETL estates (Informatica, Talend, DataStage and similar) that keep writing to the lakehouse during a migration, typically assessed and converted with Lakebridge.", what:"Incumbent ETL estates (Informatica, Talend, DataStage and similar) that keep writing to the lakehouse during a migration, typically assessed and converted with Lakebridge.", users:"Migration and platform teams retiring legacy ETL.", dataOut:{ batch:{ types:["structured"], vol:"existing pipeline outputs", interval:"Existing job schedules during migration" } } },
         { n:"Streaming Brokers", ic:"stream", long:"Kafka, Confluent, MSK and equivalent brokers already in place, consumed by Lakeflow streaming pipelines or replaced by Zerobus for new producers.", what:"Kafka, Confluent, MSK and equivalent brokers already in place, consumed by Lakeflow streaming pipelines or replaced by Zerobus for new producers.", users:"Streaming and platform engineers.", dataOut:{ stream:{ types:["semi-structured"], vol:"event streams", interval:"Continuous" } } },
@@ -3750,7 +3725,7 @@ const ARCH = {
           long:"The team building the forecasting, propensity, risk and pricing models, and the one accountable for whether a model still holds six months after it shipped.",
           uses:[
             ["Notebooks & IDEs", "Python, R and Scala against governed tables, in the workspace or in VS Code."],
-            ["Feature Store", "Features defined once, from Delta tables, Kafka streams or request-time data, and read identically in training and in serving, which is where most drift starts."],
+            ["Feature Store", "Features defined once as Feature Views, from Delta tables, Kafka streams or request-time data, and read identically in training and in serving, which is where most drift starts."],
             ["MLflow", "Every run, parameter and metric tracked, so a production model can still be explained later."],
             ["Model Serving", "Models published as endpoints the apps and agents call, with no separate serving stack to own."],
           ],
@@ -3821,7 +3796,7 @@ const ARCH = {
     cons: { id:"cons", name:"Consumers",
       note:"Every path out enforces the same Unity Catalog permissions, lineage and audit.",
       groups:[
-      { box:"BI & Productivity", ic:"chart", from:"bi", tiles:[
+      { box:"BI & Productivity", ic:"chart", simple:2, from:"bi", tiles:[
         { n:"Tableau / Qlik / ThoughtSpot", ic:"chart", long:"External BI tools connected to SQL warehouses with Unity Catalog permissions enforced end to end." },
         { n:"Excel Add-in", ic:"sheet", long:"Driverless analytics directly inside Excel with write-back support." },
         { n:"Teams & M365 Copilot", ic:"chat", long:"Tag Genie in a Teams thread for Unity Catalog-governed answers from the lakehouse." },
@@ -3829,7 +3804,7 @@ const ARCH = {
       ]},
       /* Applications moved up into the Apps and Use Cases band, so what leaves the
          platform on this path is agents and machine interfaces. */
-      { box:"MCPs and APIs", ic:"mcp", tiles:[
+      { box:"MCPs and APIs", ic:"mcp", simple:3, tiles:[
         { n:"External Agents (MCP)", ic:"mcp", long:"Third-party and vendor agents connecting through the MCP server registry, governed by Unity Gateway." },
         { n:"Operational APIs", core:true, ic:"api", long:"Low-latency APIs and model endpoints serving decisions back into operational systems." },
         { n:"Reverse ETL", ic:"reverse", long:"Curated segments and scores pushed back to SaaS and activation channels, the CustomerLake path." },
@@ -3840,7 +3815,7 @@ const ARCH = {
         { n:"Sharing Recipients", core:true, ic:"share", long:"Recipients reading live tables, volumes and models over OpenSharing with no copy and no egress duplication." },
         { n:"Other Sinks", ic:"export", long:"Any other destination a published product has to land in: object storage drops, SFTP and file exchanges, external warehouses, message queues and regulatory submission channels. Written from governed tables, so the export inherits the same permissions and lineage as the product itself." },
       ]},
-      { box:"Operational Systems", ic:"opdb", tiles:[
+      { box:"Operational Systems", ic:"opdb", simple:2, tiles:[
         { n:"ERP & Core Systems", ic:"db", long:"Decisions and scores written back into the systems of record that run the business." },
         { n:"Activation Channels", ic:"reverse", long:"Campaign, service and commerce channels activated from governed segments." },
       ]},
@@ -3856,7 +3831,7 @@ const ARCH = {
 ]},
       /* Certified AI/BI dashboards the business reads, built on governed Metric
          Views rather than a private query. An industry view specialises these. */
-      { box:"AI/BI Dashboards", ic:"aibi", tiles:[
+      { box:"AI/BI Dashboards", ic:"aibi", simple:2, tiles:[
 {"n":"Comp Sales & Margin","s":"Retail","ic":"aibi","long":"Comparable sales, gross margin after markdowns and category performance on certified Metric Views.","kpis":["Comparable sales","Gross margin","Markdown rate","Sell-through","Basket size"],"teams":["Merchant Leadership","Merchandising","Planning & Allocation"]},
 {"n":"Network Performance","s":"Telecommunication","ic":"aibi","long":"Cell and transport KPIs, alarms and restoration times on certified views.","kpis":["Dropped-call rate","Alarm-to-restoration","Cell availability","Transport utilisation","Outage impact"],"teams":["Network Operations","CEO & CTO Office","Data Engineers"]},
 {"n":"Plant OEE & Downtime","s":"Manufacturing","ic":"aibi","long":"Line and shift OEE, downtime pareto and throughput on certified Metric Views.","kpis":["OEE","Availability","Performance","Quality rate","Downtime by reason"],"teams":["Plant Leadership","Production & Scheduling","Continuous Improvement"]},
@@ -3939,7 +3914,7 @@ const ARCH = {
     provider:"azure",
     /* vendor-neutral integrations, present whichever cloud is selected */
     extras:[
-      { n:"Anthropic/OpenAI", s:"Model providers", role:"aisvc", ic:"aisvc", long:"Anthropic Claude and OpenAI GPT models called through Unity Gateway, with the same spend caps, tracing and policy as any other model.",
+      { n:"Anthropic / OpenAI", s:"Model providers", role:"aisvc", ic:"aisvc", long:"Anthropic Claude and OpenAI GPT models called through Unity Gateway, with the same spend caps, tracing and policy as any other model.",
         what:"Frontier commercial LLMs reached as governed model-serving endpoints: Anthropic Claude and OpenAI GPT are registered in Unity Gateway and called from notebooks, agents and Genie exactly like a Databricks-hosted model.",
         users:"Data scientists and ML engineers building agents and GenAI features, and the platform team setting per-employee and per-agent spend caps.",
         dataOut:{ stream:{ types:["unstructured"], vol:"prompt + completion tokens per call", interval:"On demand (synchronous)" } } },
@@ -4491,9 +4466,8 @@ function setLangAttrs(meta){
   I18N.lang = meta.code; I18N.dir = meta.dir;
   document.documentElement.setAttribute("data-lang", meta.code);
   document.documentElement.setAttribute("data-dir", meta.dir || "ltr");
-  /* The real lang attribute (not just data-lang) is what CSS hyphens:auto keys
-     off for language-correct word breaks, and it improves a11y/screen-reader
-     pronunciation. data-lang stays as the styling hook the rest of the CSS uses. */
+  /* The real lang attribute (not just data-lang) improves a11y/screen-reader
+     pronunciation. data-lang stays as the styling hook the CSS uses. */
   document.documentElement.setAttribute("lang", meta.code);
 }
 async function applyLang(code, persist){
@@ -4594,9 +4568,6 @@ let viewMode = store.get(VIEW_LS) === "detailed" ? "detailed" : "simple";
 function simpleView(){ return viewMode === "simple" && !editMode; }
 const SIMPLE_RAIL_CAP = { src:1, ing:1, cons:1, ppl:2 };
 const SIMPLE_TOP_CAP = { "Genie Agents":2, "Genie Spaces":2, "Business Use Cases":5, "Use Cases":5 };
-const SIMPLE_PLATFORM = {
-  serve:["SQL Warehouses","Lakehouse//RT","Lakebase","Model Serving"], infra:["Apache Spark","Delta Lake","Apache Iceberg"],
-};
 const SIMPLE_CLOUD_ROLES = ["storage","identity","govcat","aisvc","bi","etl","streaming","fed-dw"];
 function inView(tile, essential){ return !simpleView() || !!essential || !!(tile && (tile.hl === true || tile.core === true)); }
 function cloudCore(t, list){
@@ -4609,33 +4580,6 @@ function viewTopTiles(sec){
   const cap = SIMPLE_TOP_CAP[sec && sec.title];
   return cap ? tiles.filter((t, i)=> inView(t, i < cap)) : tiles;
 }
-function viewBand(band){
-  const keep = SIMPLE_PLATFORM[band.id];
-  if(!simpleView() || !keep) return band;
-  const pick = list=> (list || []).filter(t=> inView(t, keep.indexOf(t.n) >= 0));
-  let kept = 0;
-  const rows = (band.rows || []).map(r=>{
-    if(r.kind === "cards"){ const items = pick(r.items); kept += items.length; return Object.assign({}, r, { items }); }
-    if(r.kind === "infra" && Array.isArray(r.formats)){
-      const formats = pick(r.formats); kept += formats.length;
-      return Object.assign({}, r, { formats, grid: formats.length || r.grid });
-    }
-    return r;
-  });
-  return kept ? Object.assign({}, band, { rows }) : band;
-}
-function viewBandHidden(band){
-  const shown = viewBand(band);
-  if(shown === band) return [];
-  const out = [];
-  (band.rows || []).forEach((r, i)=>{
-    const key = r.kind === "cards" ? "items" : (r.kind === "infra" && Array.isArray(r.formats)) ? "formats" : "";
-    if(!key) return;
-    const kept = shown.rows[i][key] || [];
-    (r[key] || []).forEach(tile=>{ if(kept.indexOf(tile) < 0) out.push({ tile, arr:r[key], section:band.name }); });
-  });
-  return out;
-}
 function dispName(n){ const label = (displayMode === "category" && nameToCat[n]) ? nameToCat[n] : n; return T(label); }
 /* A tile's own label reads its `cat` straight off the object, not through the
    nameToCat map: renderRail computes the label before reg() has filled the map
@@ -4646,8 +4590,8 @@ function shownByCategory(t){ return displayMode === "category" && !!(t && t.cat)
 function displaySource(t){ if(!t) return ""; return shownByCategory(t) ? t.cat : (simpleView() && t.sn) || t.n; }
 function displayName(t){ return T(displaySource(t)); }
 function nameSpan(cls, t){
-  const shown = displayName(t), hy = shown !== displaySource(t);
-  return `<span class="${cls}${hy ? " hy" : ""}"${hy ? "" : ' lang="en"'}>${escSlash(shown)}</span>`;
+  const shown = displayName(t);
+  return `<span class="${cls}"${shown !== displaySource(t) ? "" : ' lang="en"'}>${esc(shown)}</span>`;
 }
 /* Export/render copy of a tile with its commercial product references swapped
    for their category labels when the board is in Categorical mode, so a
@@ -4759,8 +4703,16 @@ function resolveAtom(name){ return nameIndex[name] || roleIndex[name] || null; }
 /* Separators are padded with real spaces so the browser has somewhere to break
    the line — without them the whole caps string is one unbreakable word and
    overflows the card on narrow viewports. */
+function cloudCaps(list){
+  return (list || []).filter(c=>{
+    const own = LINKS[c] ? c : CHIP_ALIAS[c], L = own && LINKS[own];
+    if(!L || !L.docClouds || resolveAtom(c) || resolveAtom(own)) return true;
+    return L.docClouds.indexOf(ARCH.cloud.provider) >= 0;
+  });
+}
 function capsHtml(list){
-  if(!list || !list.length) return "";
+  list = cloudCaps(list);
+  if(!list.length) return "";
   return `<span class="p-caps">${list.map(x=>esc(T(x))).join(' <i aria-hidden="true">|</i> ')}</span>`;
 }
 function addBtn(arr, section, host, wide){
@@ -4781,7 +4733,7 @@ function productCard(t, arr, section, grow){
   b.innerHTML =
     `<span class="pico">${titleIcon(t,"")}</span>` +
     `<span class="ptxt">` +
-      `<span class="p-name">${escWrap(t.n)}</span>` +
+      `<span class="p-name">${esc(t.n)}</span>` +
       (full && t.s ? `<span class="p-sub">${esc(T(t.s))}</span>` : "") +
       (full ? capsHtml(t.caps) : "") +
     `</span>`;
@@ -4874,7 +4826,7 @@ function infraRow(row, section){
   const host = row.grid ? document.createElement("div") : wrap;
   if(row.grid){
     host.className = "fmt-grid";
-    host.style.gridTemplateColumns = `repeat(${row.grid}, minmax(0,1fr))`;
+    host.style.gridTemplateColumns = `repeat(${row.grid}, minmax(min-content,1fr))`;
     wrap.appendChild(host);
   }
   (row.formats||[]).forEach(f=>{
@@ -5032,7 +4984,7 @@ function cappedRailEntries(railId, g){
   let entries = railGroupEntries(g);
   if(railId === "ppl" && /^business$/i.test(g.box || "") && entries.length > PPL_BUSINESS_CAP)
     entries = entries.slice(0, PPL_BUSINESS_CAP);
-  const cap = SIMPLE_RAIL_CAP[railId];
+  const cap = g.simple > 0 ? g.simple : SIMPLE_RAIL_CAP[railId];
   if(!cap) return entries;
   let own = 0;
   return entries.filter(e=> inView(e.tile, e.cloudy ? cloudCore(e.tile, e.arr) : own++ < cap));
@@ -5181,7 +5133,7 @@ function renderTop(target){
 
 /* ---------- full build ---------- */
 const CUSTOM_LS = "dbxarch.dais2026.custom";
-const SCHEMA = 49;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
+const SCHEMA = 51;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
 /* Keys inside a provider dataset that hold tile arrays. Every surface that shows
    provider-specific content reads from this list, so adding a surface later means
    adding one key here rather than hunting for loops. */
@@ -5220,7 +5172,7 @@ const RAIL_IDS = ["src","ing","ppl","cons"];
    so it is discarded rather than half-applied. v25 baked the model-provider tile
    as "Anthropic" and carried source tiles without what/users/dataOut enrichment;
    restoring one repaints the bare "Anthropic" tile over the current
-   "Anthropic/OpenAI" and drops the enrichment drawer, the same stale-board
+   "Anthropic / OpenAI" and drops the enrichment drawer, the same stale-board
    confusion (this bump exists precisely because that stale tile survived a
    content-only edit that did not change shape), so it is discarded rather than
    half-applied. v26 baked the ingest arm's fourth tile as "Lakebridge /
@@ -5440,10 +5392,7 @@ function build(){
      has put it; `blk` bands into the stack of their own block. */
   const dest = b=> b.arm ? (up[b.arm] || lo[b.arm])
     : b.blk === "top" ? up.stack : lo.stack;
-  ARCH.bands.forEach(b0=>{
-    const b = viewBand(b0);
-    renderBand(b, dest(b));
-  });
+  ARCH.bands.forEach(b=> renderBand(b, dest(b)));
   renderTop(topBandEl);
   renderRail(ARCH.rails.src, railSrcEl);
   renderRail(ARCH.rails.ing, railIngEl);
@@ -5479,6 +5428,7 @@ function build(){
   if(typeof paintDisplaySeg === "function") paintDisplaySeg();
   if(typeof paintViewSeg === "function") paintViewSeg();
   if(typeof syncUrl === "function") syncUrl();
+  scheduleFit();
 }
 
 /* ==================================================================
@@ -5825,7 +5775,7 @@ const CHIP_ALIAS = {
   "Kafka / Kinesis / Event Hubs":"Streaming", "Real-Time Mode":"Streaming", "Exactly-once":"Streaming",
   "Serverless Postgres":"Lakebase", "SQL Data Warehousing":"SQL Warehouses",
   "Model registry":"MLflow", "Tracking":"MLflow", "Evaluation":"MLflow", "Tracing":"MLflow",
-  "AI Runtime (serverless GPU)":"Model Serving", "Models":"Model Serving",
+  "AI Runtime (serverless GPU)":"AI Runtime", "Models":"Model Serving",
   "Business Glossary":"Unity Catalog", "Domains":"Unity Catalog", "Access":"Unity Catalog",
   "Semantics":"Unity Catalog", "Lineage":"Unity Catalog", "Observability":"Unity Catalog",
   "Security":"Unity Catalog", "Metrics":"Unity Catalog", "Unity Catalog Semantics upload":"Unity Catalog",
@@ -6168,7 +6118,7 @@ function openDetail(id, via){
   }
   const ln = canonName(t.n), L = LINKS[ln];
   if(L && L.note) html += `<h4>${esc(T("Worth knowing"))}</h4><p class="d-note">${esc(T(L.note))}</p>`;
-  const caps = [].concat(t.caps||[], t.caps2||[]);
+  const caps = cloudCaps([].concat(t.caps||[], t.caps2||[]));
   if(caps.length){
     html += `<h4>${esc(T("Capabilities"))}</h4><div>` + caps.map(c=> chipHtml(c)).join("") + `</div>`;
   }
@@ -6374,8 +6324,8 @@ function activeTabEl(){ return tabsEl.querySelector(".tab.active"); }
 const TOOL_BTNS = [
   ["ind-btn",   "ind-wrap",   "No diagram in this tab to specialise for an industry"],
   ["stage-btn", "stage-wrap", "No diagram in this tab to filter by release stage"],
-  ["shape-btn", "shape-wrap", "No diagram in this tab to give a shape to"],
-  ["pal-btn",   "pal-wrap",   "No diagram in this tab to recolour"],
+  ["shape-menu", null, "No diagram in this tab to give a shape to"],
+  ["pal-menu",   null, "No diagram in this tab to recolour"],
   ["dl-btn",    "dl-wrap",    "No diagram in this tab to download"],
 ];
 function syncToolbar(inert){
@@ -6383,7 +6333,7 @@ function syncToolbar(inert){
     const btn = document.getElementById(id);
     if(!btn) return;
     if(btn.dataset.liveTitle == null) btn.dataset.liveTitle = btn.title;
-    btn.disabled = inert;
+    if(btn.tagName === "BUTTON") btn.disabled = inert; else btn.inert = inert;
     btn.title = inert ? busyTitle : btn.dataset.liveTitle;
     const wrap = wrapId && document.getElementById(wrapId);
     if(wrap && inert) wrap.classList.remove("open");
@@ -6709,9 +6659,13 @@ const THEME_KEY = "dbx-arch-theme";
 let themeChosen = store.get(THEME_KEY) !== null;
 /* Split in two on purpose: the sync half runs during startup, before the layout
    consts further down this script exist, so it must not reach for them. */
+const THEME_ICO = {
+  sun: '<svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+  moon: '<svg class="ico-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+};
 function syncThemeUi(dark){
   document.body.classList.toggle("theme-dark", dark);
-  document.getElementById("theme-ico").textContent = dark ? "☀" : "◐";
+  document.getElementById("theme-ico").innerHTML = THEME_ICO[dark ? "sun" : "moon"];
   document.getElementById("theme-lbl").textContent = dark ? "Light" : "Dark";
   themeBtn.setAttribute("aria-pressed", String(dark));
 }
@@ -6787,7 +6741,6 @@ const PALETTES = [
 ];
 const SWATCH = ["teal","blue","violet","coral","amber"];
 const PAL_KEY = "dbx-arch-pal";
-const palWrap = document.getElementById("pal-wrap");
 const palMenu = document.getElementById("pal-menu");
 
 function currentPal(){
@@ -6811,15 +6764,14 @@ function dotsHtml(k){
 }
 function paintPalMenu(){
   const cur = currentPal();
-  palMenu.innerHTML = PALETTES.map(p => p.hd
-    ? '<div class="men-hd">' + p.hd + '</div>'
+  palMenu.innerHTML = '<div class="men-hd">Colour palette</div>' + PALETTES.map(p => p.hd
+    ? '<div class="men-sub">' + p.hd + '</div>'
     : '<button data-pal="' + p.k + '" class="' + (p.k === cur ? "on" : "") + '"' +
       ' title="' + p.label + ": " + p.sub + '">' +
       '<span class="pal-dots" aria-hidden="true">' + dotsHtml(p.k) + '</span>' +
       '<span>' + p.label + '</span></button>').join("");
   palMenu.querySelectorAll("button").forEach(b =>
-    b.onclick = ()=>{ applyPalette(b.dataset.pal, true); palWrap.classList.remove("open"); });
-  document.getElementById("pal-dots").innerHTML = dotsHtml(cur);
+    b.onclick = ()=> applyPalette(b.dataset.pal, true));
 }
 function applyPalette(k, remember){
   const had = currentPal();
@@ -6831,9 +6783,6 @@ function applyPalette(k, remember){
      palettes, and both hand-over lines are measured, so re-fit */
   fitBoard();
 }
-document.getElementById("pal-btn").onclick = e=>{
-  e.stopPropagation(); toggleMenu(palWrap);
-};
 const OPEN_MENUS = ".pal-wrap.open, .dl-wrap.open";
 function toggleMenu(wrap){
   const opening = !wrap.classList.contains("open");
@@ -6850,26 +6799,21 @@ document.addEventListener("click", e=>{
 paintPalMenu();
 
 /* ---- Language selector (chrome stays English; only the menu lists native
-   language names so a reader finds their own). Reuses .pal-wrap/.pal-menu and
-   the one delegated close listener above. ---- */
-const langWrap = document.getElementById("lang-wrap");
+   language names so a reader finds their own). A section of the Options menu,
+   which closes through the one delegated listener on that menu. ---- */
 const langMenu = document.getElementById("lang-menu");
 function syncLangMenu(){
   /* Only list built languages: a language with built===false has an incomplete
      corpus and must never be offered (it would render English for uncovered
      strings). It flips visible once its translation is complete. */
   langMenu.innerHTML = '<div class="men-hd">Language</div>' + LANGS.filter(l => l.built !== false).map(l =>
-    '<button data-lang="' + l.code + '" class="' + (l.code === I18N.lang ? "on" : "") + '"' +
-    (l.dir === "rtl" ? ' dir="rtl"' : '') + '>' +
-    '<span>' + l.native + '</span></button>').join("");
+    '<button data-lang="' + l.code + '" class="' + (l.code === I18N.lang ? "on" : "") + '">' +
+    '<span' + (l.dir === "rtl" ? ' dir="rtl"' : '') + '>' + l.native + '</span></button>').join("");
   langMenu.querySelectorAll("button").forEach(b =>
-    b.onclick = ()=>{ applyLang(b.dataset.lang, true); langWrap.classList.remove("open"); });
+    b.onclick = ()=> applyLang(b.dataset.lang, true));
   /* The toolbar is chrome and stays English at all times; the active language is
      shown by the check-mark inside the menu, not by relabelling the button. */
 }
-document.getElementById("lang-btn").onclick = e=>{
-  e.stopPropagation(); toggleMenu(langWrap);
-};
 syncLangMenu();
 
 /* ---- Share: post the current board to a social/technical network. The link is
@@ -6951,24 +6895,23 @@ const SHARE_TARGETS = [
     href:(u,t)=> "mailto:?subject=" + encodeURIComponent(t) + "&body=" + encodeURIComponent(t + "\n\n" + u) },
   { k:"copy", label:"Copy link", copy:true, svg:'<svg class="sh-ic sh-stroke" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>' },
 ];
-const optWrap = document.getElementById("opt-wrap");
-const optBtn  = document.getElementById("opt-btn");
+const shareWrap = document.getElementById("share-wrap");
+const shareBtn  = document.getElementById("share-btn");
 const shareMenu = document.getElementById("share-menu");
 function buildShareMenu(){
   shareMenu.innerHTML = '<div class="men-hd">Share</div>' +
     '<div class="sh-title">' + esc(shareTitle()) + '</div>' +
     SHARE_TARGETS.map(t => '<button data-share="' + t.k + '">' + t.svg + '<span>' + t.label + '</span></button>').join("");
 }
-function flashShareLabel(msg){
-  const lbl = document.getElementById("opt-lbl"); if(!lbl) return;
-  const prev = lbl.dataset.base || lbl.textContent;
-  lbl.dataset.base = prev; lbl.textContent = msg;
-  clearTimeout(flashShareLabel._t);
-  flashShareLabel._t = setTimeout(()=>{ lbl.textContent = lbl.dataset.base || "Options"; }, 1500);
+function flashShare(msg){
+  const tip = document.getElementById("share-flash"); if(!tip) return;
+  tip.textContent = msg;
+  clearTimeout(flashShare._t);
+  flashShare._t = setTimeout(()=>{ tip.textContent = ""; }, 1500);
 }
 function shareCopy(){
   const url = shareLandingUrl();
-  const ok = ()=> flashShareLabel("Link copied");
+  const ok = ()=> flashShare("Link copied");
   if(navigator.clipboard && navigator.clipboard.writeText)
     navigator.clipboard.writeText(url).then(ok).catch(()=> shareCopyFallback(url, ok));
   else shareCopyFallback(url, ok);
@@ -6981,21 +6924,26 @@ function shareCopyFallback(text, ok){
     document.execCommand("copy"); ta.remove(); ok();
   }catch(e){ window.prompt("Copy this link:", text); }
 }
-if(optBtn) optBtn.onclick = e=>{
+if(shareBtn) shareBtn.onclick = e=>{
   e.stopPropagation();
-  if(!optWrap.classList.contains("open")) buildShareMenu();
-  toggleMenu(optWrap);
+  if(!shareWrap.classList.contains("open")) buildShareMenu();
+  toggleMenu(shareWrap);
 };
-document.getElementById("opt-menu").addEventListener("click", e=>{
-  if(e.target.closest("button")) optWrap.classList.remove("open");
-});
 if(shareMenu) shareMenu.addEventListener("click", e=>{
   const b = e.target.closest("button[data-share]"); if(!b) return;
   const target = SHARE_TARGETS.find(t=> t.k === b.dataset.share); if(!target) return;
   if(typeof ideaTrack === "function") ideaTrack("share", [target.k]);
+  shareWrap.classList.remove("open");
   if(target.action){ Promise.resolve(target.action()).catch(()=>{}); return; }
   if(target.copy){ shareCopy(); return; }
   window.open(target.href(shareLandingUrl(), shareTitle()), "_blank", "noopener,noreferrer");
+});
+const optWrap = document.getElementById("opt-wrap");
+document.getElementById("opt-btn").onclick = e=>{
+  e.stopPropagation(); toggleMenu(optWrap);
+};
+document.getElementById("opt-menu").addEventListener("click", e=>{
+  if(e.target.closest("button")) optWrap.classList.remove("open");
 });
 
 /* Split out from the click handler so a link that arrives with platform=1 gets
@@ -7142,39 +7090,126 @@ function fitPlatTitle(){
     need = measure();
   }
 }
-function nameFit(el){
-  const tile = el.closest(".rtile, .ctile");
-  const item = tile && [...tile.children].find(c=> c.contains(el));
-  if(!item || !tile.offsetWidth) return null;
-  const k = tile.getBoundingClientRect().width / tile.offsetWidth;
-  const cs = getComputedStyle(tile), gap = parseFloat(cs.columnGap) || 0;
-  let room = tile.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-  for(const c of tile.children){
-    if(c === item) continue;
-    const s = getComputedStyle(c);
-    if(s.display === "none" || s.position === "absolute" || s.position === "fixed") continue;
-    room -= c.getBoundingClientRect().width / k + gap + parseFloat(s.marginLeft) + parseFloat(s.marginRight);
-  }
-  let widest = 0;
-  const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+const WORD_RE = /[^\s\p{scx=Han}\p{scx=Hira}\p{scx=Kana}]+/gu;
+const WORD_MIN_PX = 10;
+function keepWords(root){
+  const todo = [], walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for(let n; (n = walk.nextNode());){
-    const re = /[^\s\/-]+[\/-]?/g;
-    for(let m; (m = re.exec(n.textContent));){
+    const p = n.parentElement;
+    if(p && !p.closest(".kw, svg, style, script, textarea, [contenteditable='true']") && /[^\s\p{L}\p{N}\p{M}]/u.test(n.textContent)) todo.push(n);
+  }
+  todo.forEach(n=>{
+    const s = n.textContent, frag = document.createDocumentFragment();
+    let at = 0;
+    for(const m of s.matchAll(WORD_RE)){
+      if(m[0].length < 2 || !/[^\p{L}\p{N}\p{M}]/u.test(m[0])) continue;
+      if(m.index > at) frag.append(s.slice(at, m.index));
+      const w = document.createElement("span");
+      w.className = "kw"; w.textContent = m[0];
+      frag.append(w);
+      at = m.index + m[0].length;
+    }
+    if(!at) return;
+    if(at < s.length) frag.append(s.slice(at));
+    n.replaceWith(frag);
+  });
+}
+function wordBlocks(root){
+  const owners = new Map(), walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for(let n; (n = walk.nextNode());){
+    if(!n.textContent.trim()) continue;
+    let o = n.parentElement;
+    if(o && o.classList.contains("kw")) o = o.parentElement;
+    if(!o || o.closest("svg") || owners.has(o)) continue;
+    let b = o;
+    while(b && b !== root && getComputedStyle(b).display.startsWith("inline")) b = b.parentElement;
+    owners.set(o, b);
+  }
+  return owners;
+}
+function widestWord(owner, k){
+  let widest = 0;
+  const walk = document.createTreeWalker(owner, NodeFilter.SHOW_TEXT);
+  for(let n; (n = walk.nextNode());){
+    const p = n.parentElement;
+    if(p !== owner && !(p.classList.contains("kw") && p.parentElement === owner)) continue;
+    for(const m of n.textContent.matchAll(WORD_RE)){
       const r = document.createRange();
       r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
       widest = Math.max(widest, [...r.getClientRects()].reduce((s, b)=> s + b.width, 0) / k);
     }
   }
-  return { room, widest, size: parseFloat(getComputedStyle(el).fontSize) };
+  return widest;
 }
-function fitTileNames(){
-  const els = [...document.querySelectorAll(".rtile .t-name:not(.hy), .ctile .ct-name:not(.hy)")];
-  els.forEach(el=> el.style.fontSize = "");
-  els.map(el=> [el, nameFit(el)]).forEach(([el, f])=>{
-    for(let i = 0; i < 4 && f && f.room > 0 && f.widest > f.room && f.size > 9; i++){
-      el.style.fontSize = Math.max(9, Math.floor(f.size * (f.room - 1) / f.widest * 10) / 10) + "px";
-      f = nameFit(el);
+function blockRoom(b, k){
+  const cs = getComputedStyle(b);
+  return b.getBoundingClientRect().width / k - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) -
+    parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
+}
+function wordRoom(b, k){
+  if(b.scrollWidth > b.clientWidth) return blockRoom(b, k);
+  const p = b.parentElement;
+  if(!p || !/flex$/.test(getComputedStyle(p).display) || /^(absolute|fixed)$/.test(getComputedStyle(b).position)) return Infinity;
+  const cs = getComputedStyle(p), pr = p.getBoundingClientRect(), br = b.getBoundingClientRect();
+  return getComputedStyle(b).direction === "rtl"
+    ? (br.right - pr.left) / k - parseFloat(cs.paddingLeft) - parseFloat(cs.borderLeftWidth)
+    : (pr.right - br.left) / k - parseFloat(cs.paddingRight) - parseFloat(cs.borderRightWidth);
+}
+function shrinkWords(board, k, widen){
+  board.querySelectorAll("[data-wfit]").forEach(el=>{ el.style.fontSize = ""; el.removeAttribute("data-wfit"); });
+  const owners = wordBlocks(board);
+  owners.forEach((b, o)=>{
+    if(!b || /^(nowrap|pre)$/.test(getComputedStyle(b).whiteSpace)) return;
+    let room = wordRoom(b, k);
+    if(room === Infinity || (b.scrollWidth <= b.clientWidth && b.getBoundingClientRect().width / k <= room + 0.5)) return;
+    let widest = widestWord(o, k);
+    if(widest <= room + 0.5) return;
+    const base = parseFloat(getComputedStyle(o).fontSize), floor = Math.min(WORD_MIN_PX, base);
+    let size = base;
+    for(let i = 0; i < 5 && widest > room + 0.5 && size > floor; i++){
+      size = Math.max(floor, Math.floor(size * (room - 0.5) / widest * 10) / 10);
+      o.style.fontSize = size + "px";
+      o.setAttribute("data-wfit", "");
+      room = wordRoom(b, k); widest = widestWord(o, k);
     }
+    const tile = widen && widest > room + 0.5 && o.closest(".rtile");
+    if(tile && tile.parentElement.classList.contains("rtiles")) tile.classList.add("wide");
+  });
+}
+function pairRailTiles(board){
+  board.querySelectorAll(".rtiles").forEach(g=>{
+    if(getComputedStyle(g).gridTemplateColumns.split(" ").length < 2) return;
+    g.classList.add("paired");
+    let open = null;
+    [...g.children].filter(t=> t.classList.contains("rtile") && t.offsetParent).forEach(t=>{
+      if(t.classList.contains("wide")){ if(open) open.classList.add("wide"); open = null; }
+      else open = open ? null : t;
+    });
+    if(open && simpleView()) open.classList.add("wide");
+  });
+}
+function fitWords(){
+  const board = document.getElementById("board");
+  if(!board || !board.offsetWidth) return;
+  keepWords(board);
+  board.querySelectorAll(".rtile.wide").forEach(t=> t.classList.remove("wide"));
+  board.querySelectorAll(".rtiles.paired").forEach(g=> g.classList.remove("paired"));
+  const k = board.getBoundingClientRect().width / board.offsetWidth || 1;
+  shrinkWords(board, k, true);
+  pairRailTiles(board);
+  shrinkWords(board, k, false);
+  board.querySelectorAll(".rgroup-t.rg-wrap").forEach(t=> t.classList.remove("rg-wrap"));
+  const textW = el=>{ const r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect().width / k; };
+  board.querySelectorAll(".rg-label").forEach(el=>{
+    const base = parseFloat(getComputedStyle(el).fontSize), floor = Math.min(WORD_MIN_PX, base);
+    let size = base, room = wordRoom(el, k), need = textW(el);
+    for(let i = 0; i < 5 && need > room + 0.05 && size > floor; i++){
+      size = Math.max(floor, Math.floor(size * (room - 0.5) / need * 10) / 10);
+      el.style.fontSize = size + "px";
+      el.setAttribute("data-wfit", "");
+      room = wordRoom(el, k); need = textW(el);
+    }
+    if(need > room + 0.05 && el.parentElement.classList.contains("rgroup-t")) el.parentElement.classList.add("rg-wrap");
   });
 }
 function applyPlatInk(){
@@ -7515,7 +7550,7 @@ function regionRows(){
   const rows = [], meta = cr.meta || {}, legend = cr.legend || {}, feats = cr.features || {}, marks = cr.marks || {};
   const feature = ((REGIONS.sources || {})[curCloud()] || {}).feature || "";
   const boxes = {}, plain = {};
-  Object.values(byId).concat(...(ARCH.bands || []).map(viewBandHidden)).forEach(rec=>{
+  Object.values(byId).forEach(rec=>{
     const t = rec && rec.tile;
     if(!t || !t.n || !isPlatformProduct(t, rec)) return;
     const lab = regionFeatureLabel(t);
@@ -7862,6 +7897,7 @@ function paintHighlights(){
     const dots = [...el.querySelectorAll(":scope > .badge-dot[data-hl]")];
     if(!dots.length) return;
     const vis = HL_ORDER.filter(k => !off.has(k) && dots.some(d=>d.dataset.hl === k));
+    el.style.setProperty("--dot-n", vis.length);
     dots.forEach(d=>{
       d.classList.remove("hl-p1","hl-p2","hl-p3","hl-p4","hl-p5","hl-p6","hl-p7","hl-p8");
       const i = vis.indexOf(d.dataset.hl);
@@ -7923,7 +7959,6 @@ const SHAPES = [
   { k:"rt",  label:"T180", ul:"bot",  ur:"bot",  d:"M10 2 H16 V9 H24 V16 H2 V9 H10 Z" },
 ];
 const SHAPE_STORE = "dbx-arch-shape";
-const shapeWrap = document.getElementById("shape-wrap");
 const shapeMenu = document.getElementById("shape-menu");
 
 /* The body class is the single source of truth, for the same reason the stage
@@ -7963,13 +7998,8 @@ function paintShapeMenu(){
     'with no notch left has no room for the arrow that used to cross it, so T ' +
     'drops the people\u2019s path up to the apps band and S drops the ingestion ' +
     'pocket\u2019s path down to cloud services.</div>';
-  shapeMenu.querySelectorAll("button").forEach(b=> b.onclick = ()=>{
-    applyShape(b.dataset.shape, true); shapeWrap.classList.remove("open"); });
-  document.getElementById("shape-ico").innerHTML = shapeIcon(shapeDef());
+  shapeMenu.querySelectorAll("button").forEach(b=> b.onclick = ()=> applyShape(b.dataset.shape, true));
 }
-document.getElementById("shape-btn").onclick = e=>{
-  e.stopPropagation(); toggleMenu(shapeWrap);
-};
 
 /* Both choices are seeded from storage ONLY when the document does not already
    carry one. An exported HTML copy is a clone of the live document and arrives
@@ -12305,6 +12335,13 @@ function alignConnectors(){
    because cropping would mean deciding which band loses a row of content. The
    floor is cleared before measuring, otherwise each pass would measure the
    floor it set last time and the platform would creep taller on every re-fit. */
+function padToTaller(a, b, aOff){
+  const ha = aOff + a.offsetHeight, hb = b.offsetHeight;
+  const target = Math.max(ha, hb);
+  if(target - Math.min(ha, hb) < 0.5) return;
+  a.style.minHeight = (target - aOff) + "px";
+  b.style.minHeight = target + "px";
+}
 function balanceHalves(){
   const head = platHeadEl, top = platTopEl, low = platformEl;
   if(!head || !top || !low) return;
@@ -12314,12 +12351,20 @@ function balanceHalves(){
     .getPropertyValue("--headgap")) || 0;
   /* the head sits above the upper block and inside the same outline, so it
      counts towards that half's height and not towards the lower one's */
-  const upper = head.offsetHeight + gap + top.offsetHeight;
-  const lower = low.offsetHeight;
-  const target = Math.max(upper, lower);
-  if(target - Math.min(upper, lower) < 0.5) return;
-  top.style.minHeight = (target - head.offsetHeight - gap) + "px";
-  low.style.minHeight = target + "px";
+  padToTaller(top, low, head.offsetHeight + gap);
+}
+function balanceBands(){
+  const top = document.getElementById("topband"), bot = document.getElementById("cloud");
+  if(!top || !bot) return;
+  const lbls = [top, bot].map(el=> el.querySelector(":scope > .cloud-lbl"));
+  [top, bot].forEach(el=> el.style.minHeight = "");
+  lbls.forEach(l=> l && (l.style.flexBasis = ""));
+  if(!document.body.classList.contains("fitting")) return;
+  if(lbls[0] && lbls[1]){
+    const w = lbls.map(l=> l.offsetWidth);
+    if(Math.abs(w[0] - w[1]) >= 1) lbls.forEach(l=> l.style.flexBasis = Math.max(...w) + "px");
+  }
+  padToTaller(top, bot, 0);
 }
 function syncFlows(){
   if(!document.getAnimations) return;
@@ -12432,16 +12477,19 @@ function introBootMode(){
   try { seen = sessionStorage.getItem(INTRO_KEY); sessionStorage.setItem(INTRO_KEY, "1"); } catch(e){}
   return seen ? "short" : "full";
 }
+let fitPending = 0;
 function fitBoard(){
+  if(fitPending){ cancelAnimationFrame(fitPending); fitPending = 0; }
   if(introOn){ introRefit = true; return; }
   applyPlatInk();   /* re-solve the plat-head ink for the live accent (theme/palette swap) */
   syncUrl();        /* mirror the live board state into the address bar */
-  fitTileNames();
+  fitWords();
   alignWorkRows();
   fitLayout();
   /* a soloed region hides the Z, its connectors and the pockets' flows, so the
      ring/connector geometry has nothing to measure and must not run */
   if(document.body.classList.contains("zoom") && !document.body.classList.contains("plat-only")){ fitPlatTitle(); return; }
+  balanceBands();
   balanceHalves();
   fitLayout();
   drawZRing();
@@ -12508,9 +12556,10 @@ function fitLayout(){
   document.body.dataset.fit = s.toFixed(3);
 }
 
-/* One-off actions (tab, edit) call fitBoard directly so the new scale is in
-   place in the same task; only the resize stream is coalesced onto a frame. */
-let fitPending = 0;
+/* One-off actions that need the new scale in the same task call fitBoard
+   directly; every rebuild and the resize stream are coalesced onto a frame,
+   because the floors the last fit set can hold the board at its old size, and
+   then the size observer never fires for a board that got shorter. */
 function scheduleFit(){
   if(fitPending) return;
   fitPending = requestAnimationFrame(()=>{ fitPending = 0; fitBoard(); });
@@ -12777,14 +12826,14 @@ function bootLangMeta(){
     { sel:"#drawer", place:"left", title:"Details for every box", settle:340,
       enter:openSampleDrawer, exit:closeSampleDrawer,
       body:"This panel shows a box's highlights, its full story and its links. Click any box, product, team or use case to open it. Every chip jumps to another part of the board, and the dock button pins the panel beside the board." },
-    { sel:"#opt-btn", place:"bottom", title:"Share it, and tell us what to fix",
-      body:"Options shares the board or copies a link that reopens exactly this board for whoever you send it to. It also replays this tour, docks the details panel and opens a short feedback form, and your notes shape the next revision." },
-    { sel:"#lang-btn, #theme-btn", place:"bottom", title:"Language, light or dark",
+    { sel:"#opt-btn, #theme-btn", place:"bottom", title:"Language, light or dark",
       body:"Read the board in 16 languages and switch between the light and dark theme. Exports capture the language and theme on screen." },
     { sel:"#dl-btn", place:"bottom", title:"Take it with you",
       body:"Export a PDF, a PowerPoint that ends with an editable copy of the board, a PNG, an animated GIF or offline HTML, or editable shapes for draw.io, Lucidchart, Visio, Miro, Figma and Excalidraw. A YAML descriptor exports too, and imports back into its own tab." },
-    { sel:"#view-seg, #display-seg, #cloud-seg, #region-btn, #stage-btn, #hl-btn, #pal-btn, #shape-btn", place:"bottom", title:"Names, cloud, region, stage and style",
+    { sel:"#view-seg, #display-seg, #cloud-seg, #region-btn, #stage-btn, #hl-btn, #opt-btn", place:"bottom", title:"Names, cloud, region, stage and style",
       body:"Simplify the board or show every detail, use brand names or generic categories, and switch the cloud band between Azure, AWS and GCP. Pick a region to see what runs there, and filter the platform by release stage. Choose which highlights show, recolour the board with a palette, and pick the shape of the platform." },
+    { sel:"#feedback-btn, #share-btn", place:"bottom", title:"Share it, and tell us what to fix",
+      body:"Share posts the board or copies a link that reopens exactly this board for whoever you send it to. Feedback opens a short form, and your notes shape the next revision." },
   ];
 
   let idx = 0, dir = 1, open = false, shownIdx = -1;

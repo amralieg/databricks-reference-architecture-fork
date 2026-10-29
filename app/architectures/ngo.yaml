@@ -3,6 +3,7 @@ description: Donor stewardship, grant compliance, program delivery and field ope
 sources:
   - name: CRM & Fundraising
     icon: custlake
+    simplified: 2
     tiles:
       - name: Salesforce Nonprofit Cloud
         icon: custlake
@@ -53,6 +54,7 @@ sources:
             interval: Continuous (API / webhook)
   - name: Grants & Finance
     icon: erp
+    simplified: 3
     tiles:
       - name: Blackbaud Financial Edge
         icon: erp
@@ -100,6 +102,7 @@ sources:
             interval: Nightly batch + monthly close
   - name: Program & Field M&E
     icon: globe
+    simplified: 2
     tiles:
       - name: CommCare Mobile
         icon: api
@@ -153,6 +156,7 @@ sources:
             interval: Daily + reporting cycles
   - name: Logistics & HR
     icon: stream
+    simplified: 2
     tiles:
       - name: RITA (Logistics Cluster)
         icon: stream
@@ -476,6 +480,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Qlik / ThoughtSpot
         icon: chart
@@ -506,6 +511,7 @@ consumers:
           - commcare
   - name: Partners & Donors
     icon: partner
+    simplified: 2
     tiles:
       - name: Institutional Funder Portal
         icon: share
@@ -547,6 +553,7 @@ consumers:
         summary: Funders, partners and auditors reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Donor Journey Hub
         icon: custlake

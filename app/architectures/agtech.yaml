@@ -3,6 +3,7 @@ description: 'An agriculture technology provider: precision-ag analytics and var
 sources:
   - name: Farm Mgmt Platforms
     icon: appbuilder
+    simplified: 3
     tiles:
       - name: Climate FieldView
         icon: appbuilder
@@ -66,6 +67,7 @@ sources:
             interval: Daily field sync
   - name: Equipment Telematics
     icon: iot
+    simplified: 3
     tiles:
       - name: JDLink Telematics
         icon: iot
@@ -129,6 +131,7 @@ sources:
             interval: Per field pass
   - name: Imagery & Remote Sensing
     icon: globe
+    simplified: 2
     tiles:
       - name: Planet Imagery
         icon: globe
@@ -191,6 +194,7 @@ sources:
             interval: Daily to weekly
   - name: Weather & Field Sensors
     icon: iot
+    simplified: 3
     tiles:
       - name: DTN Weather
         icon: stream
@@ -650,6 +654,7 @@ consumers:
         summary: Where the sustainability team baselines acres, scores practice change against imagery and models, and assembles the audit trail behind every carbon credit.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Field & Yield
         icon: aibi

@@ -58,6 +58,7 @@ sources:
             interval: Continuous at randomization
   - name: CTMS & Sites
     icon: sheet
+    simplified: 2
     tiles:
       - name: Veeva CTMS
         icon: sheet
@@ -109,6 +110,7 @@ sources:
             interval: Continuous at dosing
   - name: Safety & PV
     icon: gavel
+    simplified: 2
     tiles:
       - name: Argus Safety
         icon: gavel
@@ -522,6 +524,7 @@ consumers:
         summary: Biostat notebooks on governed SDTM and ADaM.
   - name: Sites & CROs
     icon: partner
+    simplified: 2
     tiles:
       - name: Site Payment Portal
         icon: api

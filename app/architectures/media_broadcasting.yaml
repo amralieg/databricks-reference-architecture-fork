@@ -108,6 +108,7 @@ sources:
             interval: Continuous CDC
   - name: Ad Sales & Traffic
     icon: market
+    simplified: 3
     tiles:
       - name: WideOrbit WO Traffic
         icon: market
@@ -217,6 +218,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'MXF'
         icon: zbraces

@@ -3,6 +3,7 @@ description: 'Restaurant and foodservice operators: POS and kitchen execution, i
 sources:
   - name: POS & Kitchen
     icon: market
+    simplified: 3
     tiles:
       - name: NCR Aloha POS
         icon: market
@@ -53,6 +54,7 @@ sources:
             interval: Continuous (kitchen events)
   - name: Back Office & ERP
     icon: erp
+    simplified: 3
     tiles:
       - name: Restaurant365
         icon: erp
@@ -98,6 +100,7 @@ sources:
             interval: Nightly batch + period close
   - name: Labor & Scheduling
     icon: people
+    simplified: 2
     tiles:
       - name: HotSchedules
         icon: people
@@ -143,6 +146,7 @@ sources:
             interval: Daily sync
   - name: Delivery & Loyalty
     icon: partner
+    simplified: 2
     tiles:
       - name: DoorDash Marketplace
         icon: partner

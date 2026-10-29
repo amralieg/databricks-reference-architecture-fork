@@ -3,6 +3,7 @@ description: 'Retail and commercial banking: core ledger, payments, lending, fra
 sources:
   - name: Core Banking
     icon: erp
+    simplified: 3
     tiles:
       - name: Temenos Transact
         icon: erp
@@ -110,6 +111,7 @@ sources:
             interval: Continuous message flow
   - name: Digital Channels
     icon: apps
+    simplified: 2
     tiles:
       - name: Temenos Infinity
         icon: apps
@@ -256,6 +258,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'ISO 20022'
         icon: zbraces
@@ -580,6 +583,7 @@ consumers:
         summary: Partners and regulators via governed sharing.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Branch Performance
         icon: chart

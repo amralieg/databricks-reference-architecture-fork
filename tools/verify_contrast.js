@@ -106,8 +106,9 @@ function deckInks() {
       note('board and toolbar', o);
     }
     await set('banking', pal, dark, 'simple');
-    for (const wrap of ['ind-wrap', 'region-wrap', 'pal-wrap', 'dl-wrap', 'lang-wrap', 'opt-wrap']) {
+    for (const wrap of ['ind-wrap', 'region-wrap', 'dl-wrap', 'share-wrap', 'opt-wrap']) {
       const o = await page.evaluate(([w, ex]) => { const el = document.getElementById(w); if (!el) return { n: 0, fails: ['missing #' + w], unknown: [] };
+        if (w === 'share-wrap') buildShareMenu();
         el.classList.add('open'); const r = window.__measure('#' + w, ex); el.classList.remove('open'); return r; }, [wrap, exempt]);
       o.fails = o.fails.map(f => tag + ' ' + f);
       note('toolbar menus', o);
@@ -120,6 +121,9 @@ function deckInks() {
         tip.innerHTML = '<div class="tip-name">' + svg('dot', '') + 'Unity Catalog</div><ul><li>Governs every table</li></ul><div class="tip-hint">Click for full detail</div>';
         tip.style.transition = 'none'; tip.classList.add('show'); const r = window.__measure('#tip', ex);
         tip.classList.remove('show'); tip.style.transition = ''; return r; }, exempt);
+      o.fails = o.fails.map(f => tag + ' ' + f); note('tooltips', o); }
+    { const o = await page.evaluate(ex => { const t = document.getElementById('share-flash'); if (!t) return { n: 0, fails: ['missing #share-flash'], unknown: [] };
+        t.textContent = 'Link copied'; const r = window.__measure('#share-flash', ex); t.textContent = ''; return r; }, exempt);
       o.fails = o.fails.map(f => tag + ' ' + f); note('tooltips', o); }
     await page.click('#region-btn');
     await page.click('#region-menu button[data-region]');

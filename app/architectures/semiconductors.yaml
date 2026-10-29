@@ -3,6 +3,7 @@ description: 'Fab and foundry operations: wafer manufacturing execution, yield a
 sources:
   - name: Fab & MES
     icon: erp
+    simplified: 2
     tiles:
       - name: Applied E3 MES
         icon: erp
@@ -53,6 +54,7 @@ sources:
             interval: Continuous equipment telemetry
   - name: Design & IP
     icon: sheet
+    simplified: 2
     tiles:
       - name: Synopsys Fusion Design
         icon: sheet
@@ -74,7 +76,7 @@ sources:
         summary: 'Custom and analog design: schematic, layout and LVS for IP blocks on each die.'
         citations:
           - cadence-virtuoso
-        category: EDA Custom/Analog Design
+        category: EDA Custom / Analog Design
         what_it_is: 'Supports custom and analog design: schematic, layout and LVS for IP blocks on each die.'
         who_uses_it: Analog/mixed-signal designers and IP teams.
         data_out:
@@ -100,6 +102,7 @@ sources:
             interval: Per verification run
   - name: Yield & Test
     icon: iot
+    simplified: 3
     tiles:
       - name: Teradyne UltraFLEX
         icon: iot
@@ -147,6 +150,7 @@ sources:
             interval: Continuous inline inspection
   - name: Equipment & Sensors
     icon: stream
+    simplified: 2
     tiles:
       - name: SECS/GEM Tool Interface
         icon: stream
@@ -253,6 +257,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'STDF'
         icon: zbraces

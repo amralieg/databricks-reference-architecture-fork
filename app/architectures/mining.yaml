@@ -3,6 +3,7 @@ description: 'A mining operator running pit and underground operations, processi
 sources:
   - name: Fleet & Dispatch
     icon: iot
+    simplified: 2
     tiles:
       - name: Modular Mining DISPATCH
         icon: iot
@@ -54,13 +55,14 @@ sources:
             interval: Per-blast + daily updates
   - name: Plant & Processing
     icon: stream
+    simplified: 2
     tiles:
       - name: AVEVA PI System
         icon: iot
         summary: Mill throughput, reagent flows and recovery tags from concentrator historians.
         citations:
           - aveva-pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores mill throughput, reagent flows and recovery tags from concentrator plants as the processing time-series system of record.
         who_uses_it: Plant metallurgists, concentrator operators and reliability engineers.
         data_out:
@@ -125,6 +127,7 @@ sources:
             interval: Per-batch + daily
   - name: Commercial & ERP
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP IS-Mining
         icon: erp
@@ -170,6 +173,7 @@ sources:
             interval: Per-vessel + daily updates
   - name: Safety & Environment
     icon: gavel
+    simplified: 2
     tiles:
       - name: Intelex EHS
         icon: gavel
@@ -231,6 +235,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'OMF'
         icon: zbraces

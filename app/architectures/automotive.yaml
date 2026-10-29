@@ -3,6 +3,7 @@ description: 'Automotive OEMs: vehicle design and simulation, plant manufacturin
 sources:
   - name: Engineering & PLM
     icon: product
+    simplified: 3
     tiles:
       - name: Siemens Teamcenter
         icon: product
@@ -50,6 +51,7 @@ sources:
             interval: On change release + nightly
   - name: Procurement & ERP
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP S/4HANA
         icon: erp
@@ -126,6 +128,7 @@ sources:
             interval: Continuous sequencing events
   - name: Dealer & Retail
     icon: market
+    simplified: 2
     tiles:
       - name: CDK Global DMS
         icon: erp
@@ -270,6 +273,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'ASAM MDF'
         icon: zbraces
@@ -580,6 +584,7 @@ consumers:
         summary: Suppliers and finance partners via Delta Sharing.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Plant Cockpit
         icon: gauge

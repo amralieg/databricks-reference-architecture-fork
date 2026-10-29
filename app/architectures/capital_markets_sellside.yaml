@@ -647,6 +647,7 @@ consumers:
         summary: Allocators, administrators and partners reading live tables through governed sharing that reduces separately maintained extracts.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: TCA Workbench
         icon: market

@@ -3,6 +3,7 @@ description: 'A MedTech manufacturer designing, manufacturing and supporting reg
 sources:
   - name: PLM & Engineering
     icon: dev
+    simplified: 2
     tiles:
       - name: PTC Windchill
         icon: dev
@@ -50,6 +51,7 @@ sources:
             interval: Nightly sync
   - name: Quality & Reg
     icon: gavel
+    simplified: 2
     tiles:
       - name: MasterControl QMS
         icon: gavel
@@ -112,6 +114,7 @@ sources:
             interval: Nightly + event-driven
   - name: Manufacturing & MES
     icon: compute
+    simplified: 2
     tiles:
       - name: Siemens Opcenter MES
         icon: compute
@@ -398,7 +401,7 @@ cloud_integrations:
       - name: Device Events
         icon: stream
         summary: MQTT and Kafka topics carrying connected-device telemetry, alarms and MES events, landed as structured events.
-        category: Device Event Stream (MQTT/Kafka)
+        category: Device Event Stream (MQTT / Kafka)
         what_it_is: MQTT and Kafka topics carrying connected-device telemetry, alarms and MES events, landed as structured events for real-time monitoring.
         who_uses_it: Telemetry Eng, Field service and Line quality.
         data_out:
@@ -567,6 +570,7 @@ consumers:
         summary: Engineering and data-science notebooks against governed device and quality data.
   - name: Providers & Partners
     icon: partner
+    simplified: 2
     tiles:
       - name: Provider FHIR Exchange
         icon: api

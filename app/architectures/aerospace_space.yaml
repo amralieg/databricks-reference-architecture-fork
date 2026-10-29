@@ -3,6 +3,7 @@ description: 'Aerospace & defense OEMs and MRO providers: PLM and the digital th
 sources:
   - name: PLM & Engineering
     icon: dev
+    simplified: 3
     tiles:
       - name: CATIA / 3DEXPERIENCE
         icon: dev
@@ -66,6 +67,7 @@ sources:
             interval: Per simulation run
   - name: Manufacturing & ERP
     icon: erp
+    simplified: 2
     tiles:
       - name: Siemens Opcenter MES
         icon: compute
@@ -127,7 +129,7 @@ sources:
         summary: 'Process and test historian: equipment, engine and test-stand time-series underpinning SPC, OEE and anomaly detection.'
         citations:
           - avevapi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores equipment, engine and test-stand time-series underpinning SPC, OEE and anomaly detection.
         who_uses_it: Reliability engineering, test engineering and Data science.
         data_out:

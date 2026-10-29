@@ -3,6 +3,7 @@ description: 'A grower and agribusiness co-op: field and yield monitoring, seed 
 sources:
   - name: Farm Management
     icon: sheet
+    simplified: 2
     tiles:
       - name: John Deere Operations Center
         icon: iot
@@ -55,6 +56,7 @@ sources:
             interval: Daily sync
   - name: ERP & Supply Chain
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP S/4HANA Agribusiness
         icon: erp
@@ -100,6 +102,7 @@ sources:
             interval: Nightly batch + settlement runs
   - name: Commodity Markets
     icon: market
+    simplified: 2
     tiles:
       - name: CME Group Futures
         icon: market
@@ -155,6 +158,7 @@ sources:
             interval: Daily refresh
   - name: Weather & Imagery
     icon: stream
+    simplified: 3
     tiles:
       - name: DTN Weather
         icon: stream
@@ -203,6 +207,7 @@ sources:
             interval: Per satellite revisit
   - name: Sustainability
     icon: gavel
+    simplified: 2
     tiles:
       - name: Regrow MRV
         icon: gavel
@@ -503,6 +508,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -515,6 +521,7 @@ consumers:
         summary: Agronomy notebooks against governed field and trial data.
   - name: Grower & Retail
     icon: partner
+    simplified: 2
     tiles:
       - name: Deere Ops Center API
         icon: api
@@ -566,6 +573,7 @@ consumers:
         summary: Food companies and lenders reading live tables via Delta Sharing.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Harvest Command
         icon: gauge

@@ -82,7 +82,7 @@ INDUSTRIES_BATCH_AEROSPACE_SPACE = {
                              data_out=data_out(
                                  batch=flow(["structured"], "20-80 GB/day", "Nightly batch + hourly deltas"))),
                         tile("AVEVA PI Historian", "iot", "Process and test historian: equipment, engine and test-stand time-series underpinning SPC, OEE and anomaly detection.", "avevapi",
-                             cat="Process/Time-Series Historian",
+                             cat="Process / Time-Series Historian",
                              what="Stores equipment, engine and test-stand time-series underpinning SPC, OEE and anomaly detection.",
                              users="Reliability engineering, test engineering and Data science.",
                              data_out=data_out(

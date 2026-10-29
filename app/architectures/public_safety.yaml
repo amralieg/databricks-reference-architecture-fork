@@ -3,6 +3,7 @@ description: 'Police, fire, EMS and emergency management: computer-aided dispatc
 sources:
   - name: Dispatch & 911
     icon: stream
+    simplified: 4
     tiles:
       - name: Tyler Enterprise CAD
         icon: stream
@@ -196,6 +197,7 @@ sources:
             interval: Continuous (real-time)
   - name: Fire & EMS
     icon: iot
+    simplified: 2
     tiles:
       - name: ImageTrend ePCR
         icon: docs
@@ -599,6 +601,7 @@ consumers:
         summary: Other agencies, prosecutors and researchers reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: RTCC Cockpit
         icon: gauge

@@ -3,6 +3,7 @@ description: 'Exchange and venue operators: matching-engine and gateway monitori
 sources:
   - name: Trading & Matching
     icon: market
+    simplified: 3
     tiles:
       - name: Nasdaq Matching
         icon: market
@@ -62,6 +63,7 @@ sources:
             interval: Continuous (microsecond)
   - name: Market Data Feeds
     icon: stream
+    simplified: 2
     tiles:
       - name: TotalView-ITCH
         icon: stream
@@ -235,6 +237,7 @@ sources:
             interval: Continuous telemetry
   - name: Surveillance & Clearing
     icon: gavel
+    simplified: 2
     tiles:
       - name: Nasdaq SMARTS
         icon: gavel
@@ -314,6 +317,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'FIX'
         icon: zbraces
@@ -547,6 +551,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart

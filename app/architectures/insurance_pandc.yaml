@@ -3,6 +3,7 @@ description: 'Property and casualty carriers: underwriting and rating, policy ad
 sources:
   - name: Policy Administration
     icon: erp
+    simplified: 3
     tiles:
       - name: Guidewire PolicyCenter
         icon: erp
@@ -72,6 +73,7 @@ sources:
             interval: Daily / on rate change
   - name: Claims Systems
     icon: opdb
+    simplified: 2
     tiles:
       - name: Guidewire ClaimCenter
         icon: erp
@@ -151,6 +153,7 @@ sources:
             interval: Continuous (mobile / API)
   - name: Billing & Distribution
     icon: custlake
+    simplified: 2
     tiles:
       - name: Guidewire Billing
         icon: erp
@@ -273,6 +276,7 @@ sources:
             interval: Continuous (API at FNOL)
   - name: Catastrophe Models
     icon: iot
+    simplified: 2
     tiles:
       - name: Moody's RMS
         icon: iot
@@ -691,6 +695,7 @@ consumers:
           - Chief Distribution Officer
   - name: Agent Harnesses
     icon: agents
+    simplified: 4
     tiles:
       - name: Omnigent OSS
         icon: omni

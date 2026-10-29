@@ -9,7 +9,7 @@ sources:
         summary: High-frequency turbine, boiler and balance-of-plant time-series across the fleet, the operational system of record for output and condition.
         citations:
           - pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores high-frequency turbine, boiler and balance-of-plant tags across every unit as the operational time-series system of record for output, availability and condition.
         who_uses_it: Performance engineers, reliability engineers and control-room operators.
         data_out:
@@ -194,6 +194,7 @@ sources:
             interval: Daily settlement + intraday
   - name: Asset & Outage Mgmt
     icon: erp
+    simplified: 2
     tiles:
       - name: IBM Maximo EAM
         icon: erp
@@ -257,6 +258,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'IEC 61850'
         icon: zbraces
@@ -280,6 +282,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: ISO Dispatch Signals
         icon: stream

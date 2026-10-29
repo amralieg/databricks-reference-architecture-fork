@@ -3,6 +3,7 @@ description: 'Higher-education-led with selected K-12 variants: student lifecycl
 sources:
   - name: Student Information
     icon: erp
+    simplified: 2
     tiles:
       - name: Ellucian Banner
         icon: erp
@@ -54,6 +55,7 @@ sources:
             interval: Nightly batch
   - name: Learning & Content
     icon: notebook
+    simplified: 3
     tiles:
       - name: Canvas LMS
         icon: notebook
@@ -107,6 +109,7 @@ sources:
             interval: Continuous / daily
   - name: Admissions & CRM
     icon: partner
+    simplified: 3
     tiles:
       - name: Slate by Technolutions
         icon: partner
@@ -158,6 +161,7 @@ sources:
             interval: Periodic file exchanges
   - name: Finance & Student Aid
     icon: market
+    simplified: 3
     tiles:
       - name: PowerFAIDS
         icon: market
@@ -218,6 +222,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 3
     tiles:
       - name: 'Ed-Fi'
         icon: zbraces

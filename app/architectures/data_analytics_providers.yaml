@@ -3,6 +3,7 @@ description: 'Market-data and analytics vendors: AI-enhanced sentiment and event
 sources:
   - name: Alternative & Content Data
     icon: market
+    simplified: 2
     tiles:
       - name: Dow Jones Newswires
         icon: market
@@ -186,6 +187,7 @@ sources:
             interval: Daily refresh + on-demand
   - name: Index & Benchmarks
     icon: chart
+    simplified: 3
     tiles:
       - name: S&P DJI Indices
         icon: chart
@@ -303,6 +305,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'FIX'
         icon: zbraces
@@ -601,6 +604,7 @@ consumers:
         summary: Subscribers, vendors and index licensees reading live tables through governed sharing that reduces bespoke exports, with materialization and transfer depending on recipient mode.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Signal Studio
         icon: aisvc

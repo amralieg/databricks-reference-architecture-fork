@@ -340,6 +340,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'FIX'
         icon: zbraces
@@ -620,6 +621,7 @@ consumers:
         summary: Surveillance alerts and cases pushed to the investigation queue analysts already work.
   - name: Regulatory & Reporting
     icon: gavel
+    simplified: 2
     tiles:
       - name: MiFID II / CAT Filings
         icon: gavel
@@ -642,6 +644,7 @@ consumers:
         summary: Allocators, administrators and partners reading live tables, reducing extract duplication, with access and reuse scoped by agreement.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: TCA Workbench
         icon: market
@@ -661,6 +664,7 @@ consumers:
         summary: Where quants build, backtest and promote signals from notebook to monitored pipeline against governed tick and factor data.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: P&L & Attribution
         icon: aibi

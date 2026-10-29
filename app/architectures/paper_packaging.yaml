@@ -3,6 +3,7 @@ description: 'A pulp, paper, board and packaging manufacturer: mill process cont
 sources:
   - name: Mill Process Control
     icon: compute
+    simplified: 3
     tiles:
       - name: Valmet DNA DCS
         icon: compute
@@ -52,7 +53,7 @@ sources:
         summary: 'AVEVA PI System process historian: the high-frequency tag store that underpins OEE, sheet-break analysis and predictive maintenance.'
         citations:
           - avevapi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: High-frequency process historian tag store underpinning OEE, sheet-break analysis and predictive maintenance.
         who_uses_it: Reliability engineering, process engineering and Data science.
         data_out:
@@ -114,6 +115,7 @@ sources:
             interval: Planning cycles + on-demand
   - name: ERP & Order-to-Cash
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP S/4HANA
         icon: erp
@@ -313,6 +315,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'papiNet XML'
         icon: zbraces

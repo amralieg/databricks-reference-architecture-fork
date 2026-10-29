@@ -3,6 +3,7 @@ description: 'Card acquiring, digital wallets, lending and banking cores: author
 sources:
   - name: Core & Ledger
     icon: erp
+    simplified: 3
     tiles:
       - name: Temenos Transact
         icon: erp
@@ -48,6 +49,7 @@ sources:
             interval: Nightly batch
   - name: Acquiring & Issuing
     icon: market
+    simplified: 2
     tiles:
       - name: Adyen Platform
         icon: market
@@ -167,6 +169,7 @@ sources:
             interval: Continuous (API)
   - name: Merchant & CRM
     icon: custlake
+    simplified: 3
     tiles:
       - name: Salesforce Fintech CRM
         icon: custlake
@@ -240,6 +243,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 4
     tiles:
       - name: 'ISO 20022'
         icon: zbraces
@@ -276,6 +280,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: Visa / Mastercard BIN
         icon: partner
@@ -538,6 +543,7 @@ consumers:
           - zendesk
   - name: Partners & Schemes
     icon: partner
+    simplified: 3
     tiles:
       - name: Scheme Reporting API
         icon: api

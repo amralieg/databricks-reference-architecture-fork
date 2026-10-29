@@ -3,6 +3,7 @@ description: 'EdTech software vendors: online learning platforms, LMS and course
 sources:
   - name: CRM & Subscriptions
     icon: crm
+    simplified: 2
     tiles:
       - name: Salesforce Sales Cloud
         icon: crm
@@ -78,6 +79,7 @@ sources:
             interval: Continuous (payment webhooks)
   - name: LMS & Rostering
     icon: notebook
+    simplified: 2
     tiles:
       - name: Instructure Canvas
         icon: notebook
@@ -599,6 +601,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
@@ -611,6 +614,7 @@ consumers:
         summary: Analyst notebooks, VS Code and JetBrains against governed learning and revenue data with Genie Code.
   - name: Learner Activation
     icon: zfunnel
+    simplified: 2
     tiles:
       - name: Reverse ETL to CDP
         icon: reverse

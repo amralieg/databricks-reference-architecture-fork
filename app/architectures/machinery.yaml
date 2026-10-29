@@ -3,6 +3,7 @@ description: 'An industrial machinery OEM designing, building, selling and servi
 sources:
   - name: ERP & Planning
     icon: erp
+    simplified: 2
     tiles:
       - name: SAP S/4HANA
         icon: erp
@@ -53,6 +54,7 @@ sources:
             interval: Planning cycles + on-demand what-if
   - name: MES & Shop Floor
     icon: stream
+    simplified: 2
     tiles:
       - name: Siemens Opcenter
         icon: stream
@@ -97,6 +99,7 @@ sources:
             interval: Continuous inline capture
   - name: PLM & Engineering
     icon: dev
+    simplified: 2
     tiles:
       - name: PTC Windchill
         icon: product
@@ -187,7 +190,7 @@ sources:
         summary: High-frequency sensor and actuator tags from machining cells, utilities and test rigs.
         citations:
           - aveva-pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Collects high-frequency sensor and actuator tags from machining cells, utilities and end-of-line test rigs for OEE, energy and anomaly analytics.
         who_uses_it: Reliability engineers, Process engineering and Energy management.
         data_out:
@@ -554,6 +557,7 @@ consumers:
         summary: Customers, dealers and auditors reading live tables with no copy and no egress duplication.
   - name: Databricks Apps
     icon: apps
+    simplified: 2
     tiles:
       - name: Plant Performance
         icon: gauge
@@ -628,6 +632,7 @@ consumers:
           - Financial Controller
   - name: Agent Harnesses
     icon: agents
+    simplified: 4
     tiles:
       - name: Omnigent OSS
         icon: omni

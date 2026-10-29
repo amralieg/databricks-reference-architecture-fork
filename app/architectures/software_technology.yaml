@@ -3,6 +3,7 @@ description: 'B2B and SaaS software: product-led activation and conversion, usag
 sources:
   - name: CRM & Sales
     icon: crm
+    simplified: 3
     tiles:
       - name: Salesforce Sales Cloud
         icon: crm
@@ -73,6 +74,7 @@ sources:
             interval: Hourly
   - name: Billing & Metering
     icon: market
+    simplified: 2
     tiles:
       - name: Stripe Billing
         icon: market
@@ -142,6 +144,7 @@ sources:
             interval: Continuous
   - name: Product Telemetry
     icon: stream
+    simplified: 2
     tiles:
       - name: Segment CDP
         icon: custlake
@@ -335,6 +338,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'SPDX'
         icon: zbraces
@@ -567,6 +571,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart

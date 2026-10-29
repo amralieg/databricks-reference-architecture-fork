@@ -9,7 +9,7 @@ sources:
         summary: Wellhead pressures, separator flow rates and ESP and compressor tags from field historians.
         citations:
           - aveva-pi
-        category: Process/Time-Series Historian
+        category: Process / Time-Series Historian
         what_it_is: Stores high-frequency wellhead, separator, artificial-lift and compressor tags from producing fields as the operational time-series system of record.
         who_uses_it: Production engineers, facility operators and reliability engineers.
         data_out:
@@ -29,7 +29,7 @@ sources:
         summary: Well tests, decline curves and surveillance data the production and reservoir teams maintain.
         citations:
           - slb-ofm
-        category: Production/Well Surveillance System
+        category: Production / Well Surveillance System
         what_it_is: Captures well tests, decline curves and well surveillance data used to model and forecast well and field performance.
         who_uses_it: Reservoir engineers, production engineers and subsurface geologists.
         data_out:
@@ -269,6 +269,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: OPC-UA Well Gateway
         icon: iot

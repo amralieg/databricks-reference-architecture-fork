@@ -3,6 +3,7 @@ description: 'Health systems and hospitals: EHR clinical data, revenue cycle, ca
 sources:
   - name: EHR & Clinical
     icon: erp
+    simplified: 3
     tiles:
       - name: Epic Caboodle
         icon: db
@@ -73,6 +74,7 @@ sources:
             interval: Quarterly / on code-set release
   - name: Revenue Cycle
     icon: market
+    simplified: 3
     tiles:
       - name: R1 RCM Platform
         icon: market
@@ -590,6 +592,7 @@ consumers:
         summary: Clinician-reviewed early warning from vitals, labs and nursing assessments to support timely bedside assessment.
   - name: AI/BI Dashboards
     icon: aibi
+    simplified: 2
     tiles:
       - name: Volume, LOS & Margin
         icon: aibi

@@ -3,6 +3,7 @@ description: 'For wholesale distributors: demand and inventory planning, warehou
 sources:
   - name: ERP & Finance
     icon: erp
+    simplified: 3
     tiles:
       - name: SAP S/4HANA
         icon: erp
@@ -67,6 +68,7 @@ sources:
             interval: Hourly / nightly sync
   - name: Warehouse (WMS)
     icon: store
+    simplified: 3
     tiles:
       - name: Manhattan Active WMS
         icon: store
@@ -117,6 +119,7 @@ sources:
             interval: Hourly batch
   - name: Transport & Logistics
     icon: stream
+    simplified: 3
     tiles:
       - name: Oracle OTM
         icon: stream
@@ -162,6 +165,7 @@ sources:
             interval: Continuous (API / webhook)
   - name: EDI & B2B Commerce
     icon: api
+    simplified: 2
     tiles:
       - name: SPS Commerce EDI
         icon: api
@@ -218,6 +222,7 @@ sources:
             interval: Continuous clickstream / orders
   - name: Pricing & CRM
     icon: market
+    simplified: 2
     tiles:
       - name: Vendavo Pricing
         icon: market
@@ -286,6 +291,7 @@ sources:
             interval: Queried on demand (federated)
   - name: Data Formats
     icon: zbraces
+    simplified: 2
     tiles:
       - name: 'X12 EDI'
         icon: zbraces
@@ -321,6 +327,7 @@ cloud_integrations:
     tiles: []
   - name: 3rd Party
     icon: zplug
+    simplified: 2
     tiles:
       - name: Dun & Bradstreet
         icon: partner
@@ -528,6 +535,7 @@ consumers:
   - name: BI & Productivity
     icon: chart
     from: bi
+    simplified: 2
     tiles:
       - name: Tableau / Power BI
         icon: chart
