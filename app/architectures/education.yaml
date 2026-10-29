@@ -369,7 +369,7 @@ pipelines:
         mark: CustomerLake
         summary: Recruitment yield by channel and territory, melt between deposit and day one, and section fill measured against instructional and housing capacity.
         uses:
-          - - Enrollment Forecast
+          - - Enrollment Forecasting
             - Cohort scenarios scored on instructional and housing capacity.
           - - CustomerLake
             - Prospect journeys joined to application and enrollment outcomes.

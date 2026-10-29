@@ -398,7 +398,7 @@ pipelines:
         mark: AI/BI
         summary: Channel mix, flighting and budget allocation across linear, digital and retail media, judged on reach, effective CPM and incremental lift.
         uses:
-          - - Media Mix Model
+          - - Media Mix Workbench
             - Scenario planning on incremental lift by channel.
           - - AI/BI
             - Reach curves and budget pacing on governed data.
@@ -418,7 +418,7 @@ pipelines:
         mark: Model Serving
         summary: Bid management, audience targeting and creative testing across programmatic and paid social, held to CPA, ROAS and viewability targets.
         uses:
-          - - Bid Optimizer
+          - - Programmatic Bid Optimization
             - Real-time bid adjustments against CPA and ROAS targets.
           - - Model Serving
             - Conversion propensity scored in the bid path.

@@ -233,6 +233,13 @@ function pdfImage(buf, num) {
     data: buf.subarray(st, st + num1(/\/Length (\d+)/)) };
 }
 
+function pdfZoomScales(buf, W) {
+  const s = buf.toString("latin1");
+  return [...s.matchAll(/<<\/Length (\d+)>>\nstream\n/g)]
+    .map(m => [...s.substr(m.index + m[0].length, +m[1]).matchAll(/ re W n ([\d.]+) 0 0 [\d.]+ [-\d.]+ [-\d.]+ cm \/Im[01] Do Q/g)].map(c => +c[1] / W))
+    .filter(c => c.length).map(c => Math.min(...c));
+}
+
 function pdfBoardAlpha(buf) {
   const im = pdfImage(buf, 6);
   if (!im || !im.smask) return { smask: false };
@@ -335,6 +342,17 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       const m = collectBoard();
       return { groups: m.groups.length, imgs: m.shapes.filter(s => s.t === "img").length, title: docTitle() };
     });
+    const zoom = await page.evaluate(() => {
+      const m = collectBoard(), tiles = m.groups.filter(g => g.kind === "tile");
+      if (typeof deckZoomPlan !== "function") return { n: 0, W: m.W, tiles: tiles.map(g => g.name), missing: tiles.map(g => g.name), twice: 0, minPx: [] };
+      const plan = deckZoomPlan(m), seen = new Set();
+      let placed = 0;
+      const walk = n => { if (n.shape) return; if (n.group.kind === "tile") { seen.add(n.group.id); placed++; } n.kids.forEach(walk); };
+      const minPx = n => n.shape ? (n.shape.t === "text" ? n.shape.size : Infinity) : Math.min(Infinity, ...n.kids.map(minPx));
+      plan.slides.forEach(sl => sl.items.forEach(it => walk(it.node)));
+      return { n: plan.slides.length, W: m.W, tiles: tiles.map(g => g.name), missing: tiles.filter(g => !seen.has(g.id)).map(g => g.name),
+        twice: placed - seen.size, minPx: plan.slides.map(sl => Math.min(...sl.items.map(it => minPx(it.node)))) };
+    });
     const pdfB64 = await page.evaluate(async () => {
       const blob = await boardPdfBlob();
       if (!blob) return null;
@@ -351,7 +369,7 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
 
     // PPTX slide count + content grep (zipStore is stored, so text is greppable in unzip -p)
     const slideList = execSync(`unzip -l "${pptxPath}" | grep -c 'ppt/slides/slide'`).toString().trim();
-    const slideXml = execSync(`unzip -p "${pptxPath}" "ppt/slides/slide*.xml" 2>/dev/null || true`).toString();
+    const slideXml = execSync(`unzip -p "${pptxPath}" "ppt/slides/slide*.xml" 2>/dev/null || true`, { maxBuffer: 1 << 28 }).toString();
     const hasGenie = /Genie/i.test(slideXml);
     const hasDash = /Dashboard/i.test(slideXml);
     const hasApp = /\bApp/i.test(slideXml);
@@ -363,7 +381,7 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
     const pdfAlpha = pdfB64 ? pdfBoardAlpha(u8FromB64(pdfB64)) : { smask: false };
 
     const n = Number(slideList), slideOf = i => `ppt/slides/slide${i}.xml`;
-    const unz = name => execSync(`unzip -p "${pptxPath}" "${name}"`).toString();
+    const unz = name => execSync(`unzip -p "${pptxPath}" "${name}"`, { maxBuffer: 1 << 28 }).toString();
     const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     const boardXml = unz(slideOf(3));
     const boardSlide = { ...board,
@@ -373,7 +391,29 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       wellFormed: [slideOf(3), "ppt/slides/_rels/slide3.xml.rels"].every(f => shOk(`unzip -p "${pptxPath}" "${f}" | xmllint --noout -`)),
       zipOk: shOk(`unzip -tq "${pptxPath}"`) };
 
-    results.push({ tag, want: view, ...summary, slides: n, boardSlide, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
+    const SW = 12192000, SH = 6858000, PAD = 0.03, BAND = Math.round(SH * 0.052);
+    const boxesOf = x => [...x.matchAll(/<a:off x="(-?\d+)" y="(-?\d+)"\/><a:ext cx="(\d+)" cy="(\d+)"\/>/g)].map(m => m.slice(1).map(Number))
+      .filter(b => b[2] || b[3]);
+    const zoomXml = Array.from({ length: zoom.n }, (_, i) => 3 + i < n ? unz(slideOf(4 + i)) : "");
+    const overview = boxesOf(boardXml.replace(/<p:sp><p:nvSpPr><p:cNvPr id="\d+" name="Title"\/>[\s\S]*?<\/p:sp>/, ""));
+    const span = (i, j) => Math.max(...overview.map(b => b[i] + b[j])) - Math.min(...overview.map(b => b[i]));
+    const grpNames = {};
+    zoomXml.forEach(x => [...x.matchAll(/<p:grpSp><p:nvGrpSpPr><p:cNvPr id="\d+" name="([^"]*)"/g)].forEach(m => grpNames[m[1]] = (grpNames[m[1]] || 0) + 1));
+    const tileNames = {};
+    zoom.tiles.forEach(t => tileNames[esc(t)] = (tileNames[esc(t)] || 0) + 1);
+    const ZOOM_PT = { simple: 9, detailed: 8 }[view];
+    const pdfScales = pdfB64 ? pdfZoomScales(u8FromB64(pdfB64), zoom.W) : [];
+    const zoomSlides = {
+      n: zoom.n, minPt: ZOOM_PT,
+      szMin: Math.min(Infinity, ...zoomXml.flatMap(x => [...x.matchAll(/ sz="(\d+)"/g)].map(m => +m[1] / 100))),
+      pdfPt: pdfScales.map((s, i) => +(s * zoom.minPx[i]).toFixed(2)),
+      missing: zoom.missing.concat(Object.keys(tileNames).filter(t => (grpNames[t] || 0) < tileNames[t])), twice: zoom.twice,
+      outside: zoomXml.concat(boardXml).flatMap(boxesOf).filter(([x, y, cx, cy]) => x < 0 || y < 0 || x + cx > SW || y + cy > SH).length,
+      fill: Math.max(span(0, 2) / (SW * (1 - PAD * 2)), span(1, 3) / (SH * (1 - PAD * 2) - BAND)),
+      wellFormed: zoomXml.every((x, i) => x && [slideOf(4 + i), `ppt/slides/_rels/slide${4 + i}.xml.rels`]
+        .every(f => shOk(`unzip -p "${pptxPath}" "${f}" | xmllint --noout -`))) };
+
+    results.push({ tag, want: view, ...summary, slides: n, boardSlide, zoomSlides, pptxHasGenie: hasGenie, pptxHasDash: hasDash, pptxHasApp: hasApp, firstUc, ucInDeck, pdfPages, pdfAlpha, pptxBytes: u8FromB64(pptxB64).length, pdfBytes: pdfB64 ? u8FromB64(pdfB64).length : 0 });
   }
 
   const b64Of = async (q, fn) => {
@@ -500,7 +540,8 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
       breaks += 1;
       if (s.kind === "uc" || s.kind === "genie" || s.kind === "dash") narr += s.n; else narr += 1; // apps grid = 1
     });
-    const expSlides = 1 /*cover*/ + 1 /*index*/ + 1 /*board*/ + breaks + narr + 1 /*closing*/;
+    const z = r.zoomSlides;
+    const expSlides = 1 /*cover*/ + 1 /*index*/ + 1 /*board*/ + z.n + breaks + narr + 1 /*closing*/;
 
     const checks = [];
     // Guard against a silent fall-back to generic: the loaded industry must be
@@ -526,12 +567,22 @@ const transparentOk = s => !!s && s.clear > 0.03 && s.solid > 0.3;
     checks.push(["board slide logos ship as svg", a.svgType]);
     checks.push(["deck zip + board slide xml valid", a.zipOk && a.wellFormed]);
     checks.push(["pdf board image has a transparent soft mask", r.pdfAlpha.smask && r.pdfAlpha.sizeOk && transparentOk(r.pdfAlpha)]);
+    checks.push(["board overview fills the slide", z.fill >= 0.98]);
+    checks.push(["zoom slides follow the board", z.n >= 1]);
+    checks.push(["every board tile is on a zoom slide", z.missing.length === 0]);
+    checks.push(["no board tile is on two zoom slides", z.twice === 0]);
+    checks.push([`zoom slide text is at least ${z.minPt}pt`, Number.isFinite(z.szMin) && z.szMin >= z.minPt]);
+    checks.push([`pdf zoom page text is at least ${z.minPt}pt`, z.n > 0 && z.pdfPt.length === z.n && z.pdfPt.every(p => p >= z.minPt)]);
+    checks.push(["every shape lies on its slide", z.outside === 0]);
+    checks.push(["zoom slide xml valid", z.wellFormed]);
 
     const bad = checks.filter(c => !c[1]);
     if (bad.length) fail++;
     console.log(`● ${r.tag}  [${r.label}]  ${bad.length ? "❌" : "✅"}`);
     console.log(`   secs: ${secLine}`);
     console.log(`   ${r.view}  uc=${r.uc} genie=${r.genie} dash=${r.dash} apps=${r.apps} (screen ${r.screen.uc}/${r.screen.genie}/${r.screen.dash}/${r.screen.apps})  slides=${r.slides}(exp ${expSlides})  pdfPages=${r.pdfPages}  pptx=${(r.pptxBytes/1024).toFixed(0)}KB pdf=${(r.pdfBytes/1024).toFixed(0)}KB  board slide groups=${a.grpSp}/${a.groups} pics=${a.pics}/${a.imgs}`);
+    console.log(`   zoom slides=${z.n} pptx min=${z.szMin}pt pdf=${z.pdfPt.join("/")}pt overview fill=${z.fill.toFixed(3)} outside=${z.outside}` +
+      (z.missing.length ? ` missing=${z.missing.slice(0, 5).join(" | ")}` : ""));
     console.log(`   firstUc=${JSON.stringify(r.firstUc)} inDeck=${r.ucInDeck}`);
     console.log(`   pdf board smask=${r.pdfAlpha.smask} clear=${r.pdfAlpha.smask ? (r.pdfAlpha.clear * 100).toFixed(1) + "%" : "n/a"}`);
     if (bad.length) console.log("   FAILS: " + bad.map(b => b[0]).join(", "));

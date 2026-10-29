@@ -324,7 +324,7 @@ pipelines:
         mark: AI/BI
         summary: Finite scheduling, machining sequencing and labour loading against configured orders sales already promised, watched on schedule adherence and WIP ageing.
         uses:
-          - - Production Scheduler
+          - - Plant Performance
             - Sequence and changeover plans scored before the shift board posts.
           - - AI/BI
             - Schedule adherence and WIP ageing on governed definitions.

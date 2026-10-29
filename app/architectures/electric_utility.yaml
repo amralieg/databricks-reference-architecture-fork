@@ -455,7 +455,7 @@ pipelines:
         mark: AI/BI
         summary: Regulatory affairs on cost-of-service studies, class revenue requirements and rate design that survives a commission challenge.
         uses:
-          - - Rate Case Analytics
+          - - Rate Case Submissions
             - Cost allocation and class revenue requirements on governed ledgers.
           - - AI/BI
             - Regulatory KPIs the commission and board read.

@@ -3176,9 +3176,10 @@ function accelFor(t){ return (t && (t.accel || (t.problem && ACCEL_BY_NAME[canon
    A source system that Databricks ingests through a Lakeflow Connect managed (or
    standard) connector carries a cyan glowing dot on its tile and a "Lakeflow
    Connector Available" callout in the detail panel, linking to that connector's
-   own doc page. `connectorFor` is gated on `t.cat`, which only source tiles carry
+   own doc page. Name matching is gated on `t.cat`, which only source tiles carry
    (use cases carry `problem`, agents carry feeds, cloud services carry `role`), so
-   a use case, agent or cloud tile is never marked, and no tile carries both dots.
+   a use case, agent or cloud tile is marked only when its `conn` names a connector
+   id (a broker the Kafka connector reads), and no tile carries both dots.
    The link is cloud-correct: it follows the active cloud (ARCH.cloud.provider) so
    AWS/GCP resolve on docs.databricks.com and Azure resolves on the Azure Databricks
    docs (learn.microsoft.com/azure/databricks), never generic Microsoft docs. The
@@ -3194,21 +3195,22 @@ function connectorUrl(slug){
   return "https://docs.databricks.com/" + cl + "/en/" + LFC + slug;
 }
 const CONNECTORS = {};
+function connectorEntry(c){ return { n:c.n, note:c.note, u:c.u || connectorUrl(c.slug), tier:c.tier || "Official" }; }
 function connectorFor(t){
-  // An imported descriptor may carry an explicit per-tile connector (t.conn),
-  // which wins over name matching just as t.accel does for accelerators.
-  if(t && t.conn) return t.conn;
+  // A tile or an imported descriptor may carry an explicit per-tile connector
+  // (t.conn: a CONNECTORS id or a connector object), which wins over name
+  // matching just as t.accel does for accelerators.
+  if(t && t.conn) return typeof t.conn === "string" && CONNECTORS[t.conn] ? connectorEntry(CONNECTORS[t.conn]) : t.conn;
   if(!t || !t.cat || typeof t.n !== "string") return null;
-  for(const id in CONNECTORS){ const c = CONNECTORS[id]; if(c.re.test(t.n)) return { n:c.n, note:c.note, u:c.u || connectorUrl(c.slug), tier:c.tier || "Official" }; }
+  for(const id in CONNECTORS){ const c = CONNECTORS[id]; if(c.re.test(t.n)) return connectorEntry(c); }
   return null;
 }
 const CONNECTOR_CATALOG_TILE = "Lakeflow Connect";
 function dataConnectorFor(t){
   if(!t) return null;
   if(t.spark_connector) return { n:t.spark_connector, kind:"Spark", tier:"Community", u:t.spark_repo || "" };
-  if(t.conn) return { n:(t.conn.n || t.conn), kind:"Lakeflow", tier:(t.conn.tier || "Official"), u:(t.conn.u || "") };
   const c = connectorFor(t);
-  return c ? { n:c.n, kind:"Lakeflow", tier:c.tier, u:c.u } : null;
+  return c ? { n:(c.n || c), kind:"Lakeflow", tier:(c.tier || "Official"), u:(c.u || "") } : null;
 }
 /* Single resolver the tile dot, drawer callout and every export share, so accel
    and connector marking stay in one place. Accelerator (use case) wins if both
@@ -3241,41 +3243,48 @@ const HL_TITLE = { story:"Customer Stories", conn:"Data Connector",
 function sectionDot(kind){ return `<span class="badge-dot hl-${kind} d-secdot" aria-hidden="true"></span>`; }
 function tileVideos(t){ const L = t && t.n && LINKS[canonName(t.n)]; return (L && Array.isArray(L.videos)) ? L.videos : []; }
 function tileDemos(t){ const L = t && t.n && LINKS[canonName(t.n)]; return (L && Array.isArray(L.demos)) ? L.demos : []; }
-/* Persona (Teams) tiles are the only tiles that carry BOTH sub-roles and a
-   capabilities `uses` list — products and use cases never have both. Testing that
-   pair is format-agnostic, unlike probing sub[0]'s shape: industry boards author
-   `sub` either as {n,cares} objects (toTerse normalises {name,cares} to that) or
-   as [name,cares] pairs, and only the pair form would fail a shape probe, which
-   is exactly why airlines lost its learning track and its "who is in this team". */
-function isPersonaTile(t){ return !!(t && Array.isArray(t.sub) && t.sub.length && Array.isArray(t.uses) && t.uses.length); }
+/* Persona (Teams) tiles are the only tiles that carry a capabilities `uses` list;
+   products and use cases never do. Sub-roles are optional: most technical teams
+   on the industry boards list none, so `uses` alone marks a team. */
+function isPersonaTile(t){ return !!(t && Array.isArray(t.uses) && t.uses.length); }
 /* One sub-role, read from either authored shape: an {n,cares} object or a
    [name,cares] pair (same dual shape `uses` already tolerates below). */
 function subRole(p){ return Array.isArray(p) ? { n:p[0], cares:p[1] || "" } : { n:(p.n || p.name || ""), cares:(p.cares || "") }; }
-/* Industry boards rename the business personas (the reference "Business Teams"
-   becomes "Retail Banking", "Chief Credit Officer & CFO", etc.), so an exact
-   byPersona lookup misses on every industry board and the learning track
-   disappears. Map an unknown persona to the nearest canonical Academy track by
-   keyword on its name and sub-role titles; the technical personas keep their
-   reference names and match directly. Business personas that match nothing fall
-   back to the general "Business Teams" track. */
-const PERSONA_CANON = [
-  [/\b(risk|compliance|audit|regulat|governance)\b/i, "Risk & Compliance"],
-  [/\b(chief|ceo|cfo|coo|cro|c-suite|executive|leadership)\b/i, "Executives"],
-  [/analytics engineer/i, "Analytics Engineers"],
-  [/\b(data engineer|pipeline|ingest|platform)\b/i, "Data Engineers"],
-  [/\b(scientist|machine learning|ml|model)\b/i, "Data Scientists"],
-  [/\b(developer|application|software|app)\b/i, "App Developers"],
-  [/\b(analyst|analytics|bi)\b/i, "Data Analysts"],
-];
+/* Industry boards rename the personas ("Retail Banking", "Claims ML Engineers"),
+   so an exact byPersona lookup misses and the learning track disappears. A team
+   takes the nearest canonical track by keyword on its name, among the tracks of
+   its own Teams group: a technical team is a data scientist, an app developer, an
+   analyst or otherwise a data engineer; a business team is risk, an executive or
+   otherwise the general business track. */
+const PERSONA_CANON = {
+  business: [
+    [/\b(risk|compliance|audit|regulat\w*|governance)\b/i, "Risk & Compliance"],
+    [/\b(chief|ceo|cfo|coo|cro|c-suite|executives?|leadership)\b/i, "Executives"],
+  ],
+  technical: [
+    [/\b(governance|admin\w*)\b/i, "Risk & Compliance"],
+    [/analytics eng/i, "Analytics Engineers"],
+    [/\b(scien\w*|sci|ds|ml|machine learning|models?|quants?|forecast\w*|genai|ai|optimi[sz]ation)\b/i, "Data Scientists"],
+    [/\b(apps?|applications?|developers?|devs?|software)\b/i, "App Developers"],
+    [/\b(analysts?|analytics|bi|insights?|gis|hunters?)\b/i, "Data Analysts"],
+  ],
+};
+const PERSONA_DEFAULT = { business:"Business Teams", technical:"Data Engineers" };
+const TECH_TEAMS = /^technical$/i;
+function teamGroupKind(t){
+  const groups = (typeof ARCH !== "undefined" && ARCH && ARCH.rails && ARCH.rails.ppl && ARCH.rails.ppl.groups) || [];
+  const g = groups.find(x=> (x.tiles || []).includes(t)) || groups.find(x=> (x.tiles || []).some(y=> y && y.n === t.n));
+  return g && TECH_TEAMS.test(g.box || "") ? "technical" : "business";
+}
 function personaTrackKey(t, byPersona){
   if(!byPersona || !t || !t.n) return null;
   if(byPersona[t.n]) return t.n;
   /* Classify on the persona NAME only. Folding in sub-role titles was too noisy:
      a business persona like "Commercial Banking" carries a "Credit Risk Officers"
      sub-role and would wrongly resolve to the Risk & Compliance track. */
-  const name = t.n.toLowerCase();
-  for(const [re, key] of PERSONA_CANON){ if(re.test(name) && byPersona[key]) return key; }
-  return byPersona["Business Teams"] ? "Business Teams" : null;
+  const kind = teamGroupKind(t), name = t.n.toLowerCase();
+  for(const [re, key] of PERSONA_CANON[kind]){ if(re.test(name) && byPersona[key]) return key; }
+  return byPersona[PERSONA_DEFAULT[kind]] ? PERSONA_DEFAULT[kind] : null;
 }
 /* Academy course ids attached to a tile: a Teams persona via byPersona (with the
    canonical fallback above so industry-renamed personas still resolve), or a
@@ -3638,7 +3647,7 @@ const ARCH = {
       { box:"3rd Party", ic:"zplug", simple:2, tiles:[
         { n:"Managed ELT", ic:"etl", long:"Third-party managed connectors (Fivetran, Airbyte and similar) landing SaaS and database sources into the lakehouse, used where a source is not yet covered by Lakeflow Connect.", what:"Third-party managed connectors (Fivetran, Airbyte and similar) that land SaaS and database sources into the lakehouse where a source is not yet covered by Lakeflow Connect.", users:"Data engineers and analytics teams onboarding long-tail SaaS and database sources.", dataOut:{ batch:{ types:["structured","semi-structured"], vol:"GBs/day of connector syncs", interval:"Scheduled syncs (15 min to daily)" } } },
         { n:"Custom ETL Tool", ic:"etl", long:"Incumbent ETL estates (Informatica, Talend, DataStage and similar) that keep writing to the lakehouse during a migration, typically assessed and converted with Lakebridge.", what:"Incumbent ETL estates (Informatica, Talend, DataStage and similar) that keep writing to the lakehouse during a migration, typically assessed and converted with Lakebridge.", users:"Migration and platform teams retiring legacy ETL.", dataOut:{ batch:{ types:["structured"], vol:"existing pipeline outputs", interval:"Existing job schedules during migration" } } },
-        { n:"Streaming Brokers", ic:"stream", long:"Kafka, Confluent, MSK and equivalent brokers already in place, consumed by Lakeflow streaming pipelines or replaced by Zerobus for new producers.", what:"Kafka, Confluent, MSK and equivalent brokers already in place, consumed by Lakeflow streaming pipelines or replaced by Zerobus for new producers.", users:"Streaming and platform engineers.", dataOut:{ stream:{ types:["semi-structured"], vol:"event streams", interval:"Continuous" } } },
+        { n:"Streaming Brokers", ic:"stream", conn:"kafka", long:"Kafka, Confluent, MSK and equivalent brokers already in place, consumed by Lakeflow streaming pipelines or replaced by Zerobus for new producers.", what:"Kafka, Confluent, MSK and equivalent brokers already in place, consumed by Lakeflow streaming pipelines or replaced by Zerobus for new producers.", users:"Streaming and platform engineers.", dataOut:{ stream:{ types:["semi-structured"], vol:"event streams", interval:"Continuous" } } },
       ]},
     ]},
 
@@ -3932,7 +3941,7 @@ const ARCH = {
         ingest:[
           { n:"Azure Data Factory", role:"etl", ic:"etl", long:"Existing ADF pipelines keep landing data; Databricks activities run notebooks and jobs inside the same orchestration." },
           { n:"Fabric Data Factory", role:"etl2", ic:"etl", long:"Fabric-era pipelines landing data into ADLS Gen2 for Auto Loader and Lakeflow to pick up, and can also trigger Databricks Jobs inside the same orchestration." },
-          { n:"Azure Event Hubs", role:"streaming", ic:"eventbus", long:"Kafka-compatible event ingress consumed by Lakeflow streaming pipelines and Zerobus." },
+          { n:"Azure Event Hubs", role:"streaming", ic:"eventbus", conn:"kafka", long:"Kafka-compatible event ingress consumed by Lakeflow streaming pipelines and Zerobus." },
           { n:"Azure IoT Hub", role:"iot", ic:"iot", long:"Device telemetry and bi-directional device messaging feeding real-time pipelines." },
         ],
         bi:[
@@ -3969,7 +3978,7 @@ const ARCH = {
         ingest:[
           { n:"AWS Glue", role:"etl", ic:"etl", long:"Existing Glue ETL jobs keep landing data into S3 for Auto Loader and Lakeflow to pick up." },
           { n:"AWS DMS", role:"etl2", ic:"cdc", long:"Database Migration Service replicating CDC streams from operational databases onto the lake." },
-          { n:"Amazon Kinesis / MSK", role:"streaming", ic:"eventbus", long:"Kinesis Data Streams and managed Kafka consumed by Lakeflow streaming pipelines and Zerobus." },
+          { n:"Amazon Kinesis / MSK", role:"streaming", ic:"eventbus", conn:"kafka", long:"Kinesis Data Streams and managed Kafka consumed by Lakeflow streaming pipelines and Zerobus." },
           { n:"AWS IoT Core", role:"iot", ic:"iot", long:"Device telemetry and MQTT ingress feeding real-time pipelines." },
           { n:"Amazon AppFlow", role:"saas", ic:"connect", long:"SaaS-to-S3 transfers for sources not covered by a managed Lakeflow connector." },
         ],
@@ -5133,7 +5142,7 @@ function renderTop(target){
 
 /* ---------- full build ---------- */
 const CUSTOM_LS = "dbxarch.dais2026.custom";
-const SCHEMA = 51;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
+const SCHEMA = 52;  /* bump whenever the shape OR the baked-in content of a persisted branch changes */
 /* Keys inside a provider dataset that hold tile arrays. Every surface that shows
    provider-specific content reads from this list, so adding a surface later means
    adding one key here rather than hunting for loops. */
@@ -5997,7 +6006,7 @@ function ensureGovPersona(){
     const tile = JSON.parse(JSON.stringify(proto));
     const uc = boardBusinessUseCases();
     if(uc.length) tile.ucs = uc.slice(0, 3);
-    const tech = groups.find(g => /^technical$/i.test(g.box || "")) || groups[groups.length - 1];
+    const tech = groups.find(g => TECH_TEAMS.test(g.box || "")) || groups[groups.length - 1];
     if(tech && Array.isArray(tech.tiles)) tech.tiles.push(tile);
   } catch(e){}
 }
@@ -8253,7 +8262,7 @@ function enrichAccelConn(d){
   collect(groups); collect(d.top);
   for(const t of tiles){
     if(!t.accel){ const a = accelFor(t); if(a) t.accel = a; }
-    if(!t.conn){ const c = connectorFor(t); if(c) t.conn = c; }
+    if(!t.conn || typeof t.conn === "string"){ const c = connectorFor(t); if(c) t.conn = c; }
   }
 }
 /* The terse descriptor for whatever board is on screen. An industry on the
@@ -9078,6 +9087,7 @@ function pptxTheme(){
    as pictures, because those are artwork rather than geometry. */
 
 const PPT_SW = 12192000, PPT_SH = 6858000;   /* 13.333in x 7.5in, 16:9 */
+const PDF_PW = 842, PDF_PH = 595, PDF_TT = 24, PDF_BM = 6;
 const PPT_FONT = "Calibri";
 /* Every run carries the Latin face plus, when the content language needs a
    different script, the matching complex-script (cs, Arabic/Devanagari) or
@@ -9277,14 +9287,14 @@ function collectBoardInner(){
   const at = (x, y)=> ({ x:(x - B.left) / fitK, y:(y - B.top) / fitK });
   const rel = r=> Object.assign(at(r.left, r.top), { w:r.width / fitK, h:r.height / fitK });
   const label = (el, sel)=>{ const n = el.querySelector(sel); return n ? n.textContent.replace(/\s+/g, " ").trim() : ""; };
-  const group = (kind, parent, name, link)=>{
+  const group = (kind, parent, name, link, key)=>{
     const id = "g" + (groups.length + 1);
-    groups.push({ id, kind, parent, name:name || "", link:link || "" });
+    groups.push({ id, kind, parent, name:name || "", link:link || "", key:key || "" });
     return id;
   };
   const enter = (el, g)=>{
     for(const [sel, key] of EXPORT_ZONES) if(el.matches(sel)){
-      if(!zones[key]) zones[key] = group("zone", g, label(el, ".colhead, .pockhead, .ph-title, .cl-name span") || key);
+      if(!zones[key]) zones[key] = group("zone", g, label(el, ".colhead, .pockhead, .ph-title, .cl-name span") || key, "", key);
       return zones[key];
     }
     if(el.matches(".band, .band-row, .rgroup, .cloud-sec")) return group("box", g, label(el, ".band-lbl, .rg-label"));
@@ -9718,10 +9728,14 @@ function pptxParts(slides, title){
   /* Media parts are numbered across the whole package, not per slide, so a
      second slide carrying images cannot collide with the first. */
   let mediaSeq = 0;
-  slides.forEach(s=>{ s.mediaNames = (s.media || []).map(m=> "image" + (++mediaSeq) + "." + (m.ext || "png")); });
-  const allMedia = [];
-  slides.forEach(s=> (s.media || []).forEach((m, i)=>
-    allMedia.push({ name:"ppt/media/" + s.mediaNames[i], data:m.u8 || m })));
+  const allMedia = [], named = new Map();
+  slides.forEach(s=>{ s.mediaNames = (s.media || []).map(m=>{
+    if(!named.has(m)){
+      named.set(m, "image" + (++mediaSeq) + "." + (m.ext || "png"));
+      allMedia.push({ name:"ppt/media/" + named.get(m), data:m.u8 || m });
+    }
+    return named.get(m);
+  }); });
   const hasSvg = allMedia.some(m=> /\.svg$/.test(m.name));
   const empty = '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>' +
     '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/>' +
@@ -10008,32 +10022,44 @@ function excalidrawJson(model){
     appState:{ viewBackgroundColor:model.bg, gridSize:null }, files });
 }
 
-async function pptxEditableSlide(model){
-  const fit = pptxBoardFit(model.W, model.H), tree = exportTree(model);
-  const logos = await logoPngs(exportLogos(model));
-  const slide = { media:[], hlinks:[], body:"" };
-  logos.uniq.forEach(u=> slide.media.push(u.png, { u8:new TextEncoder().encode(u.xml), ext:"svg" }));
-  const collect = k=>{ if(!k.group) return;
-    if(k.group.link && slide.hlinks.indexOf(k.group.link) < 0) slide.hlinks.push(k.group.link);
-    k.kids.forEach(collect); };
-  tree.forEach(collect);
-  const E = v=> Math.round(v * fit.k);
-  let id = 2;
-  const node = (k, rid)=>{
+async function pptxEditableSlide(model, logos){
+  const fit = pptxBoardFit(model.W, model.H);
+  logos = logos || await logoPngs(exportLogos(model));
+  return pptxTreeSlide(docTitle(), fit, logos, exportTree(model).map(node=> ({ node, k:fit.k, ox:fit.ox, oy:fit.oy })));
+}
+function pptxTreeSlide(title, fit, logos, items){
+  const slide = { media:[], hlinks:[], body:"" }, used = new Map();
+  const collect = k=>{
     if(k.shape){
-      const s = k.shape, li = s.t === "img" ? logos.refs[s.ref] : -1;
-      return pptxShapeXml(s, id++, fit.k, fit.ox, fit.oy,
-        li >= 0 ? { png:pptxSlideRel(slide, "img", li * 2), svg:pptxSlideRel(slide, "img", li * 2 + 1) } : null, rid);
+      const li = k.shape.t === "img" ? logos.refs[k.shape.ref] : -1;
+      if(li >= 0 && !used.has(li)){
+        const u = logos.uniq[li];
+        used.set(li, used.size);
+        slide.media.push(u.png, u.svgMedia || (u.svgMedia = { u8:new TextEncoder().encode(u.xml), ext:"svg" }));
+      }
+      return;
     }
+    if(k.group.link && slide.hlinks.indexOf(k.group.link) < 0) slide.hlinks.push(k.group.link);
+    k.kids.forEach(collect);
+  };
+  items.forEach(it=> collect(it.node));
+  let id = 2;
+  const node = (k, rid, it)=>{
+    if(k.shape){
+      const s = k.shape, li = s.t === "img" ? used.get(logos.refs[s.ref]) : undefined;
+      return pptxShapeXml(s, id++, it.k, it.ox, it.oy,
+        li != null ? { png:pptxSlideRel(slide, "img", li * 2), svg:pptxSlideRel(slide, "img", li * 2 + 1) } : null, rid);
+    }
+    const E = v=> Math.round(v * it.k);
     const g = k.group, r = g.link ? pptxSlideRel(slide, "link", slide.hlinks.indexOf(g.link)) : rid, gid = id++;
-    const x = E(k.box.x) + fit.ox, y = E(k.box.y) + fit.oy, cx = Math.max(1, E(k.box.w)), cy = Math.max(1, E(k.box.h));
+    const x = E(k.box.x) + it.ox, y = E(k.box.y) + it.oy, cx = Math.max(1, E(k.box.w)), cy = Math.max(1, E(k.box.h));
     const xf = '<a:off x="' + x + '" y="' + y + '"/><a:ext cx="' + cx + '" cy="' + cy + '"/>';
     return '<p:grpSp><p:nvGrpSpPr><p:cNvPr id="' + gid + '" name="' + xmlEsc(g.name || g.kind) + '"' +
       (r ? '><a:hlinkClick r:id="' + r + '"/></p:cNvPr>' : "/>") + "<p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>" +
       "<p:grpSpPr><a:xfrm>" + xf + xf.replace("a:off", "a:chOff").replace("a:ext", "a:chExt") + "</a:xfrm></p:grpSpPr>" +
-      k.kids.map(c=> node(c, r)).join("") + "</p:grpSp>";
+      k.kids.map(c=> node(c, r, it)).join("") + "</p:grpSp>";
   };
-  slide.body = pptxTitleStrip(id++, docTitle(), fit.pad, fit.bandH) + tree.map(k=> node(k, "")).join("");
+  slide.body = pptxTitleStrip(id++, title, fit.pad, fit.bandH) + items.map(it=> node(it.node, "", it)).join("");
   return slide;
 }
 
@@ -10935,12 +10961,149 @@ function pptxTitleStrip(id, title, pad, bandH){
     '</a:solidFill>' + pptxRunFonts() + '</a:rPr><a:t>' + xmlEsc(title) +
     '</a:t></a:r></a:p></p:txBody></p:sp>';
 }
+const ZOOM_MIN_PT = { simple:9, detailed:8 }, ZOOM_GAP = 8, ZOOM_GROW = 2;
+const ZOOM_AREAS = [{ keys:["platform"], boxes:true }, { keys:["src", "ing", "ppl", "cons"] }, { keys:["top", "cloud"], boxes:true }];
+function zoomMinText(n){
+  if(n.shape) return n.shape.t === "text" ? n.shape.size : Infinity;
+  return n.kids.reduce((m, k)=> Math.min(m, zoomMinText(k)), Infinity);
+}
+function zoomExtent(kids){
+  let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+  kids.forEach(k=>{ const e = k.shape ? shapeExtent(k.shape) : k.box;
+    x1 = Math.min(x1, e.x); y1 = Math.min(y1, e.y); x2 = Math.max(x2, e.x + e.w); y2 = Math.max(y2, e.y + e.h); });
+  return { x:x1, y:y1, w:Math.max(1, x2 - x1), h:Math.max(1, y2 - y1) };
+}
+function zoomClip(s, y1, y2){
+  if(s.t === "arrow" || s.t === "poly") return null;
+  const e = shapeExtent(s);
+  if(s.t !== "rect"){ const c = e.y + e.h / 2; return c >= y1 && c < y2 ? s : null; }
+  const a = Math.max(e.y, y1), b = Math.min(e.y + e.h, y2);
+  if(b - a < 1) return null;
+  return a === e.y && b === e.y + e.h ? s : Object.assign({}, s, { box:Object.assign({}, s.box, { y:a, h:b - a }) });
+}
+function zoomSplit(n, maxH){
+  const subs = new Map();
+  n.kids.forEach(k=>{ if(k.group) subs.set(k, k.box.h > maxH ? zoomSplit(k, maxH) : [k]); });
+  const rows = [];
+  [...subs.values()].flat().sort((a, b)=> a.box.y - b.box.y).forEach(p=>{
+    const r = rows[rows.length - 1];
+    if(r && p.box.y < r.y2 - 0.5) r.y2 = Math.max(r.y2, p.box.y + p.box.h);
+    else rows.push({ y1:p.box.y, y2:p.box.y + p.box.h });
+  });
+  const cuts = [];
+  let top = n.box.y;
+  rows.forEach((r, i)=>{ if(i && r.y2 - top > maxH){ top = (rows[i - 1].y2 + r.y1) / 2; cuts.push(top); } });
+  let end = rows.length ? rows[rows.length - 1].y2 : Infinity;
+  n.kids.forEach(k=>{ if(k.shape && k.shape.t !== "rect" && k.shape.t !== "arrow"){ const e = shapeExtent(k.shape);
+    if(e.y + e.h / 2 >= (cuts[cuts.length - 1] || -Infinity)) end = Math.max(end, e.y + e.h); } });
+  const bounds = [-Infinity].concat(cuts, [isFinite(end) ? end + Math.min(ZOOM_GAP, Math.max(0, n.box.y + n.box.h - end)) : Infinity]);
+  return bounds.slice(1).map((y2, i)=>{
+    const y1 = bounds[i], kids = [];
+    n.kids.forEach(k=>{
+      if(k.shape){ const s = zoomClip(k.shape, y1, y2); if(s) kids.push({ shape:s }); }
+      else subs.get(k).forEach(p=>{ const c = p.box.y + p.box.h / 2; if(c >= y1 && c < y2) kids.push(p); });
+    });
+    return kids.length ? { group:n.group, kids, box:zoomExtent(kids) } : null;
+  }).filter(Boolean);
+}
+function zoomShelf(blocks, k, AW, AH, byZone){
+  const W = AW / k, H = AH / k, rows = [];
+  let total = -ZOOM_GAP;
+  for(const b of blocks){
+    const w = b.node.box.w, h = b.node.box.h;
+    if(w > W) return null;
+    const r = rows.find(r=> (!byZone || r.items[0].zone === b.zone) && r.w + ZOOM_GAP + w <= W && total - r.h + Math.max(r.h, h) <= H);
+    if(r){ total += Math.max(r.h, h) - r.h; r.items.push(b); r.w += ZOOM_GAP + w; r.h = Math.max(r.h, h); continue; }
+    if(total + ZOOM_GAP + h > H) return null;
+    total += ZOOM_GAP + h;
+    rows.push({ items:[b], w, h });
+  }
+  return { rows, W, H, total };
+}
+function zoomSlides(model, AW, AH, minUnits){
+  const tree = exportTree(model), slides = [];
+  const need = n=>{ const px = zoomMinText(n); return isFinite(px) ? minUnits / px : 0; };
+  ZOOM_AREAS.forEach(area=>{
+    const blocks = [];
+    area.keys.forEach(key=>{
+      const z = tree.find(n=> n.group && n.group.kind === "zone" && n.group.key === key);
+      if(!z) return;
+      (area.boxes ? z.kids.filter(k=> k.group) : [z]).forEach(n=>{
+        const k = need(n);
+        zoomSplit(n, k ? AH / k : Infinity).forEach(p=> blocks.push({ node:p, need:need(p), zone:z.group.name }));
+      });
+    });
+    if(!blocks.length) return;
+    const shelf = (bs, k)=> zoomShelf(bs, k, AW, AH, area.boxes);
+    const pack = order=>{
+      const out = [];
+      order.forEach(b=>{
+        const s = out.find(s=> shelf(s.blocks.concat(b), Math.max(s.need, b.need)));
+        if(s){ s.blocks.push(b); s.need = Math.max(s.need, b.need); }
+        else out.push({ blocks:[b], need:b.need });
+      });
+      return out;
+    };
+    const by = f=> blocks.slice().sort((a, b)=> f(b) - f(a));
+    const orders = area.boxes ? [blocks, by(b=> b.node.box.w), by(b=> b.node.box.h)] : [blocks];
+    const first = orders.map(pack).reduce((a, b)=> b.length < a.length ? b : a);
+    const needOf = bs=> Math.max(...bs.map(b=> b.need));
+    const fillOf = bs=> bs.reduce((a, b)=> a + b.node.box.w * b.node.box.h, 0) * needOf(bs) * needOf(bs);
+    let best = null, score = null;
+    for(let n = 1; n <= first.length && !best; n++) orders.forEach(order=>{
+      const rec = (i, left, acc)=>{
+        if(left === 1){
+          const g = order.slice(i);
+          if(!shelf(g, needOf(g))) return;
+          const fills = acc.concat([g]).map(fillOf), sc = [Math.min(...fills), -Math.max(...fills)];
+          if(!score || sc[0] > score[0] || (sc[0] === score[0] && sc[1] > score[1])){ score = sc; best = acc.concat([g]); }
+          return;
+        }
+        for(let j = i + 1; j <= order.length - left + 1; j++){
+          const g = order.slice(i, j);
+          if(shelf(g, needOf(g))) rec(j, left - 1, acc.concat([g]));
+        }
+      };
+      rec(0, n, []);
+    });
+    best = best ? best.map(g=> ({ blocks:g, need:needOf(g) })) : first;
+    best.forEach((s, i)=>{
+      const read = s.blocks.slice().sort((a, b)=> blocks.indexOf(a) - blocks.indexOf(b));
+      if(shelf(read, s.need)) s.blocks = read;
+      const hi = Math.min(...s.blocks.map(b=> Math.min(AW / b.node.box.w, AH / b.node.box.h)));
+      let lo = shelf(s.blocks, s.need) ? s.need : 0, up = s.need ? Math.max(lo, Math.min(hi, s.need * ZOOM_GROW)) : hi;
+      if(shelf(s.blocks, up)) lo = up;
+      else for(let j = 0; j < 30; j++){ const m = (lo + up) / 2; if(shelf(s.blocks, m)) lo = m; else up = m; }
+      const k = lo, fit = shelf(s.blocks, k), items = [];
+      let y = (fit.H - fit.total) / 2;
+      fit.rows.forEach(r=>{
+        let x = (fit.W - r.w) / 2;
+        r.items.forEach(b=>{ items.push({ node:b.node, x:x * k, y:y * k }); x += b.node.box.w + ZOOM_GAP; });
+        y += r.h + ZOOM_GAP;
+      });
+      const names = blocks.map(b=> b.zone).filter((z, j, a)=> a.indexOf(z) === j && s.blocks.some(b=> b.zone === z));
+      slides.push({ title:names.join(" \u00b7 ") + (best.length > 1 ? " (" + (i + 1) + "/" + best.length + ")" : ""), k, items });
+    });
+  });
+  return slides;
+}
+function deckZoomPlan(model){
+  const fit = pptxBoardFit(model.W, model.H), AW = PPT_SW * (1 - fit.pad * 2), AH = PPT_SH * (1 - fit.pad * 2) - fit.bandH;
+  const pdf = Math.min(1, (PDF_PW - PDF_BM * 2) * 12700 / AW, (PDF_PH - PDF_TT - PDF_BM) * 12700 / AH);
+  return { fit, AW, AH, W:model.W, H:model.H, slides:zoomSlides(model, AW, AH, (ZOOM_MIN_PT[viewMode] || 8) * 12700 / pdf) };
+}
+function pptxZoomSlides(plan, logos){
+  const ox = Math.round(PPT_SW * plan.fit.pad), oy = Math.round(PPT_SH * plan.fit.pad + plan.fit.bandH);
+  return plan.slides.map(sl=> pptxTreeSlide(sl.title, plan.fit, logos, sl.items.map(it=> ({ node:it.node, k:sl.k,
+    ox:ox + Math.round(it.x - it.node.box.x * sl.k), oy:oy + Math.round(it.y - it.node.box.y * sl.k) }))));
+}
 async function exportPptx(){
   const title = docTitle();
   const coverGlyphPng = await (async()=>{ const cv = await coverGlyphCanvas(1400, ooxmlRtl()); return cv ? canvasPngU8(cv) : null; })();
   const coverLogoPng = await dbxLogoPngU8(140, expInk());
-  const board = await pptxEditableSlide(collectBoard());
-  return zipStore(pptxParts([pptxCoverSlide(coverGlyphPng, coverLogoPng), pptxIndexSlide(), board].concat(await pptxNarrativeSlides(coverGlyphPng)), title));
+  const model = collectBoard(), logos = await logoPngs(exportLogos(model));
+  const board = await pptxEditableSlide(model, logos), zoom = pptxZoomSlides(deckZoomPlan(model), logos);
+  return zipStore(pptxParts([pptxCoverSlide(coverGlyphPng, coverLogoPng), pptxIndexSlide(), board].concat(zoom, await pptxNarrativeSlides(coverGlyphPng)), title));
 }
 /* A copy of this page with the live state frozen in, so the download opens with
    the same edits and cloud provider the user is looking at. */
@@ -11383,14 +11546,15 @@ function dsClosing(){ const col = dsCols(), links = closingLinks();
    rasterised like the other non-Latin pages, and the transparent board image is
    drawn over them where boardPage() puts it. Latin languages keep the crisp
    vector boardPage(). */
-function dsBoard(){
+function dsBoard(title){
   const rtl = (typeof I18N !== "undefined" && I18N.dir === "rtl");
   return '<div style="position:absolute;left:18.7px;right:18.7px;top:10px;font-weight:700;font-size:18.7px;' +
     'line-height:1.2;white-space:nowrap;overflow:hidden;' + (rtl ? "text-align:right;" : "") + '">' +
-    xmlEsc(docTitle()) + '</div>';
+    xmlEsc(title || docTitle()) + '</div>';
 }
 async function boardPdfBlob(){
-  const { canvas, w, h } = await boardCanvas(1.6);
+  const zoom = deckZoomPlan(collectBoard());
+  const { canvas, w, h } = await boardCanvas(Math.min(3, Math.sqrt(16e6 / (zoom.W * zoom.H))));
   const px = canvas.getContext("2d").getImageData(0, 0, w, h).data;
   const rgb = new Uint8Array(w * h * 3), alpha = new Uint8Array(w * h);
   for(let i=0, j=0, k=0; i<px.length; i+=4){ rgb[j++]=px[i]; rgb[j++]=px[i+1]; rgb[j++]=px[i+2]; alpha[k++]=px[i+3]; }
@@ -11406,7 +11570,7 @@ async function boardPdfBlob(){
      it rides as a second XObject (/Im1) above the kicker; RAST covers carry it in
      dsCover instead. */
   const coverLogoImg = await dbxLogoRgbOnBg(140, expBg(), expInk());
-  const PW = 842, PH = 595, M = 14;                        /* A4 landscape, points */
+  const PW = PDF_PW, PH = PDF_PH, M = 14;                  /* A4 landscape, points */
   const TB = 26;                          /* title strip, points, above the board */
   const NM = 54;                          /* margin on the narrative pages, points */
   const enc = new TextEncoder();
@@ -11558,18 +11722,31 @@ async function boardPdfBlob(){
      allows instead of floating centred behind a wide margin (more zoom room).
      The board title anchors to the reading side (right for RTL content). */
   const boardDraw = im=>{
-    const TT = 24;                          /* title band from the top edge */
-    const BM = 6;                           /* tight side/bottom board margin */
+    const TT = PDF_TT;                      /* title band from the top edge */
+    const BM = PDF_BM;                      /* tight side/bottom board margin */
     const availW = PW - BM * 2, availH = PH - TT - BM;
     const k = Math.min(availW / w, availH / h);
     const dw = w * k, dh = h * k, dx = (PW - dw) / 2, dy = (PH - TT) - dh;
     return "q " + dw.toFixed(2) + " 0 0 " + dh.toFixed(2) + " " + dx.toFixed(2) + " " + dy.toFixed(2) +
       " cm " + im + " Do Q\n";
   };
-  const boardPage = ()=>{
-    const tx = ooxmlRtl() ? (PW - M - pdfTextW(docTitle(), 14)) : M;
-    const c = rectF(bgc, 0, 0, PW, PH) + boardDraw("/Im0") + txt("F1", 14, ink, tx, PH - 20, docTitle());
+  const boardPage = (title, draw)=>{
+    title = title || docTitle();
+    const tx = ooxmlRtl() ? (PW - M - pdfTextW(title, 14)) : M;
+    const c = rectF(bgc, 0, 0, PW, PH) + (draw || boardDraw)("/Im0") + txt("F1", 14, ink, tx, PH - 20, title);
     return { content:c, annots:[], usesImage:true, imgIndex:0 };
+  };
+  const zoomDraw = sl=> im=>{
+    const x0 = Math.min(...sl.items.map(it=> it.x)), y0 = Math.min(...sl.items.map(it=> it.y));
+    const cw = Math.max(...sl.items.map(it=> it.x + it.node.box.w * sl.k)) - x0, ch = Math.max(...sl.items.map(it=> it.y + it.node.box.h * sl.k)) - y0;
+    const f = Math.min((PW - PDF_BM * 2) / cw, (PH - PDF_TT - PDF_BM) / ch), left = (PW - cw * f) / 2 - x0 * f;
+    const n = v=> v.toFixed(2);
+    return sl.items.map(it=>{
+      const s = sl.k * f, b = it.node.box, X = left + it.x * f, top = PDF_TT + (it.y - y0) * f;
+      return "q " + n(X) + " " + n(PH - top - b.h * s) + " " + n(b.w * s) + " " + n(b.h * s) + " re W n " +
+        n(zoom.W * s) + " 0 0 " + n(zoom.H * s) + " " + n(X - b.x * s) + " " + n(PH - top - (zoom.H - b.y) * s) +
+        " cm " + im + " Do Q\n";
+    }).join("");
   };
 
   /* ---- page: Contents / index, right after the cover ---- */
@@ -11797,6 +11974,8 @@ async function boardPdfBlob(){
   deckSections().forEach(sec=>{
     if(sec.kind === "board"){
       pages.push(RAST ? { raster:true, html:dsBoard(), board:true } : boardPage());
+      zoom.slides.forEach(sl=> pages.push(RAST ? { raster:true, html:dsBoard(sl.title), board:true, draw:zoomDraw(sl) }
+        : boardPage(sl.title, zoomDraw(sl))));
       si++; return;
     }
     const role = DECK_ROLES[si % DECK_ROLES.length];
@@ -11876,7 +12055,7 @@ async function boardPdfBlob(){
     let content, imgIdxList = [], annots = "";
     if(p.raster){
       imgIdxList = p.board ? [p.imgIndex, 0] : [p.imgIndex];
-      content = "q " + PW + " 0 0 " + PH + " 0 0 cm /Im0 Do Q\n" + (p.board ? boardDraw("/Im1") : "");
+      content = "q " + PW + " 0 0 " + PH + " 0 0 cm /Im0 Do Q\n" + (p.board ? (p.draw || boardDraw)("/Im1") : "");
     } else {
       content = p.content;
       /* a page paints /Im0../ImN in the order it recorded them: several glyph

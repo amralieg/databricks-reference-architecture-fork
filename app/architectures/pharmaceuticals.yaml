@@ -546,7 +546,7 @@ pipelines:
             cares: disproportionality and NLP models over ICSR and case text.
         ucs:
           - Lead Optimization / QSAR
-          - Assay & Screening Analytics
+          - Enrollment Forecast
           - Yield Optimisation
           - Safety Signal Detect
       - name: App Developers

@@ -17,6 +17,8 @@ const NAME_EXEMPT = {
 };
 const VENDOR_STRIP = /\b(event logs|audit logs|system logs|unified audit logs|logs|organization|activity logging|hcm|reports|event stream|waf|support|aggregated|falcon)\b/gi;
 const VENDOR_SKIP = new Set(["zip", "square", "atlassian", "anthropic", "openai", "glean"]);
+const BUSINESS_TRACKS = new Set(["Business Teams", "Executives", "Risk & Compliance"]);
+const KAFKA_BROKERS = /\bkafka\b|confluent|\bmsk\b|event hubs?|streaming brokers/i;
 
 const norm = s => String(s || "").toLowerCase().replace(/\(.*?\)/g, " ").replace(/\b(databricks|oss|the)\b/g, " ")
   .replace(/[^a-z0-9+]+/g, " ").replace(/\s+/g, " ").trim();
@@ -49,8 +51,11 @@ function vendorPatterns(catalog) {
     for (const id of ids) {
       await page.evaluate(async i => { i === "generic" ? build() : await applyIndustry(i, false); }, id);
       (view === "detailed" ? tiles : simpleTiles).push(...await page.evaluate(({ board, cloud }) => Object.values(byId).filter(r => r.tile && typeof r.tile.n === "string").map(r => {
-        const t = r.tile, cf = t.cat ? connectorFor(t) : null, df = t.cat ? dataConnectorFor(t) : null;
+        const t = r.tile, cf = connectorFor(t), df = dataConnectorFor(t);
+        const tg = r.el.closest(".pocket.ppl .rgroup, .rail.ppl .rgroup"), tgl = tg && tg.querySelector(".rg-label");
         return { board, cloud, n: t.n, canon: canonName(t.n), head: r.arr == null, title: r.el.classList.contains("plat-head"),
+          team: !!tg, tech: !!tgl && tgl.textContent.trim() === T("Technical"), persona: isPersonaTile(t),
+          track: isPersonaTile(t) ? personaTrackKey(t, ACADEMY.byPersona) : null,
           src: !!t.cat, kinds: hlKinds(t), dots: [...r.el.querySelectorAll(":scope > .badge-dot[data-hl]")].map(d => d.dataset.hl),
           cf: cf ? cf.n : null, df: df ? df.n : null, dfTier: df ? df.tier : null, dfKind: df ? df.kind : null };
       }), { board: view === "simple" ? id + "@simple" : id, cloud }));
@@ -123,10 +128,26 @@ function vendorPatterns(catalog) {
     if (want.length !== r.dots.length || want.some(k => !r.dots.includes(k)))
       fail("dots:" + r.board + ":" + r.n, `'${r.n}' (${r.board}) draws dots [${r.dots}] but carries [${want}]`);
   }
+  const teams = tiles.concat(simpleTiles).filter(r => !r.head && r.team);
+  if (!teams.length || !teams.some(r => r.tech)) fail("teams-none", `the Teams rail placed ${teams.length} teams, ${teams.filter(r => r.tech).length} of them technical`);
+  for (const r of tiles.concat(simpleTiles)) {
+    if (r.head || r.team === r.persona) continue;
+    fail("team:" + r.board + ":" + r.n, r.team ? `team '${r.n}' (${r.board}) is not read as a team, so it shows no learning track, certifications, demos or videos`
+      : `'${r.n}' (${r.board}) is read as a team outside the Teams rail`);
+  }
+  for (const r of teams) {
+    for (const k of ["course", "cert"]) if (!r.dots.includes(k)) fail("teamdot:" + r.board + ":" + r.n + ":" + k, `team '${r.n}' (${r.board}/${r.cloud}) draws no ${k} dot`);
+    if (r.tech ? BUSINESS_TRACKS.has(r.track) && !(r.track === "Risk & Compliance" && /governance|admin/i.test(r.n)) : !BUSINESS_TRACKS.has(r.track))
+      fail("track:" + r.board + ":" + r.n, `${r.tech ? "technical" : "business"} team '${r.n}' (${r.board}) takes the '${r.track}' learning track`);
+  }
   for (const r of leaf) {
-    if (!r.src) continue;
+    if (!r.src && !r.cf) continue;
     if ((r.dfKind === "Lakeflow" && r.cf !== r.df) || (!r.df && r.cf))
       fail("par:" + r.n, `connector dot and callout disagree on '${r.n}' (${r.board}): callout=${r.cf} dot=${r.df}`);
+  }
+  for (const r of leaf) {
+    if (r.persona || !KAFKA_BROKERS.test(r.n) || (r.df === "Apache Kafka" && r.cf === "Apache Kafka" && r.dots.includes("conn"))) continue;
+    fail("broker:" + r.board + ":" + r.n, `'${r.n}' (${r.board}/${r.cloud}) is read with the Apache Kafka connector but shows ${r.df ? "the " + r.df + " connector" : "no connector"}`);
   }
   const pats = vendorPatterns(res.catalog);
   for (const r of leaf) {
@@ -167,6 +188,9 @@ function vendorPatterns(catalog) {
   const srcCount = new Set(leaf.filter(r => r.src).map(r => r.n)).size;
   console.log(`boards: ${tiles.length ? new Set(tiles.map(r => r.board)).size : 0} x ${CLOUDS.length} clouds, tile placements: ${tiles.length}, distinct leaf tiles: ${leafNames.size}`);
   console.log(`Simplified on ${CLOUDS[0]}: ${simpleTiles.length} tile placements against ${detailedFirst} in Detailed, every one checked for its dots`);
+  const techTeams = teams.filter(r => r.tech), trackCount = {};
+  techTeams.forEach(r => trackCount[r.track] = (trackCount[r.track] || 0) + 1);
+  console.log(`team placements: ${teams.length}, technical: ${techTeams.length} (${Object.entries(trackCount).map(([k, v]) => k + "=" + v).join(" ")})`);
   console.log(`source tiles: ${srcCount}, catalog connectors: ${res.catalog.length}, aliases: ${Object.keys(res.aliases).length}`);
   console.log(`resourced entries: ${Object.entries(resourced).map(([k, v]) => k + "=" + v.length).join(" ")}`);
   console.log(`exempt with a reason: orphans ${Object.keys(ORPHAN_EXEMPT).length}, names ${Object.keys(NAME_EXEMPT).length}, connectors ${Object.keys(CONNECTOR_EXEMPT).length}`);

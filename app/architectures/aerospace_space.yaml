@@ -433,7 +433,7 @@ pipelines:
         mark: Lakehouse//RT
         summary: Production and assembly on rate, takt and station performance, quality and MRB on nonconformance and first-pass yield, and supply chain on part availability and supplier quality across the extended aerospace supply base.
         uses:
-          - - Yield & MRB Cockpit
+          - - Manufacturing Yield & Supply
             - Station yield and nonconformance flagged before a unit is at risk.
           - - Lakehouse//RT
             - Live MES and historian state at the latency a pulse line moves at.

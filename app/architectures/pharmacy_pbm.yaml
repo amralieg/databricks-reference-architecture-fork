@@ -485,7 +485,7 @@ pipelines:
         mark: Lakehouse//RT
         summary: Retail pharmacy operations on dispensing workflow and throughput, mail and specialty on fulfillment and patient support, and inventory on stock, replenishment and 340B accumulation.
         uses:
-          - - Pharmacy management system
+          - - Dispensing Queue
             - Fill volume, wait time and out-of-stock risk monitored in the external pharmacy-management workspace.
           - - Lakehouse//RT
             - Live dispensing and inventory state at the latency a pharmacy moves at.

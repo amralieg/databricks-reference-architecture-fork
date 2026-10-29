@@ -422,7 +422,7 @@ pipelines:
         mark: AI/BI
         summary: Infection prevention, sepsis-bundle compliance and hospital-acquired-condition reduction, catching the deterioration before the public measure does.
         uses:
-          - - Quality Dashboard
+          - - eCQM Quality Measures
             - Core measures and HAC rates before public reporting.
           - - AI/BI
             - Mortality and complication indices on governed definitions.

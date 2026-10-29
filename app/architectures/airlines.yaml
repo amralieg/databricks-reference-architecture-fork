@@ -420,7 +420,7 @@ pipelines:
             - The forecast, override history and revenue at risk on a flight before a bid price is touched.
           - - Continuous Pricing & NDC
             - Offers priced per shopping request rather than against a filed fare ladder.
-          - - Loyalty & Ancillary
+          - - Ancillary Merchandising
             - Seats, bags and lounge access merchandised per passenger against the loyalty profile.
           - - Model Serving
             - Demand and willingness-to-pay models scored inside the offer path.

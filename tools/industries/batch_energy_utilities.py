@@ -181,7 +181,7 @@ INDUSTRIES_BATCH_ENERGY_UTILITIES = {
                     ],
                     ucs=["Vegetation Management", "Capital Planning", "Voltage Management"]),
                 biz("Regulatory & Rates", "AI/BI", "Regulatory affairs on cost-of-service studies, class revenue requirements and rate design that survives a commission challenge.",
-                    [["Rate Case Analytics", "Cost allocation and class revenue requirements on governed ledgers."], ["AI/BI", "Regulatory KPIs the commission and board read."], ["Unity Catalog", "One definition of revenue and plant investment across finance and operations."]],
+                    [["Rate Case Submissions", "Cost allocation and class revenue requirements on governed ledgers."], ["AI/BI", "Regulatory KPIs the commission and board read."], ["Unity Catalog", "One definition of revenue and plant investment across finance and operations."]],
                     sub=[
                         ["Rate Design", "class revenue requirements and cost causation that survives challenge."],
                         ["Regulatory Affairs", "commission filings, data requests and the reliability record."],

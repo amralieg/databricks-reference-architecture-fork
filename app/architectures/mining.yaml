@@ -389,7 +389,7 @@ pipelines:
         mark: Unity Catalog
         summary: Fatal-risk protocols, Scope 1 emissions and community commitments the board signs, tracked on TRIFR and permit-breach counts before audit.
         uses:
-          - - Safety Dashboard
+          - - Workforce Safety
             - Leading indicators and permit breaches before audit.
           - - Unity Catalog
             - Lineage from sensor to regulatory disclosure.

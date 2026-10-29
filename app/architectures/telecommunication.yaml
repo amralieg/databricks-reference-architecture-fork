@@ -431,7 +431,7 @@ pipelines:
         mark: CustomerLake
         summary: Product owners on offer uptake, upsell and retention campaigns, scoring next-best-offer per subscriber before the contract renewal window.
         uses:
-          - - Offer Management
+          - - Next Best Offer
             - Propensity-scored upsell before renewal, delivered through the Churn Prevention Hub.
           - - CustomerLake
             - Segments without copying profiles into a separate CDP.

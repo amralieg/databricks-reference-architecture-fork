@@ -215,7 +215,7 @@ INDUSTRIES_BATCH_AEROSPACE_SPACE = {
                     ucs=["Digital Thread", "Simulation & Test", "Geospatial Intelligence"]),
                 biz("Mfg & Quality", "Lakehouse//RT",
                     "Production and assembly on rate, takt and station performance, quality and MRB on nonconformance and first-pass yield, and supply chain on part availability and supplier quality across the extended aerospace supply base.",
-                    [["Yield & MRB Cockpit", "Station yield and nonconformance flagged before a unit is at risk."],
+                    [["Manufacturing Yield & Supply", "Station yield and nonconformance flagged before a unit is at risk."],
                      ["Lakehouse//RT", "Live MES and historian state at the latency a pulse line moves at."],
                      ["Model Serving", "Defect and supplier-risk models scored against in-line inspection."]],
                     sub=[["Production & assembly", "rate, takt and station performance on the line."],
