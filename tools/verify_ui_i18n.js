@@ -496,6 +496,7 @@ function offline(){
       if(['de', 'nl', 'da', 'sv'].includes(l) && build && build.joinKept && build.joinKept(t, found, l) !== t) fails.push(`[${l}] a kept term does not join the words next to it in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
       const colon = l === 'fi' && build && build.pinnedTerm && found.find(f => build.pinnedTerm(f, l) && new RegExp(esc(f) + ':\\p{L}', 'u').test(t));
       if(colon) fails.push(`[fi] '${colon}' takes its case ending after a colon in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
+      for(const w of build && build.pinUnconfirmed ? build.pinUnconfirmed(s, t, l) : []) fails.push(`[${l}] no word in the translation confirms the sense '${w}' stands for in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
       for(const what of senseFails(s, t, l, from[s], found)) fails.push(`[${l}] ${what}: '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
     }
     for(const s of TOUR){
