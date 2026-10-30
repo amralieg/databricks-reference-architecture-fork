@@ -462,6 +462,11 @@ const SENSE = [
       bad: Object.fromEntries(LANGS.map(l => [l, { test: t => !t.includes(name) }])) })),
 ];
 const prose = s => { const w = s.trim().split(/\s+/); return w.length >= 3 && w.some(x => /^[a-z]{2,}/.test(x)); };
+const senseFails = (s, t, l, file, found) => {
+  const bare = found.reduce((x, f) => x.split(f).join(' '), t);
+  return SENSE.filter(r => r.bad[l] && r.src.test(s) && !(r.except && r.except.test(s)) && !(r.only && r.only.indexOf(s) < 0) &&
+    !(r.notOn && r.notOn.includes(file)) && !(r.onlyOn && !r.onlyOn.includes(file)) && r.bad[l].test(r.bad[l] instanceof RegExp ? bare : t)).map(r => r.what);
+};
 
 function offline(){
   const build = fs.existsSync(path.join(__dirname, 'build_i18n.js')) ? require('./build_i18n.js') : null;
@@ -484,15 +489,14 @@ function offline(){
       const found = build ? build.protect(s, l).found : [];
       const lost = found.find(f => (named.has(f) || named.has(one(f))) && !t.includes(f) && !(named.has(one(f)) && t.includes(one(f))));
       if(lost) fails.push(`[${l}] '${lost}' should read as written in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
-      const bare = found.reduce((x, f) => x.split(f).join(' '), t);
       const CJK = '[\u3000-\u30ff\u3400-\u9fff\uff00-\uffef]', esc = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const split = found.find(f => (l === 'ja' || l === 'zh') ? (new RegExp('^' + CJK).test(f) && new RegExp(CJK + ' +' + esc(f)).test(t)) || (new RegExp(CJK + '$').test(f) && new RegExp(esc(f) + ' +' + CJK).test(t))
         : l === 'he' && /^[\u05D0-\u05EA]/.test(f) && new RegExp('(^|[\\s(])[ובלמהשכ]{1,3}-\u2060?' + esc(f)).test(t));
       if(split) fails.push(`[${l}] '${split}' is cut off from the word next to it in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
-      for(const r of SENSE){
-        if(!r.bad[l] || !r.src.test(s) || (r.except && r.except.test(s)) || (r.only && r.only.indexOf(s) < 0) || (r.notOn && r.notOn.includes(from[s])) || (r.onlyOn && !r.onlyOn.includes(from[s]))) continue;
-        if(r.bad[l].test(r.bad[l] instanceof RegExp ? bare : t)) fails.push(`[${l}] ${r.what}: '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
-      }
+      if(['de', 'nl', 'da', 'sv'].includes(l) && build && build.joinKept && build.joinKept(t, found, l) !== t) fails.push(`[${l}] a kept term does not join the words next to it in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
+      const colon = l === 'fi' && build && build.pinnedTerm && found.find(f => build.pinnedTerm(f, l) && new RegExp(esc(f) + ':\\p{L}', 'u').test(t));
+      if(colon) fails.push(`[fi] '${colon}' takes its case ending after a colon in '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
+      for(const what of senseFails(s, t, l, from[s], found)) fails.push(`[${l}] ${what}: '${s.slice(0, 60)}' => '${t.slice(0, 60)}'`);
     }
     for(const s of TOUR){
       if(prose(s) && !d[s]) fails.push(`[${l}] the tour text '${s.slice(0, 60)}' has no translation`);
@@ -604,7 +608,9 @@ async function rendered(){
   return { checked, fails, errors };
 }
 
-(async () => {
+module.exports = { senseFails };
+
+if(require.main === module) (async () => {
   const a = offline();
   console.log(`offline: ${LANGS.length} languages, ${a.n} translations, ${TOUR.length} tour strings, ${a.fails.length} problems`);
   if(a.partial) console.log('offline: tools/build_i18n.js is not in this checkout, so names that stay as written and full stops the English does not have are not checked');
