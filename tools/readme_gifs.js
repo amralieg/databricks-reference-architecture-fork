@@ -10,6 +10,7 @@ const { serve, boardReady } = require('./lib_serve');
 const DOCS = path.join(__dirname, '..', 'docs');
 const VW = 1728, VH = 1180, CAPW = 1440, CAPH = Math.round(CAPW * VH / VW), OUTW = 960, FPS = 25;
 const AZ = '&cloud=azure&theme=light';
+const ease3 = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const FREEZE = '.flow::before,.medal-arrow::before,.pocket.ing::before,.pocket.ppl::before,.zring path,' +
   '.badge-dot::after,.d-badge .db-dot::after,.ix{animation:none!important}';
 
@@ -40,7 +41,7 @@ function cursorOverlay() {
 
 function pilot(page) {
   let at = [-60, -60];
-  const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const ease = ease3;
   const p = {
     page,
     async place(x, y) { at = [x, y]; await page.mouse.move(x, y); },
@@ -159,17 +160,22 @@ const SCENES = {
     },
   },
   'use-case': {
-    q: '?industry=banking' + AZ, at: [760, 700],
+    q: '?industry=oil_gas_upstream&shape=z' + AZ, at: [980, 470],
+    camera: { viewport: [1280, 875], out: [1250, 853], zoomFps: 7 },
     async run(a) {
-      await a.hold(600);
-      await a.glideTo({ tile: 'Real-Time Fraud' }, 1000);
-      await a.hold(650);
+      await a.hold(1200);
+      a.cam([536, 45, 744, 508], 800);
+      await a.glideTo({ tile: 'Predictive Maintenance & Asset Health' }, 1100);
+      await a.hold(500);
       await a.click();
       await a.drawerOpen();
-      await a.glideTo({ text: 'Fraud Framework', within: '#drawer', tag: 'a' }, 900, 0.3, 0.5);
-      await a.hold(900);
-      await a.glideTo({ text: 'Coinbase', within: '#drawer', tag: 'a' }, 800, 0.3, 0.5);
-      await a.hold(2400);
+      await a.hold(700);
+      await a.glideTo({ text: 'IoT Anomaly Detection', within: '#drawer', tag: 'a' }, 900, 0.3, 0.5);
+      await a.hold(1300);
+      for (let i = 0; i < 13; i++) { await a.page.mouse.wheel(0, 40); await a.page.waitForTimeout(45); }
+      await a.hold(500);
+      await a.glideTo({ text: "BP's Geospatial", within: '#drawer', tag: 'a' }, 800, 0.3, 0.5);
+      await a.hold(2600);
     },
   },
   region: {
@@ -244,6 +250,7 @@ async function record(page, scene, dir) {
   await page.waitForTimeout(150);
   const cdp = await page.context().newCDPSession(page);
   const frames = [];
+  if (scene.camera) return recordCamera(page, scene, a, cdp, frames, dir);
   cdp.on('Page.screencastFrame', f => {
     const file = path.join(dir, 'f' + String(frames.length).padStart(5, '0') + '.png');
     fs.writeFileSync(file, Buffer.from(f.data, 'base64'));
@@ -260,11 +267,46 @@ async function record(page, scene, dir) {
   return { frames: frames.sort((x, y) => x.t - y.t), start, end };
 }
 
+async function recordCamera(page, scene, a, cdp, frames, dir) {
+  const [vw, vh] = scene.camera.viewport, [ow, oh] = scene.camera.out, aspect = ow / oh;
+  const fit = ([x, y, w, h]) => {
+    const cx = x + w / 2, cy = y + h / 2;
+    if (w / h > aspect) w = h * aspect; else h = w / aspect;
+    return [Math.max(0, cx - w / 2), Math.max(0, cy - h / 2), w, h];
+  };
+  let cur = fit([0, 0, vw, vh]), from = cur, to = cur, t0 = 0, dur = 0;
+  const wins = [];
+  a.cam = (rect, ms) => { from = cur; to = fit(rect); t0 = Date.now() / 1000; dur = ms / 1000; wins.push([t0, t0 + dur]); };
+  const view = () => {
+    const e = ease3(dur ? Math.min(1, (Date.now() / 1000 - t0) / dur) : 1);
+    cur = from.map((v, i) => v + (to[i] - v) * e);
+    return cur;
+  };
+  let rec = true;
+  const loop = (async () => {
+    while (rec) {
+      const [x, y, w] = view(), s = ow / w;
+      const r = await cdp.send('Page.captureScreenshot', { format: 'png', optimizeForSpeed: true, clip: { x, y, width: ow / s, height: oh / s, scale: s } });
+      const file = path.join(dir, 'f' + String(frames.length).padStart(5, '0') + '.png');
+      fs.writeFileSync(file, Buffer.from(r.data, 'base64'));
+      frames.push({ file, t: Date.now() / 1000 });
+    }
+  })();
+  await page.waitForTimeout(250);
+  const start = Date.now() / 1000;
+  await scene.run(a);
+  const end = Date.now() / 1000;
+  rec = false;
+  await loop;
+  return { frames, start, end, wins, camera: scene.camera };
+}
+
 function encode(tl, dir, out, crop) {
   if (!tl.frames.length) throw new Error('the screencast sent no frames');
-  const step = 1 / FPS, seq = [];
+  const cam = tl.camera, seq = [];
   let j = 0;
-  for (let t = Math.max(tl.start, tl.frames[0].t); t < tl.end; t += step) {
+  for (let t = Math.max(tl.start, tl.frames[0].t), step; t < tl.end; t += step) {
+    step = cam && tl.wins.some(([u, v]) => t >= u && t < v) ? 1 / cam.zoomFps : 1 / (cam ? cam.fps || 12 : FPS);
     while (j + 1 < tl.frames.length && tl.frames[j + 1].t <= t) j++;
     const f = tl.frames[j].file;
     if (seq.length && seq[seq.length - 1][0] === f) seq[seq.length - 1][1] += step;
@@ -279,9 +321,10 @@ function encode(tl, dir, out, crop) {
     const r = spawnSync('ffmpeg', ['-v', 'error', '-y'].concat(args), { encoding: 'utf8' });
     if (r.status !== 0) throw new Error('ffmpeg failed: ' + (r.stderr || '').trim());
   };
-  ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-vf',
-    (crop ? 'crop=' + px(crop[2]) + ':' + px(crop[3]) + ':' + px(crop[0]) + ':' + px(crop[1]) + ',' : '') +
-    'scale=' + OUTW + ':-1:flags=lanczos,format=rgb24', '-c:v', 'ffv1', '-fps_mode', 'passthrough', rgb]);
+  ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-vf', cam
+    ? 'crop=min(iw\\,' + cam.out[0] + '):min(ih\\,' + cam.out[1] + '):0:0,pad=' + cam.out[0] + ':' + cam.out[1] + ':0:0:color=white,format=rgb24'
+    : (crop ? 'crop=' + px(crop[2]) + ':' + px(crop[3]) + ':' + px(crop[0]) + ':' + px(crop[1]) + ',' : '') +
+      'scale=' + OUTW + ':-1:flags=lanczos,format=rgb24', '-c:v', 'ffv1', '-fps_mode', 'passthrough', rgb]);
   ffmpeg(['-i', rgb, '-vf', 'split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=none:diff_mode=rectangle',
     '-fps_mode', 'passthrough', '-loop', '0', tmp]);
   const secs = seq.reduce((s, x) => s + x[1], 0);
@@ -310,7 +353,8 @@ async function recordScenes(scenes, names, outDir) {
     for (const name of names) {
       const scene = scenes[name];
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'readme-gif-'));
-      const ctx = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: 2, colorScheme: 'light', acceptDownloads: true });
+      const [vw, vh] = scene.camera ? scene.camera.viewport : [VW, VH];
+      const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, deviceScaleFactor: 2, colorScheme: 'light', acceptDownloads: true });
       try {
         await ctx.addInitScript(() => { try { localStorage.setItem('dbx-arch-tour-v1', '1'); localStorage.setItem('dbx-arch-theme', 'light'); } catch (e) {} });
         await ctx.addInitScript(cursorOverlay);

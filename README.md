@@ -53,7 +53,7 @@ is, who uses it and where it runs, then export the board as a deck or an editabl
   KPIs a dashboard tracks.
 - Every chip in a panel links onward, every box is reachable by keyboard, and Escape closes the panel.
 
-![Real-Time Fraud on the banking board, with its solution accelerator and customer stories](docs/use-case.gif)
+![Predictive Maintenance & Asset Health on the oil and gas upstream board, with its solution accelerator and customer stories](docs/use-case.gif)
 
 ### Your cloud, region and release stage
 
